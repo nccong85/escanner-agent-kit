@@ -49,6 +49,20 @@ t 2 main 'git stash list && git stash'
 t 2 auto 'git stash list && git stash' sub-1
 t 2 auto 'git branch -a; git branch -D old' sub-1
 
+for c in 'git "stash"' "git 'checkout' -- notes.txt" 'git "reset" --hard' 'g""it stash' 'git stas""h' \
+         "git \$'stash'" 'git st\ash' $'git \\\nstash' $'git status\ngit stash' \
+         $'git stash list\ngit stash'; do
+  t 2 main "$c"
+done
+for c in 'git "commit" -m x' $'git \\\ncommit -m x' 'git "branch" -D old'; do
+  t 2 auto "$c" sub-2
+done
+for c in 'grep -n "git restore" notes.txt' "rg 'git stash' docs" 'git commit -m "fix: keep stash out of the tree"' \
+         "git commit -m 'restore'" 'git log --grep="reset"' 'echo "use git checkout -- carefully"' \
+         $'git status\ngit log --oneline -1' 'git commit -m "$(printf done)"'; do
+  t 0 main "$c"
+done
+
 PROJ="$WORK/proj"; mkdir -p "$PROJ/.claude/review-loop"
 cp "$HERE/plugins/review-loop/templates/review_rules.md" "$PROJ/.claude/review-loop/"
 printf '1. rule\n' > "$PROJ/.claude/review-loop/review_brief.md"

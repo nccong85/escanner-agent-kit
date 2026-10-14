@@ -26,6 +26,18 @@ fi
 [ -z "$cmd" ] && exit 0
 cwd=$(field '.cwd'); [ -n "$cwd" ] || cwd="$PWD"
 
+normalize() {
+  local s="$1" bs='\' nl=$'\n' sq="'" dq='"' ansi='$'"'"
+  s="${s//"$bs$nl"/ }"
+  s="${s//"$nl"/;}"
+  s="${s//"$ansi"/$sq}"
+  s="${s//"$sq$sq"/}"
+  s="${s//"$dq$dq"/}"
+  printf '%s' "$s" | sed -E -e 's/\\([A-Za-z])/\1/g' \
+    -e "s/'([^'[:space:]]*)'/\1/g" -e 's/"([^"[:space:]]*)"/\1/g'
+}
+cmd=$(normalize "$cmd")
+
 if [ "$mode" = "auto" ]; then
   if [ -n "$(field '.agent_id')" ]; then mode=subagent; else mode=main; fi
 fi

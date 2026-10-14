@@ -2,6 +2,15 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [0.1.5] — 2026-10-14
+### Security
+- `review-loop` 0.1.4: the git guard normalizes a command the way the shell reads it before checking it. These
+  bypasses were confirmed and are now blocked: a quoted verb (`git "stash"`, `git 'checkout' -- f`), a line
+  continuation (`git \⏎stash`), ANSI-C quoting (`git $'stash'`), empty-quote splicing (`g""it stash`,
+  `git stas""h`) and backslash escapes (`git st\ash`). Newlines now separate commands.
+- 21 new security test cases, including the legitimate commands that must stay allowed (quoted grep patterns,
+  multi-word and single-word commit messages, `--grep=`).
+
 ## [0.1.4] — 2026-10-14
 ### Changed
 - `review-loop` 0.1.3: `/review-loop:init` points to this kit's README for the serena install command (it read as

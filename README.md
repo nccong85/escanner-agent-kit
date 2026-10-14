@@ -124,8 +124,10 @@ The names must be exactly `serena` and `context7`.
   Branch switching, commit and push still work.
 - **Inside subagents** (detected from `agent_id`): additionally blocks commit, push, rebase, merge, branch
   switching, branch/tag/ref changes, gc/reflog expiry, and `git apply` without `--check`.
-- Each part of a chained command (`;`, `&&`, `||`, `|`) is checked separately, and git commands built through an
-  alias, a `$GIT` variable, `eval` or command substitution are refused.
+- The command is first normalized the way the shell would read it (line continuations joined, `$'…'` and empty
+  quote pairs removed, `\x` escapes and single-word quotes unwrapped), then each part of a chained command
+  (`;`, `&&`, `||`, `|`, newlines) is checked separately. Git commands built through an alias, a `$GIT` variable,
+  `eval` or command substitution are refused.
 
 It is a guard against accidents, not a security boundary — see [SECURITY.md](SECURITY.md).
 
