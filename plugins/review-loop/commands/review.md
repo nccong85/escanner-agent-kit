@@ -53,7 +53,8 @@ reproduced → `REAL`; not reproduced → defer with the output attached (never 
 defer, it is not a blocker. `REAL` → keep at the filter's
 severity (it may downgrade, never upgrade).
 
-Report the funnel — raised → survived validate → survived filter — so the cost of the review is visible.
+Report the funnel — raised → dropped by rule IDs → dropped by quotes → survived filter — so the cost of the
+review is visible and each deterministic gate shows what it actually removed.
 
 ## Step 5 — Aggregate
 Summarize by severity (Critical → High → Medium → Low) across all reports and list the report paths.

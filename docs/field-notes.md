@@ -22,8 +22,9 @@ Lessons measured while running this loop on a production codebase. Each one chan
    compares commits and is always empty when the team does not commit between tasks. Orchestrators had been
    working around it with a `git stash create` snapshot, but that snapshot skips untracked files — 57 new files in
    one feature — so reviewers also need an explicit list of the files the fix created. The workflow now says both.
-8. **The hook blocked a harmless `grep "git restore"`.** Quoted text is now ignored unless the command re-enters
-   a shell (`sh -c`, `eval`, `xargs`).
+8. **The hook blocked a harmless `grep "git restore"`, then let `git "stash"` through.** Regexes over shell text
+   fail in both directions. The hook now reads the command the way bash/zsh do, so quoted text is data unless the
+   shell would run it (`sh -c`, `eval`, `$(…)`, a here-document fed to a shell).
 9. **Agents are slower than doing it yourself for small work.** The project owner stopped dispatching coder
    agents for routine fixes. The pipeline is for features, not one-line changes.
 10. **Most agents in a catalog go unused.** Counting real dispatches over a month removed six of sixteen agents.

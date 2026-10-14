@@ -43,14 +43,16 @@ printf '%s\n' "-----------------------------------------------------------------
 
 while IFS= read -r u; do
   [ -n "$u" ] || continue
-  # HEAD first; many servers reject HEAD, so fall back to a 1-byte ranged GET.
+  # HEAD first; many servers answer HEAD differently from a browser GET (Google help pages return 404 to
+  # HEAD and 200 to GET), so any non-success HEAD is re-checked with a 1-byte ranged GET before judging.
   code=$(curl -sS -o /dev/null -w '%{http_code}' -I -L --max-time "$TIMEOUT" -A "$UA" "$u" 2>/dev/null)
-  if [ "${code:-000}" = "000" ] || [ "${code:-000}" = "405" ] || [ "${code:-000}" = "501" ]; then
+  case "${code:-000}" in 2??|3??) ;; *) code=retry ;; esac
+  if [ "$code" = "retry" ]; then
     code=$(curl -sS -o /dev/null -w '%{http_code}' -L --max-time "$TIMEOUT" -A "$UA" \
                 -r 0-0 "$u" 2>/dev/null)
   fi
   case "${code:-000}" in
-    2??|3??)      printf '%-9s %s\n' "OK"        "$u"; ok=$((ok+1)) ;;
+    2??|3??|416)  printf '%-9s %s\n' "OK"        "$u"; ok=$((ok+1)) ;;
     404|410)      printf '%-9s %s  (HTTP %s)\n' "DEAD"  "$u" "$code"; dead=$((dead+1)) ;;
     000)          printf '%-9s %s  (no response / DNS)\n' "DEAD" "$u"; dead=$((dead+1)) ;;
     401|403|429)  printf '%-9s %s  (HTTP %s — blocked or rate-limited, NOT proof of fabrication)\n' \

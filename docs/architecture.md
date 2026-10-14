@@ -15,11 +15,13 @@
 | `review_rules.md` | Closed vocabulary of rule IDs | — |
 | `routing.md` | Directory → agent, overlay gates, ownership | — |
 | `validate_rule_ids.sh` | Drops findings whose rule ID does not resolve | **yes** |
+| `validate_findings.sh` | Drops findings whose cited file, line or verbatim quote is not there | **yes** |
 | `validate_spec_refs.sh` | Fails specs/tasks that cite missing files or unknown agents | **yes** |
 | `validate_citations.sh` | Flags dead or fabricated research URLs | **yes** |
 | `block_destructive_git.sh` | Blocks git commands that discard uncommitted work | **yes** |
 | `review-filter` | Judges one finding against one hunk | model |
 | Area reviewers and gates | Review the diff, one column each | model |
+| `test-device-e2e` + drivers | Runs the release app on real phones and reports evidence per case | drivers **yes**, agent model |
 
 ## Why each rule exists
 

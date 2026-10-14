@@ -84,5 +84,35 @@ case "$got:$out" in "0:OUT_OF_DIFF"*) pass=$((pass+1)) ;; *) fail=$((fail+1)); e
 out=$(cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$VF" src/lib.dart:9-10 'line nine changed' src/lib.dart:1 'nope' 2>&1); got=$?
 case "$got:$out" in 1:OK*NO_QUOTE*) pass=$((pass+1)) ;; *) fail=$((fail+1)); echo "FAIL mixed batch, got $got: $out" ;; esac
 
+
+printf 'See `src/app.dart` and `./src/app.dart`.\n' > "$PROJ/docs/features/sync/rooted.md"
+printf 'See `lib/widgets/button.dart` for the pattern.\n' > "$PROJ/docs/features/sync/unrooted.md"
+expect 0 "$BIN/validate_spec_refs.sh" docs/features/sync/rooted.md
+expect 1 "$BIN/validate_spec_refs.sh" docs/features/sync/unrooted.md
+out=$(cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$BIN/validate_spec_refs.sh" docs/features/sync/unrooted.md 2>&1)
+case "$out" in *"UNROOTED lib/widgets/button.dart"*) pass=$((pass+1)) ;; *) fail=$((fail+1)); echo "FAIL unrooted path not reported: $out" ;; esac
+
+PORT_FILE="$PROJ/port"
+python3 - "$PORT_FILE" <<'PYSRV' &
+import sys
+from http.server import BaseHTTPRequestHandler, HTTPServer
+class H(BaseHTTPRequestHandler):
+    def log_message(self, *a): pass
+    def _reply(self, code, body=b""):
+        self.send_response(code); self.send_header("Content-Length", str(len(body))); self.end_headers()
+        if self.command != "HEAD": self.wfile.write(body)
+    def do_HEAD(self): self._reply(404)
+    def do_GET(self): self._reply(200 if self.path == "/head-404-get-200" else 404, b"x")
+s = HTTPServer(("127.0.0.1", 0), H)
+open(sys.argv[1], "w").write(str(s.server_address[1]))
+s.serve_forever()
+PYSRV
+SRV=$!
+for _ in 1 2 3 4 5 6 7 8 9 10; do [ -s "$PORT_FILE" ] && break; sleep 0.2; done
+PORT=$(cat "$PORT_FILE")
+expect 0 "$BIN/validate_citations.sh" "http://127.0.0.1:$PORT/head-404-get-200"
+expect 1 "$BIN/validate_citations.sh" "http://127.0.0.1:$PORT/really-gone"
+kill "$SRV" 2>/dev/null; wait "$SRV" 2>/dev/null
+
 echo "validators: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

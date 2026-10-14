@@ -27,8 +27,9 @@ New here? Follow **[docs/guide-new-feature.md](docs/guide-new-feature.md)** — 
 | [`review-loop`](plugins/review-loop) | `review-filter` agent · `/review-loop:review` · `/review-loop:init` · rule/spec/citation validators on `PATH` · destructive-git hook · project templates |
 | [`dev-pipeline`](plugins/dev-pipeline) | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md` · `/dev-pipeline:research` · `research-tech` agent |
 | [`flutter-native-agents`](plugins/flutter-native-agents) | Reference stack for Flutter apps with a C/C++ engine and iOS/Android code: `dev-flutter`, `review-flutter`, `owner-native-engine`, `owner-platform`, `owner-contract`, `owner-build-release`, `gate-security`, `gate-performance` |
+| [`device-e2e`](plugins/device-e2e) | `test-device-e2e` agent · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
 
-`review-loop` is the core and works on its own. The other two depend on it.
+`review-loop` is the core and works on its own. The others depend on it.
 
 ## Install
 
@@ -37,6 +38,7 @@ claude plugin marketplace add nccong85/escanner-agent-kit
 claude plugin install review-loop@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
 claude plugin install flutter-native-agents@escanner-agent-kit   # optional, Flutter + native stacks
+claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
 ```
 
 Then, inside your project:
@@ -71,6 +73,7 @@ spec-create ─► spec-validate ─► task-decompose ─► implement
         │  ACTION: ISSUES_FOUND (blocking=n, deferred=m)
         ▼
    validate_rule_ids.sh ── drops invented rule IDs (no model call)
+   validate_findings.sh ── drops findings whose file, line or quote is not there (no model call)
         │
         ▼
    review-filter × each blocking finding ── REAL / NOT_REAL / NEEDS_EVIDENCE
@@ -81,6 +84,13 @@ spec-create ─► spec-validate ─► task-decompose ─► implement
 
 See [docs/architecture.md](docs/architecture.md) for the reasoning behind each step and
 [docs/field-notes.md](docs/field-notes.md) for what was measured while building it.
+
+**How much the scripts have caught so far (e-Scanner, Aug–Oct 2026).** They are cheap — milliseconds, no
+tokens — but judge them by their record, not their intent. `validate_rule_ids.sh` dropped invented anchors in
+real reviews (`R-PIT-8.12`, `R-PIT-15.3`); in most recorded reviews every ID was valid. `validate_findings.sh` is
+new and has no record yet. `validate_spec_refs.sh` and `validate_citations.sh` have mostly reported OK, and their
+false alarms (a green run that checked almost nothing; a HEAD-only 404 from Google) are fixed. The Cost Ledger
+records what each gate drops; a gate that keeps dropping nothing should be removed.
 
 ## When not to use this
 

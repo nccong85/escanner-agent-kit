@@ -33,7 +33,7 @@ TOPS=$(cd "$ROOT" && for d in */ .claude/; do [ -d "$d" ] && printf '%s|' "${d%/
 
 [ $# -gt 0 ] || { echo "usage: $(basename "$0") <spec-or-tasks.md>..."; exit 2; }
 
-bad=0; checked=0; skipped=0; planned=0
+bad=0; checked=0; skipped=0; planned=0; unrooted=0
 
 is_placeholder() {
   case "$1" in
@@ -91,6 +91,21 @@ for doc in "$@"; do
 $hits
 EOF
 
+  while IFS= read -r u; do
+    [ -n "$u" ] || continue
+    u="${u#./}"
+    if is_placeholder "$u"; then continue; fi
+    case "$u" in
+      *.dart|*.md|*.cpp|*.cc|*.c|*.h|*.hpp|*.sh|*.yaml|*.yml|*.json|*.kt|*.kts|*.swift|*.go|*.rs|*.py|*.ts|*.tsx|*.js|*.cs|*.csproj|*.xaml|*.sql|*.txt|*.toml|*.plist|*.xcprivacy|*.cmake|*.gradle|*.podspec|*.arb|*.png|*.svg) ;;
+      *) continue ;;
+    esac
+    if printf '%s' "${u%%/*}" | grep -qE "^($TOPS)$"; then continue; fi
+    printf '  UNROOTED %s  (write it from the repo root, or it is never checked)\n' "$u"
+    unrooted=$((unrooted+1)); bad=1
+  done <<EOF
+$(grep -oE '(^|[[:space:]`(|])\.?/?[A-Za-z0-9_@-][A-Za-z0-9_.@-]*(/[A-Za-z0-9_.@+-]+)+' "$doc" | sed -E 's/^[[:space:]`(|]//; s/[.,;:]+$//' | sort -u)
+EOF
+
   # ---- 2. Agent: fields ----------------------------------------------------
   # Real rows look like: **Agent:** `dev-flutter`  /  my-plugin:review-x (notes) + owner-contract
   # so: strip markdown, split on + and , and ;, cut prose after the first '(' or '_' or em-dash,
@@ -116,12 +131,13 @@ EOF
 done
 
 echo
-echo "checked=$checked  planned-not-yet-created=$planned  skipped-placeholders=$skipped  result=$([ $bad -eq 0 ] && echo OK || echo FAILED)"
+echo "checked=$checked  unrooted=$unrooted  planned-not-yet-created=$planned  skipped-placeholders=$skipped  result=$([ $bad -eq 0 ] && echo OK || echo FAILED)"
 
 if [ "$bad" -ne 0 ]; then
   echo
   echo "REJECTED: a spec that cites files which do not exist cannot be implemented from."
   echo "  - Wrong path      -> fix the citation."
+  echo "  - UNROOTED        -> the path is relative to a subfolder; cite it from the repo root."
   echo "  - Renamed/deleted -> the spec is stale; re-ground it before decomposing."
   echo "  - Not built yet   -> say so explicitly ('to be created'), don't cite it as a reference."
   exit 1

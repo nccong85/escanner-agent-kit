@@ -373,9 +373,12 @@ which rules earn their keep: a rule ID whose findings come back mostly `rejected
 features is noise and gets deleted from `review_rules.md` (§4 there).
 
 ## Cost Ledger (what the pipeline actually cost — the original complaint was unmeasurable)
-| Task | Review rounds | Raised | Survived validate | Survived filter | Fix rounds | Report lines |
-|------|---------------|--------|-------------------|-----------------|------------|--------------|
-| Task 1 | 1 | 6 | 5 | 2 | 1 | 96 |
+| Task | Review rounds | Raised | Dropped: rule IDs | Dropped: quotes | Survived filter | Fix rounds | Report lines |
+|------|---------------|--------|-------------------|-----------------|-----------------|------------|--------------|
+| Task 1 | 1 | 6 | 1 | 0 | 2 | 1 | 96 |
+
+The two `Dropped` columns are the only evidence that the deterministic gates earn their place: a gate that drops
+0 across 10 recorded tasks is a candidate for removal, the same as a rule nobody cites.
 
 ## Resume Instructions
 Continue from Task 2, Step 2 (Review).
