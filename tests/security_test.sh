@@ -31,7 +31,7 @@ for c in 'git checkout HEAD notes.txt' 'git checkout notes.txt' 'git checkout -f
 done
 
 for c in 'git checkout feature' 'git checkout -b feat/new' 'git checkout -b feat/two origin/main' 'git switch feature' \
-         'git restore --staged notes.txt' 'git commit -m "explain why `git restore` is blocked"' \
+         'git restore --staged notes.txt' "git commit -m 'explain why \`git restore\` is blocked'" \
          'git log --format=%h -1 $(git rev-parse HEAD)' 'cd "$(git rev-parse --show-toplevel)" && git status' \
          'git branch -D old' 'git worktree list' 'echo "do not run git stash here"'; do
   t 0 main "$c"
@@ -45,6 +45,7 @@ for c in 'git branch --show-current' 'git branch -a' 'git tag -l' 'git reflog' '
   t 0 auto "$c" sub-1
 done
 
+t 2 main 'git commit -m "explain why `git restore .` is blocked"'
 t 2 main 'git stash list && git stash'
 t 2 auto 'git stash list && git stash' sub-1
 t 2 auto 'git branch -a; git branch -D old' sub-1

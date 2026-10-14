@@ -5,4 +5,5 @@ status=0
 bash "$HERE/hook_test.sh" || status=1
 bash "$HERE/validators_test.sh" || status=1
 bash "$HERE/security_test.sh" || status=1
+bash "$HERE/parser_test.sh" || status=1
 exit $status
