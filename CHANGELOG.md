@@ -2,7 +2,7 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
-## [0.1.0] — unreleased
+## [0.1.0] — 2026-10-14
 ### Added
 - `review-loop`: `review-filter` agent, `/review-loop:review`, `/review-loop:init`, rule/spec/citation
   validators, destructive-git `PreToolUse` hook (main-session and subagent modes), project templates.
