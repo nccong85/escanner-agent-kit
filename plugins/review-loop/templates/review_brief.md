@@ -120,7 +120,7 @@ FILES_TO_REVIEW:
 An item you cannot satisfy is `open: <why>`. A hand-off without `SELF-CHECK:` is rejected.
 
 **Reviewing:** write the report with the Write tool (never `echo`/redirection) to
-`<reports dir>/review_{scope}_{agent}_{YYYYMMDD_HHmm}.md` — `{agent}` is your own name, so parallel reviewers
+`docs/reviews/review_{scope}_{agent}_{YYYYMMDD_HHmm}.md` (change the directory here if your project keeps reports elsewhere) — `{agent}` is your own name, so parallel reviewers
 never overwrite each other. Then end with exactly one of:
 ```
 ACTION: QA_PASSED (blocking=0, deferred=<n>)

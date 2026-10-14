@@ -16,5 +16,7 @@ Set up `.claude/review-loop/` in the current project.
    not verify with `<VERIFY>`; do not guess.
 3. List the installed agents (`/agents`) and fill the agent names in `routing.md`. Plugin agents are written
    `<plugin>:<agent>`.
-4. Run `validate_rule_ids.sh R-NN-1` to confirm the scripts find the files.
-5. Report what was created, what was skipped, and every `<VERIFY>` the user still has to settle.
+4. Create the reports directory named in `review_brief.md` §B7 (default `docs/reviews/`) if it does not exist.
+5. Run `validate_rule_ids.sh R-NN-1` to confirm the scripts find the files; the template pitfall headings are
+   unnumbered on purpose, so `R-PIT-*` resolves only after you add a real entry.
+6. Report what was created, what was skipped, and every `<VERIFY>` the user still has to settle.

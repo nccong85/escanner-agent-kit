@@ -2,6 +2,14 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [0.1.1] — 2026-10-14
+### Fixed
+- `review-loop` templates: the example headings in `common_pitfalls.md` are unnumbered, so `R-PIT-1` / `R-PIT-1.1`
+  no longer resolve before a real pitfall exists (found by installing the kit into a test project).
+- `review-loop` templates: `review_brief.md` §B7 now defaults the reports directory to `docs/reviews/`, and
+  `/review-loop:init` creates it.
+- Regression test: the unmodified pitfall template must not resolve any `R-PIT-*` ID.
+
 ## [0.1.0] — 2026-10-14
 ### Added
 - `review-loop`: `review-filter` agent, `/review-loop:review`, `/review-loop:init`, rule/spec/citation

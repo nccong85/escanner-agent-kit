@@ -51,5 +51,10 @@ Reference: src/missing.dart
 EOF
 expect 1 "$BIN/validate_spec_refs.sh" "$PROJ/docs/features/sync/bad_tasks.md"
 
+TPLPROJ="$PROJ/tplonly"; mkdir -p "$TPLPROJ/.claude/review-loop"
+cp "$TPL/review_brief.md" "$TPL/review_rules.md" "$TPL/common_pitfalls.md" "$TPLPROJ/.claude/review-loop/"
+out=$(cd "$TPLPROJ" && REVIEW_LOOP_PROJECT_DIR="$TPLPROJ" "$BIN/validate_rule_ids.sh" R-PIT-1 R-PIT-1.1 2>&1); got=$?
+if [ "$got" = 1 ]; then pass=$((pass+1)); else fail=$((fail+1)); echo "FAIL template pitfalls must not resolve R-PIT-1 (got $got)"; fi
+
 echo "validators: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

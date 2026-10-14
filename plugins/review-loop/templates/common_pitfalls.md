@@ -1,11 +1,12 @@
 # Common Pitfalls — the project's defect corpus
 
 Each entry records a defect class that actually happened, so reviewers cite it (`R-PIT-<n>.<m>`) instead of
-re-deriving it. Number sections `## <n>.` and entries `### <n>.<m>`; never renumber an existing entry.
+re-deriving it. Number sections `## <n>.` and entries `### <n>.<m>` (replace the example below with your first real entry);
+never renumber an existing entry.
 
-## 1. <Area>
+## <n>. <Area>
 
-### 1.1 <One-line symptom>
+### <n>.<m> <One-line symptom>
 - **Symptom:** <what was observed, with the measured number or error text>
 - **Cause:** <the root cause, verified>
 - **Rule:** <what every future change must do or avoid>
