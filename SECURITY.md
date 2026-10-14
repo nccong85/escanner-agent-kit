@@ -10,9 +10,11 @@ Include what you ran, what happened, and the Claude Code version. You will get a
 possible.
 
 ## Scope
-- The `block_destructive_git.sh` hook is a guard against **accidents**, not a security boundary. A determined
-  command can bypass it (for example through an interpreter other than a shell). Report bypasses anyway; they
-  help.
+- The `block_destructive_git.sh` hook is a guard against **accidents**, not a security boundary. It parses shell
+  text, so a determined command can still bypass it (for example through an interpreter other than a shell, or a
+  script file). Report bypasses anyway; they help.
+- `config.env` is **read as data, never executed**: only six known keys are accepted, values may reference only
+  `$ROOT` and `$CONTEXT_DIR`, and values containing command substitution or shell operators are refused.
 - Validators read only files inside your project and never send data anywhere, except `validate_citations.sh`,
   which requests the URLs cited in a research report.
 - Review every agent and command before you install them, as you would any code.

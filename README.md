@@ -92,11 +92,16 @@ times the tokens of a chat. See [docs/when-not-to-use.md](docs/when-not-to-use.m
 ## Safety hook
 
 `review-loop` installs a `PreToolUse` hook on `Bash`:
-- **Main session:** blocks only commands that destroy uncommitted work — `git checkout -- <path>`,
-  `git checkout .`, `git restore` (not `--staged`), `git stash` (not `create|list|show`), `git clean` (not `-n`),
-  `git reset --hard|--merge|--keep`. Branch switching, commit and push still work.
+- **Main session:** blocks only commands that destroy uncommitted work — `git checkout` of paths (with or
+  without `--`, `.`, `--force`, `--patch`), `git restore` (only `--staged` alone is allowed), `git stash` (not
+  `create|list|show`), `git clean` (not `-n`), `git reset --hard|--merge|--keep`, `git worktree remove --force`.
+  Branch switching, commit and push still work.
 - **Inside subagents** (detected from `agent_id`): additionally blocks commit, push, rebase, merge, branch
-  switching and `git apply` without `--check`.
+  switching, branch/tag/ref changes, gc/reflog expiry, and `git apply` without `--check`.
+- Each part of a chained command (`;`, `&&`, `||`, `|`) is checked separately, and git commands built through an
+  alias, a `$GIT` variable, `eval` or command substitution are refused.
+
+It is a guard against accidents, not a security boundary — see [SECURITY.md](SECURITY.md).
 
 Run a blocked command yourself with Claude Code's `!` prefix when you really mean it.
 
