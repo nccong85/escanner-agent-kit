@@ -1,7 +1,7 @@
 {
   "name": "flutter-native-agents",
   "displayName": "Flutter + Native Agents",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "Reference coder, reviewer, contract-owner and gate agents for Flutter apps with a C/C++ engine and iOS/Android platform code.",
   "author": {
     "name": "Nguyen Chi Cong"

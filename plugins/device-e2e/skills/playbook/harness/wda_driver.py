@@ -7,7 +7,22 @@ import time
 import urllib.request
 from pathlib import Path
 
-SID_FILE = Path(os.environ.get("E2E_WDA_SID_FILE", "/tmp/e2e_wda_sid"))
+SID_FILE = Path(os.environ.get("E2E_WDA_SID_FILE", str(Path.home() / ".cache" / "device-e2e" / "wda_sid")))
+
+
+def _write_private(path, text):
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0), 0o600)
+    os.fchmod(fd, 0o600)
+    with os.fdopen(fd, "w") as f:
+        f.write(text)
+
+
+def _read_cached_sid(path):
+    if path.is_symlink() or not path.is_file():
+        return ""
+    sid = path.read_text().strip()
+    return sid if re.fullmatch(r"[A-Za-z0-9-]{1,128}", sid) else ""
 
 
 def _env(name):
@@ -38,8 +53,8 @@ class IosDriver:
     def sid(self):
         if self._sid:
             return self._sid
-        if SID_FILE.exists():
-            cached = SID_FILE.read_text().strip()
+        cached = _read_cached_sid(SID_FILE)
+        if cached:
             try:
                 _call("GET", f"/session/{cached}")
                 self._sid = cached
@@ -48,7 +63,7 @@ class IosDriver:
                 pass
         r = _call("POST", "/session", {"capabilities": {"alwaysMatch": {"shouldWaitForQuiescence": False}}})
         self._sid = r["sessionId"]
-        SID_FILE.write_text(self._sid)
+        _write_private(SID_FILE, self._sid)
         return self._sid
 
     def _s(self, path):

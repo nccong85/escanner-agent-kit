@@ -54,6 +54,35 @@ os.environ["E2E_ADB"] = str(fake_adb)
 import adb_driver
 import wda_driver
 
+check("wda session file defaults to a private per-user path",
+      str(wda_driver.SID_FILE).startswith(str(Path.home())) and not str(wda_driver.SID_FILE).startswith("/tmp"))
+target = WORK / "victim.txt"
+target.write_text("keep")
+link = WORK / "sid_link"
+link.symlink_to(target)
+try:
+    wda_driver._write_private(link, "S9")
+    check("wda session write refuses a symlink", False)
+except OSError:
+    check("wda session write refuses a symlink", target.read_text() == "keep")
+
+loose = WORK / "loose_sid"
+loose.write_text("old")
+loose.chmod(0o644)
+wda_driver._write_private(loose, "S2")
+check("wda session write tightens an existing file to 0600", (loose.stat().st_mode & 0o777) == 0o600 and loose.read_text() == "S2")
+secret = WORK / "secret.txt"
+secret.write_text("AKIA-SECRET-VALUE")
+sid_link = WORK / "sid_points_elsewhere"
+sid_link.symlink_to(secret)
+check("wda ignores a symlinked session file on read", wda_driver._read_cached_sid(sid_link) == "")
+bad_sid = WORK / "bad_sid"
+bad_sid.write_text("../../etc/passwd")
+check("wda ignores a malformed cached session id", wda_driver._read_cached_sid(bad_sid) == "")
+good_sid = WORK / "good_sid"
+good_sid.write_text("0A1B2C3D-4E5F-6789-ABCD-EF0123456789\n")
+check("wda accepts a UUID session id", wda_driver._read_cached_sid(good_sid) == "0A1B2C3D-4E5F-6789-ABCD-EF0123456789")
+
 try:
     adb_driver.AndroidDriver()
     check("android driver requires E2E_APP_ID", False)
@@ -204,6 +233,7 @@ i.launch()
 launches = [c for c in calls if c[1].endswith("/wda/apps/launch")]
 check("ios launch uses the app id", launches and launches[-1][2] == {"bundleId": "com.example.app"})
 check("ios session id cached", (WORK / "sid").read_text() == "S1")
+check("ios session file is owner-only", ((WORK / "sid").stat().st_mode & 0o777) == 0o600)
 srv.shutdown()
 shutil.rmtree(WORK, ignore_errors=True)
 

@@ -18,7 +18,7 @@ cd <wda checkout> && xcodebuild -project WebDriverAgent.xcodeproj -scheme WebDri
 - The first start on a phone may need an enrolled Touch ID/Face ID; a passcode alone is not always enough.
 - The IP is usually DHCP and changes: read it from the log, `grep -o 'ServerURLHere->[^<]*' <wda log>`, and
   export `WDA=http://<ip>:8100`. Check with `curl -s $WDA/status`.
-- The session id is cached in `E2E_WDA_SID_FILE` (default `/tmp/e2e_wda_sid`); a stale one is recreated.
+- The session id is cached in `E2E_WDA_SID_FILE` (default `~/.cache/device-e2e/wda_sid`, private to your user); a stale one is recreated.
 - Stop WDA at the end by stopping the background xcodebuild task.
 
 ## Reading the UI
