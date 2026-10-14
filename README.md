@@ -1,31 +1,22 @@
 # eScanner Agent Kit
 
-A Claude Code plugin marketplace for **agent code review that actually terminates**.
+These are the Claude Code agents, review rules and workflows I built and refined while developing
+**e-Scanner**, a document scanner app for iPhone and Android.
 
-Multi-agent review usually fails in the same ways: reviewers invent rules, re-review the whole feature every
-round, file each other's findings, and turn every Medium nit into another fix round. This repository packages
-the opposite design, extracted from a production mobile app:
+They are personal lessons from one project and are tailored to it, so treat them as a reference rather than a
+ready-made solution: copy the patterns and adapt the agents, rule vocabulary and routing to your own project (the
+agents in `flutter-native-agents` will not fit an unrelated codebase unchanged). You are welcome to improve them
+and take them further. I would be very happy if any of this helps you.
 
-- **A closed rule vocabulary.** Every finding cites a rule ID; a script drops IDs that do not resolve — no model call.
-- **A precision filter.** `review-filter` judges one finding against one diff hunk, without seeing the
-  reviewer's reasoning, before any fix round starts.
-- **Convergence rules.** Only Critical/High block, round 2+ is a delta review of the fix, fix rounds are capped,
-  and a new non-regression blocker means the *spec* is wrong — stop and ask.
-- **Exclusive ownership.** Each concern has one reviewer; everyone else mentions it in one line.
-- **Machines over prompts.** A `PreToolUse` hook blocks git commands that would destroy uncommitted work, and
-  recurring findings must graduate into tests.
-
-## Important notes
-
-- **A reference base, not a finished product.** This kit shows how to structure agents, rules and a review loop.
-  Copy the patterns and adapt the agents, rule vocabulary and routing to your own project — the agents in
-  `flutter-native-agents` will not fit an unrelated codebase unchanged.
 - **Agents are token-hungry.** A single feature through the pipeline runs a coder, several reviewers, one filter
   call per blocking finding and possibly fix rounds, each a separate session on a strong model. Use it with a
   **Claude Max subscription**; on pay-per-token API billing it gets expensive quickly. For small changes use the
   main session plus `/review-loop:review`.
 - **Models.** Agents use `model: inherit` (your session's model); only `review-filter` is pinned to `opus`,
   because a smaller model once rejected a true finding.
+
+**Get e-Scanner:** [App Store (iOS)](https://apps.apple.com/app/id6790476934?pt=129164581&ct=github_agent_kit&mt=8) ·
+[Google Play (Android)](https://play.google.com/store/apps/details?id=io.pbsolutions.escanner&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Dagent_kit)
 
 New here? Follow **[docs/guide-new-feature.md](docs/guide-new-feature.md)** — one real feature taken through every step.
 
