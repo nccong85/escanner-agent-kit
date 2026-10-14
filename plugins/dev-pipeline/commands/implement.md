@@ -76,8 +76,8 @@ that the changed files trigger, in addition to the base routing.
 Launch the coder agent for the current task per the **routing.md (Coder column) + overlay gates**.
 
 > **Prefer a packaged skill for standard setup work.** If the current task is a canonical, packaged
-> procedure (e.g. scaffold a feature module → `new-feature`; ffigen bindings → `dart-use-ffigen`; coverage report → `dart-collect-coverage`), the
-> skill encodes the maintained steps — use it instead of re-deriving them.
+> procedure and the project has a skill for it (for example scaffolding a feature module, generating FFI
+> bindings, or a coverage report), the skill encodes the maintained steps — use it instead of re-deriving them.
 >
 > **Only a coder that declares `Skill` in its `tools:` can invoke one itself.** For any other routed coder,
 > **you** invoke the skill before dispatching and hand the result over in the brief; telling that agent to

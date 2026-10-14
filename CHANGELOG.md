@@ -2,6 +2,12 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [0.1.3] — 2026-10-14
+### Changed
+- README: one short **Requirements** section (required / recommended / your own tools) replaces the separate
+  requirements and MCP sections; a one-line note on models.
+- `dev-pipeline` 0.1.2: `implement` no longer names skills from the project the kit was extracted from.
+
 ## [0.1.2] — 2026-10-14
 ### Added
 - `docs/guide-new-feature.md`: one real feature ("pin/unpin notes") taken through spec-create, spec-validate,

@@ -24,6 +24,8 @@ the opposite design, extracted from a production mobile app:
   call per blocking finding and possibly fix rounds, each a separate session on a strong model. Use it with a
   **Claude Max subscription**; on pay-per-token API billing it gets expensive quickly. For small changes use the
   main session plus `/review-loop:review`.
+- **Models.** Agents use `model: inherit` (your session's model); only `review-filter` is pinned to `opus`,
+  because a smaller model once rejected a true finding.
 
 New here? Follow **[docs/guide-new-feature.md](docs/guide-new-feature.md)** — one real feature taken through every step.
 
@@ -96,30 +98,22 @@ times the tokens of a chat. See [docs/when-not-to-use.md](docs/when-not-to-use.m
 
 ## Requirements
 
-- Claude Code with plugin support (developed and validated with v2.1.299).
-- `bash`, `git`, and `jq` or `python3` for the hook and validators. `curl` for citation checks.
-- Agents default to `model: inherit` so you control cost; `review-filter` uses `opus` on purpose (a smaller
-  model once returned `NOT_REAL` for a true finding, which is the one error the filter cannot recover from).
+**Required**
+- Claude Code with plugin support
+- `bash`, `git`, and `jq` or `python3` (used by the safety hook)
 
-## Recommended MCP servers
-
-The agents work best with two MCP servers. Install them — the server **names must be exactly `serena` and
-`context7`**, because the agents list `mcp__serena…` / `mcp__context7…` in their tools:
+**Recommended** — the agents still work without them, just less precisely
+- `serena`: finds callers and symbols
+- `context7`: current library docs
 
 ```bash
 claude mcp add --transport http context7 https://mcp.context7.com/mcp
-# serena needs uv first: https://docs.astral.sh/uv/  then:  uv tool install -p 3.13 serena-agent
 claude mcp add --scope user serena -- serena start-mcp-server --context claude-code --project-from-cwd
 ```
 
-| Server | Used for | If it is missing |
-|---|---|---|
-| `serena` | symbol lookups, "who calls this", implementations, renames | agents fall back to `Grep`/`Read` and say so; coders confirm "no other callers" with the analyzer |
-| `context7` | current docs of a named package | agents read the installed package source at the pinned version and mark unchecked claims as unverified |
+The names must be exactly `serena` and `context7`.
 
-Every agent that lists these tools has a **Tool availability** section with that fallback, so a missing server
-never stops a task. `/review-loop:init` checks which of the two are configured and tells you. A context7 connector
-added through claude.ai has a different tool name and is not picked up by the agents.
+**Your project's own tools** (Flutter, CMake, …) must be on `PATH` so the agents can run your tests.
 
 ## Safety hook
 
