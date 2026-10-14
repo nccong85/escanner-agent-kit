@@ -1,0 +1,28 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "escanner-agent-kit",
+  "description": "A review loop for Claude Code that terminates: closed rule vocabulary, deterministic validators, a precision filter, delta re-reviews — plus a spec-to-ship pipeline and a reference Flutter + native agent stack.",
+  "owner": {
+    "name": "Nguyen Chi Cong"
+  },
+  "plugins": [
+    {
+      "name": "review-loop",
+      "source": "./plugins/review-loop",
+      "description": "Rule-ID-gated code review: the review-filter agent, rule validators, a destructive-git safety hook, project templates, and /review-loop:review.",
+      "category": "development"
+    },
+    {
+      "name": "dev-pipeline",
+      "source": "./plugins/dev-pipeline",
+      "description": "Spec → validate → decompose → implement, checkpointed in execution_state.md, with convergence rules so the coder/reviewer loop ends.",
+      "category": "development"
+    },
+    {
+      "name": "flutter-native-agents",
+      "source": "./plugins/flutter-native-agents",
+      "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, contract owner, security and performance gates.",
+      "category": "development"
+    }
+  ]
+}

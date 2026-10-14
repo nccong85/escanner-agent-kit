@@ -1,0 +1,21 @@
+name: Proposal
+description: A new rule, agent, gate or protocol change
+labels: [proposal]
+body:
+  - type: textarea
+    id: case
+    attributes:
+      label: The case you observed
+      description: What failed or cost time, and how you measured it. Proposals without an observed case are usually declined.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Could a test, lint or hook enforce it instead of a prompt?
