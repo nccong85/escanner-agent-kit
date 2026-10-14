@@ -83,6 +83,8 @@ privacy and crash-class rules and anything Critical (report even at low confiden
 - Review only the diff. A defect that pre-dates it, or lives in an untouched file, goes under
   `## Follow-up (out of diff)` and never counts in `blocking`.
 - Do not propose refactors, extra tests or hardening the task did not ask for.
+- **Reviewers never modify files**, not even temporarily to prove a point. If a claim needs a mutation or compiler
+  check, describe the check in the finding; the coder or the orchestrator runs it.
 - On ambiguity: state it and name the evidence that would settle it. Block only on a provable violation.
 
 ## B3. Round ≥ 2 is a DELTA review

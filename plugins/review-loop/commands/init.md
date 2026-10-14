@@ -16,7 +16,11 @@ Set up `.claude/review-loop/` in the current project.
    not verify with `<VERIFY>`; do not guess.
 3. List the installed agents (`/agents`) and fill the agent names in `routing.md`. Plugin agents are written
    `<plugin>:<agent>`.
-4. Create the reports directory named in `review_brief.md` §B7 (default `docs/reviews/`) if it does not exist.
-5. Run `validate_rule_ids.sh R-NN-1` to confirm the scripts find the files; the template pitfall headings are
+4. Run `claude mcp list` (or inspect the available tools) and report whether MCP servers named exactly `serena`
+   and `context7` are configured. If one is missing, print the install commands (`claude mcp add --transport http context7 https://mcp.context7.com/mcp`;
+   serena: see the repository README) and say
+   that the agents will fall back to Grep/Read and installed sources.
+5. Create the reports directory named in `review_brief.md` §B7 (default `docs/reviews/`) if it does not exist.
+6. Run `validate_rule_ids.sh R-NN-1` to confirm the scripts find the files; the template pitfall headings are
    unnumbered on purpose, so `R-PIT-*` resolves only after you add a real entry.
-6. Report what was created, what was skipped, and every `<VERIFY>` the user still has to settle.
+7. Report what was created, what was skipped, and every `<VERIFY>` the user still has to settle.

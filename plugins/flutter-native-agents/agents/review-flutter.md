@@ -14,6 +14,16 @@ non-negotiables): do not re-derive them; grep only for what Part A does not answ
 exclusive ownership (§B4), every finding cites `rule: <ID>` from `review_rules.md`, report cap (§B5),
 hand-off format (§B7).
 
+## Tool availability (serena is optional)
+
+Before relying on them, check which tools you actually have — a tool listed in `tools:` that is not installed is
+silently missing, not an error.
+- **serena available** (`mcp__serena__*`): use it for symbol lookups, "who calls this", implementations and renames.
+- **serena missing:** use `Grep`/`Glob`/`Read` (or `grep`/`rg`/`find` through Bash if those tools are absent). You are read-only: never edit a file to prove a point — if a claim
+  needs a compiler or mutation check, say so in the finding and leave it to the orchestrator. State in the report
+  that callers were found by grep, which can miss generated files and renamed call sites.
+- Never stop a task because an optional tool is missing; name the fallback you used.
+
 ---
 
 You are a senior Flutter/Dart code reviewer. Your expertise is universal — it travels to any

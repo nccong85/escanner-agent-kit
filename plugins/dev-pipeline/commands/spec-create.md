@@ -30,6 +30,8 @@ anything. Cite the sections you rely on.
 - **Text level:** `Grep`/`Glob` for similar constructs, strings, assets, docs and config.
 - **Library docs:** context7 for fast-moving APIs — then verify against the version the project actually pins
   (lockfile, manifest). Docs describe the newest release, not the one installed.
+- **If serena or context7 is not installed:** use `Grep`/`Read` and the installed package source instead, and
+  mark any API claim you could not check against a source as unverified. Do not stop because of it.
 
 ### 1.4 Contract, security and budget pre-check
 - **Contract change** → the spec describes the contract change FIRST, then the per-side updates, then an interop test.

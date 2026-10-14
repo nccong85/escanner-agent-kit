@@ -14,7 +14,7 @@ budget so trivial questions don't get over-researched. Pick the cheapest tier th
 | Tier | Signal | Spend | Example |
 |---|---|---|---|
 | **Repo-first** | The answer is in this repo — code, spec, lockfile, guide | **0 agents.** `Grep`/`Read`/`Glob` yourself | "Which version of library X is pinned? What is the current value of setting Y?" |
-| **API lookup** | A named package/SDK's current API | **0 agents.** `context7`, then verify against the installed source | "Is API Z deprecated in the SDK version we build against?" |
+| **API lookup** | A named package/SDK's current API | **0 agents.** `context7` (if installed; otherwise the installed source or official docs via `WebFetch`), then verify against the installed source | "Is API Z deprecated in the SDK version we build against?" |
 | **Simple factual** | One external fact needing a source | **0–1 agents**, 3–10 searches | "Does the app store still accept target SDK N?" |
 | **Depth** | One mechanism, needs real understanding | **1 agent**, 10–15 searches | "Why does this image filter smear on folded pages?" |
 | **Breadth** | **N genuinely independent sub-questions** | **N agents** — one per sub-question | "Compare three PDF libraries for in-memory encryption" |

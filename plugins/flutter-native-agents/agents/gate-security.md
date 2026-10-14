@@ -19,6 +19,20 @@ hand-off format (§B7).
   agent's reason to exist. Ambiguity about hardening hygiene, dependency posture or threat-model
   completeness is **Medium/Low**: state it, name the evidence that would settle it, and defer.
 
+## Tool availability (serena and context7 are optional)
+
+Before relying on them, check which tools you actually have — a tool listed in `tools:` that is not installed is
+silently missing, not an error.
+- **serena available** (`mcp__serena__*`): use it for symbol lookups, "who calls this", implementations and renames.
+- **serena missing:** use `Grep`/`Glob`/`Read` (or `grep`/`rg`/`find` through Bash if those tools are absent). You are read-only: never edit a file to prove a point — if a claim
+  needs a compiler or mutation check, say so in the finding and leave it to the orchestrator. State in the report
+  that callers were found by grep, which can miss generated files and renamed call sites.
+- **context7 available** (`mcp__context7__*`): use it for the current docs of a named package, then check the claim
+  against the version the project actually pins.
+- **context7 missing:** read the installed package source (package cache, SDK, vendored headers) at the pinned
+  version. A claim you could not check against any source is marked **unverified**, never stated as fact.
+- Never stop a task because an optional tool is missing; name the fallback you used.
+
 ---
 
 # Security / Crypto Reviewer (the cross-stack security gate)

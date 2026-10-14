@@ -9,15 +9,19 @@ Lessons measured while running this loop on a production codebase. Each one chan
    never restricted anything.
 3. **Reviewers invent anchors.** Citations like `R-PIT-8.12` looked plausible but did not exist. The rule-ID
    validator rejected them with no model call.
-4. **A smaller filter model deleted a true finding.** That is the one error the filter cannot recover from, so
+4. **A smaller filter model returned `NOT_REAL` for a true finding**, which would have dropped it. That is the one
+   error the filter cannot recover from, so
    the filter runs on the strongest model. It stays cheap because each call sees one claim and one hunk.
 5. **A suite that builds is not a suite that runs.** About 74 platform tests accumulated over several review rounds
    without executing once. When they finally ran, they exposed an out-of-bounds read and three guard tests that
    could never fail, because their fixtures violated the contract's own normalization.
-6. **A test helper used `git checkout -- <file>` to undo a mutation** and erased another task's uncommitted
-   work. A rule in a prompt had not prevented it, so the hook now blocks the command.
-7. **`git diff <sha>..` was always empty** because the team does not commit between tasks. Delta reviews were
-   checking nothing until the baseline became a `git stash create` snapshot.
+6. **A test helper used `git checkout -- <file>` to undo a mutation** and wiped another task's uncommitted edits
+   in that file. The agent noticed and rebuilt the file by hand, which was luck rather than a safeguard. A rule in a
+   prompt had not prevented it, so the hook now blocks the command.
+7. **The written delta-review baseline was wrong.** The workflow told reviewers to read `git diff <sha>..`, which
+   compares commits and is always empty when the team does not commit between tasks. Orchestrators had been
+   working around it with a `git stash create` snapshot, but that snapshot skips untracked files — 57 new files in
+   one feature — so reviewers also need an explicit list of the files the fix created. The workflow now says both.
 8. **The hook blocked a harmless `grep "git restore"`.** Quoted text is now ignored unless the command re-enters
    a shell (`sh -c`, `eval`, `xargs`).
 9. **Agents are slower than doing it yourself for small work.** The project owner stopped dispatching coder

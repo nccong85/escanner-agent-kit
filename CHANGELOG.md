@@ -2,6 +2,23 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [0.1.2] — 2026-10-14
+### Added
+- `docs/guide-new-feature.md`: one real feature ("pin/unpin notes") taken through spec-create, spec-validate,
+  task-decompose and implement on a test project, with the actual outputs.
+- README "Important notes": the kit is a reference base, and agents are token-hungry (use a Claude Max subscription).
+- README "Recommended MCP servers": install commands for `serena` and `context7`, and what happens without them.
+- Every agent that lists `serena`/`context7` has a **Tool availability** section: check what is installed, fall back
+  to Grep/Read (or grep/find through Bash) and the installed package source, never stop because an optional tool is
+  missing. Read-only agents never edit files to prove a point.
+- `/review-loop:init` reports whether `serena` and `context7` are configured.
+### Changed
+- `review_brief.md` template §B2: reviewers never modify files, not even temporarily (seen in a real run).
+- Docs: corrected an overstated field note about the delta-review baseline, the number of command-checked gate
+  conditions (three, not four), and described the demo run as non-interactive.
+
+Plugin versions: `review-loop` 0.1.2 · `dev-pipeline` 0.1.1 · `flutter-native-agents` 0.1.1.
+
 ## [0.1.1] — 2026-10-14
 ### Fixed
 - `review-loop` templates: the example headings in `common_pitfalls.md` are unnumbered, so `R-PIT-1` / `R-PIT-1.1`
