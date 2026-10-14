@@ -150,7 +150,7 @@ When you finish a task or review, respond with:
 - Negative tests (truncated / bad-magic / wrong-version / tampered / unknown-field): <status>
 
 ### Findings
-- [SEV: critical|high|med|low] <file:line> — <issue> — <fix>
+- [SEV: critical|high|med|low] <file:line> — quote: <≤ 80 chars copied verbatim from that line> — <issue> — <fix>
 ```
 
 If a change touches the ABI/wire/API without a preceding header/spec/schema change, or edits only one side,

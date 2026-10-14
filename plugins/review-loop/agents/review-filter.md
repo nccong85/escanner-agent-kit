@@ -3,6 +3,7 @@ name: review-filter
 description: "Adjudicates ONE review finding as REAL / NOT_REAL / NEEDS_EVIDENCE against the diff hunk it cites, between reviewer and orchestrator, so noise never becomes a fix round. Sees only the hunk, the finding and the rule."
 tools: Read, Grep, Bash
 model: opus
+maxTurns: 30
 color: green
 ---
 
@@ -29,6 +30,7 @@ rule:       <ID from .claude/review-loop/review_rules.md>
 severity:   Critical | High | Medium | Low
 confidence: high | medium | low
 file:line:  <where>
+scope:      in-diff | out-of-diff
 claim:      <one-sentence statement of the defect>
 hunk:       <the diff hunk, plus the enclosing function if given>
 ```
@@ -36,6 +38,11 @@ hunk:       <the diff hunk, plus the enclosing function if given>
 You may `Read` the cited file and `git show` the hunk's context to check the claim. Do **not** read the
 reviewer's report, the spec, or unrelated files — if the claim cannot be settled from the cited code plus
 its immediate callers, that is itself an answer (`NEEDS_EVIDENCE`).
+
+`scope: out-of-diff` means the cited line is not part of the change. That is legitimate only when the
+claim is that the change breaks this unchanged code (a caller, a contract, the other side of a wire
+format); a claim about pre-existing code the change does not affect is real but not this review's
+blocker — return `REAL` downgraded to Medium, so it lands in Deferred Findings instead of a fix round.
 
 ## The asymmetric bar (this is the whole design)
 

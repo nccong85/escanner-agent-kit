@@ -56,5 +56,33 @@ cp "$TPL/review_brief.md" "$TPL/review_rules.md" "$TPL/common_pitfalls.md" "$TPL
 out=$(cd "$TPLPROJ" && REVIEW_LOOP_PROJECT_DIR="$TPLPROJ" "$BIN/validate_rule_ids.sh" R-PIT-1 R-PIT-1.1 2>&1); got=$?
 if [ "$got" = 1 ]; then pass=$((pass+1)); else fail=$((fail+1)); echo "FAIL template pitfalls must not resolve R-PIT-1 (got $got)"; fi
 
+
+git -C "$PROJ" init -q
+printf 'line one\nfinal value = compute(a, b);\nline three\nline four\nline five\nline six\nline seven\nline eight\nline nine\nline ten\n' > "$PROJ/src/lib.dart"
+git -C "$PROJ" add src/lib.dart
+git -C "$PROJ" -c user.email=t@t -c user.name=t commit -qm init
+sed -i.bak 's/line nine/line nine changed/' "$PROJ/src/lib.dart" && rm -f "$PROJ/src/lib.dart.bak"
+printf 'brand new file\n' > "$PROJ/src/new.dart"
+VF="$BIN/validate_findings.sh"
+expect 0 "$VF" src/lib.dart:9 'line nine changed'
+expect 0 "$VF" src/lib.dart:2 'final   value = compute(a, b);'
+expect 0 "$VF" src/new.dart:1 'brand new'
+expect 1 "$VF" src/missing.dart:3 'anything'
+expect 1 "$VF" src/lib.dart:40 'line one'
+expect 1 "$VF" src/lib.dart:9 'value = compute(x, y)'
+expect 1 "$VF" src/lib.dart:9 ''
+expect 1 "$VF" src/lib.dart 'line one'
+expect 2 "$VF" src/lib.dart:9
+expect 0 "$VF" src/lib.dart:9:12 'line nine changed'
+expect 0 "$VF" '`src/lib.dart:9`' '`line nine changed`'
+expect 0 "$VF" src/lib.dart:9-10:3 '"line nine changed"'
+expect 1 "$VF" src/lib.dart:9:x 'line nine changed'
+out=$(cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$VF" src/lib.dart:9 '``' 2>&1); got=$?
+case "$got:$out" in 1:MISSING_QUOTE*) pass=$((pass+1)) ;; *) fail=$((fail+1)); echo "FAIL empty quote must be MISSING_QUOTE, got $got: $out" ;; esac
+out=$(cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$VF" src/lib.dart:2 'final value' 2>&1); got=$?
+case "$got:$out" in "0:OUT_OF_DIFF"*) pass=$((pass+1)) ;; *) fail=$((fail+1)); echo "FAIL unchanged line must be OUT_OF_DIFF with exit 0, got $got: $out" ;; esac
+out=$(cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$VF" src/lib.dart:9-10 'line nine changed' src/lib.dart:1 'nope' 2>&1); got=$?
+case "$got:$out" in 1:OK*NO_QUOTE*) pass=$((pass+1)) ;; *) fail=$((fail+1)); echo "FAIL mixed batch, got $got: $out" ;; esac
+
 echo "validators: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

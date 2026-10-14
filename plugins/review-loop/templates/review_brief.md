@@ -101,7 +101,8 @@ file no finding. Two reviewers filing the same finding is a defect of this proto
 
 ## B5. Report budget
 Max **120 lines**, max **8 findings**, highest severity first (state how many you dropped). Each finding is
-≤ 6 lines with exactly: `rule:` · `severity:` · `confidence:` · `file:line` · why it is wrong · the one-line fix.
+≤ 6 lines with exactly: `rule:` · `severity:` · `confidence:` · `file:line` · `quote:` (≤ 80 chars copied verbatim
+from the cited lines — checked by `validate_findings.sh`) · why it is wrong · the one-line fix.
 Cite `file:line`; never paste code back. The report file is the deliverable; the chat reply is the verdict line
 plus ≤ 5 lines of summary.
 

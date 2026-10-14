@@ -35,10 +35,22 @@ validate_rule_ids.sh <every rule ID in every report>
 ```
 Drop the findings whose IDs print `UNKNOWN`, then recount `blocking`.
 
+**Gate 1b — cited code, deterministic, no model call.** Pass every blocking finding's `file:line` and `quote`:
+```
+validate_findings.sh --base <the base the diff was taken against> <file:line> '<quote>' [<file:line> '<quote>' ...]
+```
+`NO_FILE` / `NO_LINE` / `NO_QUOTE` → drop the finding: it points at code that is not there.
+`MISSING_QUOTE` → never drop on that alone: re-prompt the same reviewer once for the quote (resume it),
+then re-run this gate; still missing → treat it as `NO_QUOTE`.
+`OUT_OF_DIFF` → keep it and pass `scope: out-of-diff` to the filter (a cross-file contract finding is
+legitimate there; scope drift is not); every other survivor gets `scope: in-diff`.
+
 **Gate 2 — precision filter.** For each surviving blocking (Critical/High) finding, launch
 `review-loop:review-filter` in parallel, one per finding, passing only `rule` · `severity` · `confidence` ·
-`file:line` · the one-sentence `claim` · the cited hunk — **never the reviewer's reasoning or report**.
-`NOT_REAL` → drop and record. `NEEDS_EVIDENCE` → defer; it is not a blocker. `REAL` → keep at the filter's
+`file:line` · `scope` (from Gate 1b) · the one-sentence `claim` · the cited hunk — **never the reviewer's reasoning or report**.
+`NOT_REAL` → drop and record. `NEEDS_EVIDENCE` → if Critical/High and the named check runs here without a build or a device, run it:
+reproduced → `REAL`; not reproduced → defer with the output attached (never `NOT_REAL`). Otherwise
+defer, it is not a blocker. `REAL` → keep at the filter's
 severity (it may downgrade, never upgrade).
 
 Report the funnel — raised → survived validate → survived filter — so the cost of the review is visible.

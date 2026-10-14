@@ -109,7 +109,8 @@ Agent tool:
 **Reject a hand-off with no `SELF-CHECK:` block** — re-prompt the same agent for it rather than paying a
 review round to find what the coder could have caught itself.
 
-**After agent returns:** update Pipeline State → route per the decision table below.
+**After agent returns:** record the coder's agent ID per layer as **Coder agent** in Pipeline State, then
+update Pipeline State → route per the decision table below.
 
 ---
 
@@ -174,7 +175,7 @@ Agent tool:
 
 ## Step 2b: Validate + Filter the findings (it removes whole fix rounds)
 
-Never route a raw reviewer verdict into a fix round. Two gates, in order:
+Never route a raw reviewer verdict into a fix round. Three gates, in order:
 
 **Gate 1 — rule IDs (deterministic, no model call).**
 ```
@@ -182,6 +183,16 @@ validate_rule_ids.sh <every rule ID in the report>
 ```
 Exit 1 → drop the findings whose IDs printed `UNKNOWN`, and recount `blocking`. A finding that cannot
 name a pre-existing rule is an invented one; it does not get a coder.
+
+**Gate 1b — cited code, deterministic, no model call.** Pass every blocking finding's `file:line` and `quote`:
+```
+validate_findings.sh --base <SNAP, or HEAD on round 1> <file:line> '<quote>' [<file:line> '<quote>' ...]
+```
+`NO_FILE` / `NO_LINE` / `NO_QUOTE` → drop the finding: it points at code that is not there.
+`MISSING_QUOTE` → never drop on that alone: re-prompt the same reviewer once for the quote (resume it),
+then re-run this gate; still missing → treat it as `NO_QUOTE`.
+`OUT_OF_DIFF` → keep it and pass `scope: out-of-diff` to the filter (a cross-file contract finding is
+legitimate there; scope drift is not); every other survivor gets `scope: in-diff`.
 
 **Gate 2 — the precision filter.** For each surviving **blocking** finding, launch `review-loop:review-filter`
 **in parallel, one per finding**. **Run the filter on the strongest model you have** (a smaller-model pass once returned `NOT_REAL` on a true observation — deleting a true finding is the one error here that
@@ -203,13 +214,19 @@ Agent tool:
     severity:   <Critical|High>
     confidence: <high|medium|low>
     file:line:  <where>
+    scope:      <in-diff | out-of-diff, from Gate 1b>
     claim:      <the one-sentence claim ONLY — not the reviewer's reasoning or report>
     hunk:       <the cited diff hunk + enclosing function>
 ```
 
 - `NOT_REAL` → drop the finding; record it in `## Deferred Findings` with `outcome: rejected`.
-- `NEEDS_EVIDENCE` → move to `## Deferred Findings` (it is not a blocker); if it names a bench or device
-  run, surface that to the owner at Step 5.
+- `NEEDS_EVIDENCE` → if the finding is Critical/High **and** the command the filter named runs on this
+  machine without a build or a device (a unit test, a small probe, a host-side native bench), run it now
+  and act on its output: it reproduces the defect → `REAL` (it enters the fix round); it does not →
+  `## Deferred Findings` with the command and its output attached — never `NOT_REAL`, because a probe
+  that misses can be a weak probe, and deleting a true finding is the one unrecoverable error here.
+  Every other `NEEDS_EVIDENCE` → `## Deferred Findings` (it is not a blocker); if it names a bench or
+  device run, surface that to the owner at Step 5.
 - `REAL` → it enters the fix round, at the filter's severity (the filter may downgrade, never upgrade).
 
 Recount `blocking` from the survivors. **If `blocking` reaches 0 here, the task passes** — the review
@@ -232,6 +249,11 @@ git ls-files --others --exclude-standard > <scratchpad>/untracked_before_fix.txt
 `git stash create` writes a commit object of the tracked working tree without touching the tree or the
 stash list (the destructive-git hook allows it). Record `SNAP` as **Pre-fix snapshot** in Pipeline State;
 the delta re-review and the out-of-scope revert both use it.
+
+**Resume the coder that wrote the code** — `SendMessage` to the **Coder agent** ID recorded for that layer,
+with the prompt below minus the brief line. It keeps its own reads and reasoning, so the fix round skips
+re-orientation. Dispatch a fresh coder only when no ID is recorded, the issue is in another layer, the
+earlier run ended partial (turn cap or compaction), or the session was restarted.
 
 ```yaml
 Agent tool:

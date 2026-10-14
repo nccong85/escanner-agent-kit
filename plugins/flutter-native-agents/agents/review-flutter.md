@@ -3,6 +3,7 @@ name: review-flutter
 description: "Reviews Dart/Flutter diffs: state lifecycle, codegen sync, routing, feature boundaries, Dart-side FFI free-correctness, local persistence access, the error-handling contract and test quality. Read-only; writes a report and a QA verdict."
 tools: Read, Grep, Glob, Bash, Write, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__get_symbols_overview, mcp__serena__get_diagnostics_for_file
 model: inherit
+maxTurns: 80
 color: cyan
 ---
 
