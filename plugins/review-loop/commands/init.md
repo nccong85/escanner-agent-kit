@@ -18,7 +18,7 @@ Set up `.claude/review-loop/` in the current project.
    `<plugin>:<agent>`.
 4. Run `claude mcp list` (or inspect the available tools) and report whether MCP servers named exactly `serena`
    and `context7` are configured. If one is missing, print the install commands (`claude mcp add --transport http context7 https://mcp.context7.com/mcp`;
-   serena: see the repository README) and say
+   serena: the Requirements section of this kit's README, https://github.com/nccong85/escanner-agent-kit) and say
    that the agents will fall back to Grep/Read and installed sources.
 5. Create the reports directory named in `review_brief.md` §B7 (default `docs/reviews/`) if it does not exist.
 6. Run `validate_rule_ids.sh R-NN-1` to confirm the scripts find the files; the template pitfall headings are

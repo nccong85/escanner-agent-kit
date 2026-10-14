@@ -25,6 +25,13 @@ claude plugin install flutter-native-agents@escanner-agent-kit   # or your own s
 ```
 Add `--scope local` to keep the plugins to one project.
 
+**Updating later:** run `claude plugin marketplace update escanner-agent-kit`, then
+`claude plugin update <plugin>@escanner-agent-kit` (add `--scope local` for local installs). With local installs in
+several projects, the update can report "already at the latest version" for a second project while that project
+still runs the old copy — check `claude plugin list` in that project, and if the version is old, uninstall and
+install the plugin again there. Local installs are recorded per project path, so a moved project folder needs the
+same reinstall.
+
 Inside the project, run `/review-loop:init`. It creates `.claude/review-loop/` and drafts the project facts from
 your code. Then **settle every `<VERIFY>` it leaves** — this is the step that decides the quality of every later
 review:

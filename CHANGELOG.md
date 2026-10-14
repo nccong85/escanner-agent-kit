@@ -2,6 +2,13 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [0.1.4] — 2026-10-14
+### Changed
+- `review-loop` 0.1.3: `/review-loop:init` points to this kit's README for the serena install command (it read as
+  serena's own README).
+- Guide: how to update the plugins, and what to do when an update reports "already at the latest version" for a
+  second project or a moved project folder.
+
 ## [0.1.3] — 2026-10-14
 ### Changed
 - README: one short **Requirements** section (required / recommended / your own tools) replaces the separate
