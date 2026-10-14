@@ -85,13 +85,6 @@ spec-create ─► spec-validate ─► task-decompose ─► implement
 See [docs/architecture.md](docs/architecture.md) for the reasoning behind each step and
 [docs/field-notes.md](docs/field-notes.md) for what was measured while building it.
 
-**How much the scripts have caught so far (e-Scanner, Aug–Oct 2026).** They are cheap — milliseconds, no
-tokens — but judge them by their record, not their intent. `validate_rule_ids.sh` dropped invented anchors in
-real reviews (`R-PIT-8.12`, `R-PIT-15.3`); in most recorded reviews every ID was valid. `validate_findings.sh` is
-new and has no record yet. `validate_spec_refs.sh` and `validate_citations.sh` have mostly reported OK, and their
-false alarms (a green run that checked almost nothing; a HEAD-only 404 from Google) are fixed. The Cost Ledger
-records what each gate drops; a gate that keeps dropping nothing should be removed.
-
 ## When not to use this
 
 Small fixes, one-file changes and exploratory work are faster in a single session. Multi-agent runs cost many
