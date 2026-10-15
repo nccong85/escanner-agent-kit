@@ -17,6 +17,15 @@ notes"**. Use it as a map, not a script: your project facts, agents and rules wi
 > strong model. Use it with a **Claude Max subscription** (Claude Code with a Max plan). On pay-per-token API
 > billing the same run can get expensive quickly. For small changes, skip the pipeline (see the last section).
 
+> **Most tokens go to long main sessions, not to the agents.** The main session re-sends its whole context on every
+> turn. Measured over a month on e-Scanner: sessions that grew past 400k tokens of context were 92% of all tokens;
+> every subagent together was about 2%. So:
+> - `/clear` when you switch to an unrelated task. It costs nothing; the pipeline's state lives in
+>   `execution_state.md`, not in the conversation.
+> - Keep auto-compact well below the window (for example `/autocompact 200k`, or `"autoCompactWindow": 200000`
+>   in `~/.claude/settings.json`), especially with a 1M-context model.
+> - `implement` already stops after each task so the next one starts in a fresh session.
+
 ## 0. One-time setup per project
 
 ```bash

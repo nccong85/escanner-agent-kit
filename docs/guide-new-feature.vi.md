@@ -18,6 +18,15 @@ agent và rule của bạn sẽ khác.
 > session model riêng trên một model mạnh. Hãy dùng với **gói Claude Max** (Claude Code với gói Max). Nếu trả tiền
 > API theo token, cùng một lần chạy có thể tốn tiền rất nhanh. Với thay đổi nhỏ, hãy bỏ qua pipeline (xem phần cuối).
 
+> **Phần lớn token nằm ở session chính kéo dài, không nằm ở agent.** Session chính gửi lại toàn bộ context ở mỗi lượt.
+> Đo trong một tháng trên e-Scanner: các session có context vượt 400k token chiếm 92% tổng token; toàn bộ subagent
+> cộng lại chỉ khoảng 2%. Vì vậy:
+> - Chạy `/clear` khi chuyển sang việc không liên quan. Lệnh này không tốn gì; trạng thái của pipeline nằm trong
+>   `execution_state.md`, không nằm trong hội thoại.
+> - Đặt auto-compact thấp hơn nhiều so với cửa sổ context (ví dụ `/autocompact 200k`, hoặc
+>   `"autoCompactWindow": 200000` trong `~/.claude/settings.json`), nhất là khi dùng model context 1M.
+> - `implement` đã tự dừng sau mỗi task để task sau bắt đầu trong một session mới.
+
 ## 0. Cài đặt một lần cho mỗi project
 
 ```bash
