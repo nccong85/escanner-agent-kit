@@ -16,6 +16,10 @@ Enter plan mode first: explore thoroughly before writing, and get the user's app
 
 ### 1.1 Parse the input
 - Extract the feature name and scope.
+- **Never write over an existing spec.** If `<features dir>/{feature-name}/spec_{feature-name}.md` already exists,
+  this is a follow-up: pick a distinct feature name (e.g. `{feature-name}_v2`, or what the follow-up actually
+  does) and tell the user. A follow-up gets its own folder too, even when it extends an existing feature: the
+  old folder's `execution_state.md` holds that feature's history, and task-decompose writes by fixed name.
 - List the **layers** it touches, using the layout in `.claude/review-loop/review_brief.md` Part A.
 - Flag **contract impact**: does it change an ABI, an encrypted or binary wire format, or a network API shape?
   If yes it is a **contract change** and needs contract-first sequencing (the contract owner in `routing.md`).
@@ -110,5 +114,6 @@ validate_spec_refs.sh <features dir>/{feature-name}/spec_{feature-name}.md
 Every repo path the spec cites must exist. A file the feature will *create* is fine — write "to be created".
 
 ## Step 4: Save and exit plan mode
-Save `spec_{feature-name}.md` (bugfix: `spec_fix_{brief}.md`), exit plan mode for approval, and report the file,
+Save `<features dir>/{feature-name}/spec_{feature-name}.md` (bugfix: `spec_fix_{brief}.md` in its own folder the
+same way), exit plan mode for approval, and report the file,
 the layers, the contract impact and the next step: `/dev-pipeline:spec-validate <spec path>`.

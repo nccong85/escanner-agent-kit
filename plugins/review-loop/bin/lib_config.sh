@@ -40,3 +40,15 @@ export ROUTING="${ROUTING_FILE:-${CFG_ROUTING_FILE:-$CONTEXT_DIR/routing.md}}"
 export PITFALLS="${PITFALLS_FILE:-${CFG_PITFALLS_FILE:-$CONTEXT_DIR/common_pitfalls.md}}"
 export SPECS_DIR="${SPECS_DIR:-${CFG_SPECS_DIR:-$ROOT/docs/specs}}"
 export FEATURES_DIR="${FEATURES_DIR:-${CFG_FEATURES_DIR:-$ROOT/docs/features}}"
+
+# require_file <path> <label>: a missing project file is a broken setup, never an empty result.
+# Exit 2 so callers can tell "your files are broken" from "this ID/path does not resolve" (exit 1).
+require_file() {
+  [ -f "$1" ] && return 0
+  if [ -L "$1" ]; then
+    echo "FATAL: broken symlink for the $2 file: $1 -> $(readlink "$1") (fix the link or config.env)"
+  else
+    echo "FATAL: missing $2 file $1 (run /review-loop:init or fix config.env)"
+  fi
+  exit 2
+}

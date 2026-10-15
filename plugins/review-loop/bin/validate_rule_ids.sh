@@ -10,6 +10,15 @@ shopt -s globstar nullglob 2>/dev/null || true
 
 [ -f "$RULES" ] || { echo "FATAL: missing rules index $RULES (run /review-loop:init)"; exit 2; }
 [ $# -gt 0 ] || { echo "usage: $(basename "$0") <RULE_ID>..."; exit 2; }
+# Check the pitfalls/brief files only for the families actually cited, so a project that never cites one
+# family need not keep its file. A missing file used to turn every such ID into a silent UNKNOWN, and the
+# orchestrator dropped all of them.
+for id in "$@"; do
+  case "$id" in
+    R-PIT-*) require_file "$PITFALLS" pitfalls ;;
+    R-NN-*) require_file "$BRIEF" brief ;;
+  esac
+done
 
 bad=0
 for id in "$@"; do
@@ -18,7 +27,7 @@ for id in "$@"; do
     R-PIT-*)
       n="${id#R-PIT-}"
       # `### 9.3` for a sub-entry, `## 10.` for a whole section
-      if [ -f "$PITFALLS" ] && { grep -qE "^### ${n//./\\.}[ .]" "$PITFALLS" || grep -qE "^## ${n//./\\.}\. " "$PITFALLS"; }; then
+      if { grep -qE "^### ${n//./\\.}[ .]" "$PITFALLS" || grep -qE "^## ${n//./\\.}\. " "$PITFALLS"; }; then
         ok=1
       fi
       ;;
@@ -26,7 +35,7 @@ for id in "$@"; do
       n="${id#R-NN-}"
       case "$n" in
         ''|*[!0-9]*) ok=0 ;;
-        *) [ -f "$BRIEF" ] && grep -qE "^${n}\. " "$BRIEF" && ok=1 ;;
+        *) grep -qE "^${n}\. " "$BRIEF" && ok=1 ;;
       esac
       ;;
     R-SPEC-*)

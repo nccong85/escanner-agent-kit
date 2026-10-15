@@ -33,7 +33,9 @@ End with: ACTION: QA_PASSED (blocking=0, deferred=<n>) or ACTION: ISSUES_FOUND (
 ```
 validate_rule_ids.sh <every rule ID in every report>
 ```
-Drop the findings whose IDs print `UNKNOWN`, then recount `blocking`.
+Exit 1 → drop the findings whose IDs print `UNKNOWN`, then recount `blocking`.
+Exit 2 → the project's review files are broken (the `FATAL` line names the missing file), not the findings.
+Drop **no** finding: stop and report the `FATAL` line to the user.
 
 **Gate 1b — cited code, deterministic, no model call.** Pass every blocking finding's `file:line` and `quote`:
 ```

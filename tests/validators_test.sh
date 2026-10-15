@@ -33,6 +33,19 @@ expect 1 "$BIN/validate_rule_ids.sh" R-SPEC-ghost§1
 expect 1 "$BIN/validate_rule_ids.sh" R-DOD-x
 expect 2 "$BIN/validate_rule_ids.sh"
 
+# A missing pitfalls/brief file is a broken setup, not an unknown rule: FATAL + exit 2, never a silent UNKNOWN.
+expect_out() {
+  want=$1 pat=$2; shift 2
+  out=$(cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$@" 2>&1); got=$?
+  case "$got:$out" in "$want:"*"$pat"*) pass=$((pass+1)) ;; *) fail=$((fail+1)); echo "FAIL want $want + '$pat', got $got: $*"; echo "$out" | head -5 ;; esac
+}
+ln -s "$PROJ/nowhere.md" "$PROJ/dangling.md"
+expect_out 2 "missing pitfalls" env PITFALLS_FILE=/nonexistent "$BIN/validate_rule_ids.sh" R-PIT-1.1
+expect_out 2 "missing brief" env BRIEF_FILE=/nonexistent "$BIN/validate_rule_ids.sh" R-NN-1
+expect_out 2 "broken symlink" env PITFALLS_FILE="$PROJ/dangling.md" "$BIN/validate_rule_ids.sh" R-PIT-1.1
+expect_out 0 "OK      R-NN-1" env PITFALLS_FILE=/nonexistent "$BIN/validate_rule_ids.sh" R-NN-1
+expect_out 0 "OK      R-PIT-1.1" env BRIEF_FILE=/nonexistent "$BIN/validate_rule_ids.sh" R-PIT-1.1
+
 cat > "$PROJ/docs/features/sync/sync_tasks.md" <<'EOF'
 ## Task 1: a
 **Agent:** dev-local
@@ -50,6 +63,8 @@ cat > "$PROJ/docs/features/sync/bad_tasks.md" <<'EOF'
 Reference: src/missing.dart
 EOF
 expect 1 "$BIN/validate_spec_refs.sh" "$PROJ/docs/features/sync/bad_tasks.md"
+expect_out 2 "missing routing" env ROUTING_FILE=/nonexistent "$BIN/validate_spec_refs.sh" "$PROJ/docs/features/sync/sync_tasks.md"
+expect_out 0 "result=OK" env ROUTING_FILE=/nonexistent "$BIN/validate_spec_refs.sh" docs/features/sync/spec_sync.md
 
 TPLPROJ="$PROJ/tplonly"; mkdir -p "$TPLPROJ/.claude/review-loop"
 cp "$TPL/review_brief.md" "$TPL/review_rules.md" "$TPL/common_pitfalls.md" "$TPLPROJ/.claude/review-loop/"

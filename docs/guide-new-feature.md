@@ -46,6 +46,14 @@ review:
 In the test run, `init` found the real layout and drafted five non-negotiables from the existing code, but
 correctly marked as `<VERIFY>` everything it had to assume (budgets, test command, reports directory).
 
+**Already have these files** (or symlinks to your own docs)? `init` copies only missing files and drafts only into
+the files it just created; for the rest it prints suggestions. To check that a re-run left them alone:
+
+```bash
+shasum .claude/review-loop/* > /tmp/before.sha    # before /review-loop:init
+shasum .claude/review-loop/* | diff /tmp/before.sha - && echo unchanged   # after
+```
+
 ## 1. Write the spec — `/dev-pipeline:spec-create "<feature>"`
 
 ```

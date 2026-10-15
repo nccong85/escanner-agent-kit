@@ -183,6 +183,8 @@ validate_rule_ids.sh <every rule ID in the report>
 ```
 Exit 1 → drop the findings whose IDs printed `UNKNOWN`, and recount `blocking`. A finding that cannot
 name a pre-existing rule is an invented one; it does not get a coder.
+Exit 2 → the project's review files are broken (the `FATAL` line names the missing file), not the findings.
+Drop **no** finding: save state with Step=BLOCKED, and stop and report the `FATAL` line to the owner.
 
 **Gate 1b — cited code, deterministic, no model call.** Pass every blocking finding's `file:line` and `quote`:
 ```
@@ -377,7 +379,8 @@ features is noise and gets deleted from `review_rules.md` (§4 there).
 |------|---------------|--------|-------------------|-----------------|-----------------|------------|--------------|
 | Task 1 | 1 | 6 | 1 | 0 | 2 | 1 | 96 |
 
-The two `Dropped` columns are the only evidence that the deterministic gates earn their place: a gate that drops
+Report lines = the sum of the reviewer report lines for the task, across all rounds; the coder (agent or main
+session) does not count. The two `Dropped` columns are the only evidence that the deterministic gates earn their place: a gate that drops
 0 across 10 recorded tasks is a candidate for removal, the same as a rule nobody cites.
 
 ## Resume Instructions
@@ -414,15 +417,17 @@ Continue from Task 2, Step 2 (Review).
 | No recognized ACTION | Analyze output | ① Extract file paths → FILES. ② "no issues"/"passed"/blocking=0 → treat as QA_PASSED. ③ blocking issues + report path → ISSUES_FOUND. ④ files but no result → REVIEW_REQUIRED. ⑤ still unclear → save state, report to owner. |
 
 **VIOLATION: Returning to the user after an ACTION without launching the next agent is FORBIDDEN** —
-except for the four sanctioned stops below.
+except for the five sanctioned stops below.
 **VIOLATION: Asking "should I proceed?" is FORBIDDEN. The answer is always YES** — except at those stops.
 
-**The four sanctioned stops** (each is a signal the loop cannot fix by iterating):
+**The five sanctioned stops** (each is a signal the loop cannot fix by iterating):
 1. **Rule C4** — a new non-regression blocking finding on round ≥ 2 (the spec, not the code, is wrong).
 2. Fix iteration cap reached with blocking issues open → `FINAL_QA_PARTIAL`.
 3. A contract/crypto gate that needs a device or an interop run the pipeline cannot perform.
 4. Two reviewers filing **contradictory** blocking findings on the same line — iterating just alternates
    between them. Report both and let the owner pick.
+5. A deterministic validator exits 2 (`FATAL`): the project's review files are missing or a symlink is broken.
+   Iterating cannot fix that, and dropping findings over it would hide them.
 
 Otherwise this is a fully autonomous pipeline: Steps 1→2→3→4 loop until all tasks are done, then Step 5.
 An ABI/wire change is not DONE until its interop test passes, and the data-handling non-negotiables in Part A

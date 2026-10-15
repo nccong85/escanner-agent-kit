@@ -116,12 +116,14 @@ EOF
            | sed -E 's/[`*_]//g; s/\(.*$//; s/—.*$//; s/^ +//; s/ +$//' \
            | grep -oE '^[a-z][a-z0-9-]*(:[a-z][a-z0-9-]+)?$' \
            | grep -vE '^(none|owner|na|main)$' | sort -u)
+  # A missing routing file would report every plugin agent MISSING without naming the real cause.
+  [ -z "$agents" ] || require_file "$ROUTING" routing
   while IFS= read -r a; do
     [ -n "$a" ] || continue
     case "$a" in none|None|N/A|-) continue ;; esac
     if is_placeholder "$a"; then skipped=$((skipped+1)); continue; fi
     checked=$((checked+1))
-    if [ ! -f "$AGENTS/${a#*:}.md" ] && ! { [ -f "$ROUTING" ] && grep -qF "\`$a\`" "$ROUTING"; }; then
+    if [ ! -f "$AGENTS/${a#*:}.md" ] && ! grep -qF "\`$a\`" "$ROUTING"; then
       printf '  MISSING  agent "%s" (not in %s, no .claude/agents/%s.md)\n' "$a" "$ROUTING" "${a#*:}"
       bad=1
     fi

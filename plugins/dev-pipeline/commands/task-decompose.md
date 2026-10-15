@@ -8,6 +8,12 @@ argument-hint: "<path-to-spec-file>"
 **Input:** the spec at `$ARGUMENTS`.
 **Output (same folder as the spec):** `{feature}_tasks.md` and `execution_state.md`.
 
+## Step 0: Refuse to overwrite another spec's plan
+If `{feature}_tasks.md` or `execution_state.md` already exists in the spec's folder, read its `**Source:**` /
+`**Spec:**` line. When it names a different spec, **stop**: name the conflicting file and tell the user to move
+the new spec into its own folder (`<features dir>/<feature>/spec_<feature>.md`). Never write over it — it holds
+that feature's progress, Deferred Findings and Cost Ledger. When it names this same spec, ask before regenerating.
+
 ## Step 1: Read the spec
 Extract the feature name, the layers, the **contract impact** (none | abi | wire | api) and the dependencies.
 
@@ -84,12 +90,15 @@ command it names.
 |------|------|----------|---------|-------------|------|---------|
 
 ## Cost Ledger
-| Task | Review rounds | Raised | Survived validate | Survived filter | Fix rounds | Report lines |
-|------|---------------|--------|-------------------|-----------------|------------|--------------|
+| Task | Review rounds | Raised | Dropped: rule IDs | Dropped: quotes | Survived filter | Fix rounds | Report lines |
+|------|---------------|--------|-------------------|-----------------|-----------------|------------|--------------|
 
 ## Resume Instructions
 Start from Task 1, Step 1 (Implement).
 ```
+
+The Cost Ledger header is the one `/dev-pipeline:implement` fills in; keep the two identical. Report lines = the sum
+of the reviewer report lines for the task, across all rounds; the coder (agent or main session) does not count.
 
 Status values: `PENDING` `- [ ]` · `IN_PROGRESS` `- [ ] … (iteration X/2)` · `QA_PASSED` `- [x] … (QA_PASSED)` ·
 `BLOCKED` `- [ ] … (BLOCKED: reason)`.

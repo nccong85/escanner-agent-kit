@@ -11,11 +11,15 @@ Set up `.claude/review-loop/` in the current project.
    - `routing.md` — directory → agent routing, overlay gates, ownership
    - `common_pitfalls.md` — the defect corpus
    - `config.env` — paths the validator scripts use (edit if your docs live elsewhere)
-2. Read the project's manifest, lint config, test layout and existing docs, then **draft Part A** of
-   `review_brief.md` and the first rows of `routing.md` from what you actually find. Mark every fact you could
-   not verify with `<VERIFY>`; do not guess.
-3. List the installed agents (`/agents`) and fill the agent names in `routing.md`. Plugin agents are written
-   `<plugin>:<agent>`.
+
+   **Steps 2 and 3 edit only files that step 1 created in this run.** A file that already existed — including a
+   symlink to the project's own docs — is the project's, even if it looks like an unfilled template: do not write
+   to it. For those files, report what the draft would have changed as a suggestion instead.
+2. For each of `review_brief.md` and `routing.md` that step 1 created: read the project's manifest, lint config,
+   test layout and existing docs, then **draft Part A** of `review_brief.md` and the first rows of `routing.md` from
+   what you actually find. Mark every fact you could not verify with `<VERIFY>`; do not guess.
+3. List the installed agents (`/agents`). If step 1 created `routing.md`, fill the agent names in it; otherwise
+   list the routing names that do not match an installed agent. Plugin agents are written `<plugin>:<agent>`.
 4. Run `claude mcp list` (or inspect the available tools) and report whether MCP servers named exactly `serena`
    and `context7` are configured. If one is missing, print the install commands (`claude mcp add --transport http context7 https://mcp.context7.com/mcp`;
    serena: the Requirements section of this kit's README, https://github.com/nccong85/escanner-agent-kit) and say
