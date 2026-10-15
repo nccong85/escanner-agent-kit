@@ -15,5 +15,11 @@ for f in task-decompose.md implement.md; do
   grep -q 'Report lines = ' "$CMD/$f" && ok || ko "$f does not define the Report lines column"
 done
 
+# The sanctioned-stops header names a count; it must match the numbered list under it.
+words=(zero one two three four five six seven eight nine)
+word=$(grep -oE 'The [a-z]+ sanctioned stops\*\*' "$CMD/implement.md" | awk '{print $2}')
+n=$(awk '/The [a-z]+ sanctioned stops\*\*/{f=1;next} f&&/^[0-9]+\. /{c++} f&&/^$/{exit} END{print c+0}' "$CMD/implement.md")
+[ "${words[$n]}" = "$word" ] && ok || ko "implement.md says '$word' sanctioned stops but lists $n"
+
 echo "templates: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

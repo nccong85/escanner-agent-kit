@@ -1,11 +1,12 @@
 ---
 description: Implement a validated spec by orchestrating coder and reviewer agents through a review loop that terminates, checkpointed in execution_state.md.
-argument-hint: "<path-to-spec-file>"
+argument-hint: "<path-to-spec-file> [--continuous]"
 ---
 
 # Execute Specification
 
-Implement the specification at: $ARGUMENTS
+Implement the specification at: $ARGUMENTS (the first token is the spec path; `--continuous` is a flag, see
+"Session boundary" below).
 
 ## ⚠️ RULE: Read Pipeline State EVERY Turn (NON-NEGOTIABLE)
 
@@ -34,6 +35,27 @@ Pipeline State.
 - **Every agent prompt cites `.claude/review-loop/review_brief.md`** so the agent skips re-deriving the
   project's layout, commands and budgets. That orientation cost is otherwise paid again by every agent
   in every round.
+
+## Session boundary: one task per session (default)
+
+The main session re-sends its whole context on every turn, so its cost grows with its length, not with the work
+left. A run that carries every task in one session ends up paying for all earlier tasks on each new turn. Measured
+on a real project: the sessions that grew past 400k tokens of context were 92% of all tokens spent, and the
+subagents were about 2%. Nothing the pipeline needs lives only in the conversation — `execution_state.md` holds
+the state, the reports hold the findings — so a fresh session per task loses nothing.
+
+So, unless `$ARGUMENTS` contains `--continuous`:
+- When a task reaches Step 4 and its state is saved (task ticked, Pipeline State reset, `Next Action` naming the
+  next task or Step 5), **stop** and print exactly:
+  ```
+  Task <n>/<total> done (<QA_PASSED | FINAL_QA_PARTIAL>, deferred=<d>). State saved in <path>/execution_state.md.
+  Continue in a fresh session:  /clear  then  /dev-pipeline:implement <spec path>
+  ```
+- Never stop inside a task: its fix rounds resume the same coder by agent ID, and that ID lives in this session.
+- Step 5 (the global audit) runs in its own session the same way, and the run ends after it.
+
+With `--continuous`, skip the boundary and run Steps 1→4 for every task, then Step 5, in this session. Use it for
+small features (two or three short tasks), where restarting costs more than it saves.
 
 ---
 
@@ -301,7 +323,8 @@ Update `execution_state.md`:
 - Append the task's row to `## Cost Ledger`
 - Reset Pipeline State for next task (Step = IMPLEMENT, Round = 1, Iteration = 0, clear files/report/snapshot)
 
-**Pending tasks remain** → Step 1 for next task. **All done** → Step 5.
+**Pending tasks remain** → the session boundary (stop and print the resume line), or with `--continuous` Step 1
+for the next task. **All done** → the session boundary, then Step 5 in the next session (`--continuous`: Step 5 now).
 
 > Contract-impact gate: a task that changed an ABI header may only be marked DONE
 > after the FFI roundtrip test passes; a task that changed the encrypted wire format may only be
@@ -409,7 +432,7 @@ Continue from Task 2, Step 2 (Review).
 | Task whose coder column is **main session** | Step=IMPLEMENT | Implement it yourself (no dispatch), print your own `SELF-CHECK:` block, then continue exactly as if a coder had returned `ACTION: REVIEW_REQUIRED` with your file list. |
 | `ACTION: REVIEW_REQUIRED` (+ SELF-CHECK) | Step=REVIEW, Files=list, Round=1 | Record the file list. Launch review agent(s) by directory + overlay gates (parallel if files span layers or trigger a gate), passing the SELF-CHECK block. |
 | `ACTION: REVIEW_REQUIRED` with **no** SELF-CHECK | Step unchanged | Re-prompt the same coder for the SELF-CHECK block. Do not spend a review round on it. |
-| `ACTION: QA_PASSED (blocking=0, …)` | Step=DONE | Append any `deferred` to `## Deferred Findings`. Run the interop test if a contract task; → next task (Step 1) or global audit (Step 5). |
+| `ACTION: QA_PASSED (blocking=0, …)` | Step=DONE | Append any `deferred` to `## Deferred Findings`. Run the interop test if a contract task; → Step 4, then the session boundary (`--continuous`: next task or Step 5). |
 | `ACTION: ISSUES_FOUND (blocking=0, deferred=n)` | Step=DONE | **This is a PASS (rule C1).** Append the n findings to `## Deferred Findings` and move on. Do NOT launch a fix round. |
 | `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-loop:finding-checker`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
 | `ACTION: ISSUES_FOUND (blocking≥1, regressions=0)`, round ≥2 | Step=BLOCKED | **Rule C4** — the new blocking finding is not a regression, so the spec is suspect. Save state, record as `SPEC-DOUBT`, **stop and ask the owner.** |
@@ -417,10 +440,10 @@ Continue from Task 2, Step 2 (Review).
 | No recognized ACTION | Analyze output | ① Extract file paths → FILES. ② "no issues"/"passed"/blocking=0 → treat as QA_PASSED. ③ blocking issues + report path → ISSUES_FOUND. ④ files but no result → REVIEW_REQUIRED. ⑤ still unclear → save state, report to owner. |
 
 **VIOLATION: Returning to the user after an ACTION without launching the next agent is FORBIDDEN** —
-except for the five sanctioned stops below.
+except for the six sanctioned stops below.
 **VIOLATION: Asking "should I proceed?" is FORBIDDEN. The answer is always YES** — except at those stops.
 
-**The five sanctioned stops** (each is a signal the loop cannot fix by iterating):
+**The six sanctioned stops** (1–5 are signals the loop cannot fix by iterating; 6 is planned):
 1. **Rule C4** — a new non-regression blocking finding on round ≥ 2 (the spec, not the code, is wrong).
 2. Fix iteration cap reached with blocking issues open → `FINAL_QA_PARTIAL`.
 3. A contract/crypto gate that needs a device or an interop run the pipeline cannot perform.
@@ -428,8 +451,11 @@ except for the five sanctioned stops below.
    between them. Report both and let the owner pick.
 5. A deterministic validator exits 2 (`FATAL`): the project's review files are missing or a symlink is broken.
    Iterating cannot fix that, and dropping findings over it would hide them.
+6. **Session boundary** — a task just reached DONE and its state is saved (not with `--continuous`). Print the
+   resume line and stop; do not ask whether to continue.
 
-Otherwise this is a fully autonomous pipeline: Steps 1→2→3→4 loop until all tasks are done, then Step 5.
+Otherwise this is a fully autonomous pipeline within a task: Steps 1→2→3→4 run without stopping, then the
+session boundary hands the next task to a fresh session (with `--continuous`, every task and Step 5 run here).
 An ABI/wire change is not DONE until its interop test passes, and the data-handling non-negotiables in Part A
 are never traded away.
 

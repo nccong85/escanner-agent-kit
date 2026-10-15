@@ -155,6 +155,7 @@ Things to watch in your own runs:
 
 | Stop | Meaning | What you do |
 |---|---|---|
+| `Task n/N done … Continue in a fresh session` | The planned session boundary: one task per session keeps the context, and so the token cost, small | `/clear`, then `/dev-pipeline:implement <spec>`. Add `--continuous` for a small feature you want in one go |
 | `SPEC-DOUBT` (rule C4) | A new blocking finding on round ≥ 2 that the fix did not cause | The spec is wrong or incomplete. Fix the spec, then resume |
 | `FINAL_QA_PARTIAL` | Two fix rounds and still blocking | Read the open findings; fix by hand or change the spec |
 | Contradictory reviewers | Two reviewers want opposite changes on the same line | Decide which column owns it (`routing.md`) |

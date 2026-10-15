@@ -159,6 +159,7 @@ Những điều cần để ý khi bạn tự chạy:
 
 | Điểm dừng | Ý nghĩa | Bạn làm gì |
 |---|---|---|
+| `Task n/N done … Continue in a fresh session` | Điểm dừng có chủ đích: mỗi task một session giúp context nhỏ, nên tốn ít token | Chạy `/clear`, rồi `/dev-pipeline:implement <spec>`. Thêm `--continuous` nếu feature nhỏ và bạn muốn chạy một mạch |
 | `SPEC-DOUBT` (rule C4) | Một finding chặn mới ở vòng ≥ 2 mà không phải do lần sửa gây ra | Spec sai hoặc thiếu. Sửa spec rồi chạy tiếp |
 | `FINAL_QA_PARTIAL` | Đã qua hai vòng sửa mà vẫn còn finding chặn | Đọc các finding còn mở; sửa tay hoặc đổi spec |
 | Reviewer mâu thuẫn nhau | Hai reviewer muốn sửa ngược nhau trên cùng một dòng | Quyết định cột nào chịu trách nhiệm (`routing.md`) |

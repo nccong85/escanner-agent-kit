@@ -1,7 +1,7 @@
 {
   "name": "dev-pipeline",
   "displayName": "Dev Pipeline",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Spec-to-ship pipeline: spec-create, spec-validate, task-decompose and implement, checkpointed and convergent.",
   "author": {
     "name": "Nguyen Chi Cong"

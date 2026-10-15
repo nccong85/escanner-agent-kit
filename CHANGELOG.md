@@ -2,6 +2,14 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [dev-pipeline 1.2.0] — 2026-10-15
+- `implement` now stops after each task by default and prints the resume line (`/clear`, then
+  `/dev-pipeline:implement <spec>`), so every task runs in a fresh, small main session. The state was already in
+  `execution_state.md`, so nothing is lost. Measured on e-Scanner: main sessions that grew past 400k tokens of
+  context were 92% of all tokens spent; subagents were about 2%. `--continuous` keeps the old one-session run for
+  small features. The boundary never falls inside a task, so fix rounds still resume the same coder.
+- The other three plugins stay 1.1.0.
+
 ## [1.1.0] — 2026-10-15
 All four plugins are 1.1.0. **Breaking:** every agent is renamed so a newcomer can read what it does from its name.
 Names are now `<scope>-<role>`, with the role from a closed set tied to permissions: `-coder`, `-expert` (writes and
