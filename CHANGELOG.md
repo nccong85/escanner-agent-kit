@@ -9,6 +9,10 @@ Fixes from the first field test of 1.0.0. `review-loop` and `dev-pipeline` are 1
   or a broken symlink, instead of reporting every `R-PIT-*` / `R-NN-*` ID as `UNKNOWN`, which dropped those
   findings without a word. Each file is checked only when its ID family is cited. `validate_spec_refs.sh` does
   the same for a missing routing file.
+- `review-loop`: `validate_spec_refs.sh` no longer accepts `wrong-plugin:x` because the project has
+  `.claude/agents/x.md`; a project agent resolves only by its bare name. Its rejection hint, and `spec-create`,
+  now name the planned-file forms it actually accepts (`` new `path` `` / `` create `path` ``) instead of
+  "to be created", which failed when written after the path.
 - `review-loop`: `/review-loop:review` says what exit 2 means: stop, drop no finding.
 - `review-loop`: `/review-loop:init` drafts only into the files it created in that run; existing files and
   symlinks get suggestions, never edits.

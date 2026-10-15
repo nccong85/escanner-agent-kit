@@ -63,6 +63,12 @@ cat > "$PROJ/docs/features/sync/bad_tasks.md" <<'EOF'
 Reference: src/missing.dart
 EOF
 expect 1 "$BIN/validate_spec_refs.sh" "$PROJ/docs/features/sync/bad_tasks.md"
+# The planned-file forms the rejection hint and spec-create document must actually pass.
+printf 'Key files: new `src/later.dart`, create `src/also_later.dart`.\n' > "$PROJ/docs/features/sync/planned.md"
+expect_out 0 "planned-not-yet-created=2" "$BIN/validate_spec_refs.sh" docs/features/sync/planned.md
+# A project agent is always called by its bare name: a plugin prefix must not resolve to .claude/agents/.
+printf '## Task 1: a\n**Agent:** wrong-plugin:dev-local\n' > "$PROJ/docs/features/sync/prefix_tasks.md"
+expect_out 1 'MISSING  agent "wrong-plugin:dev-local"' "$BIN/validate_spec_refs.sh" docs/features/sync/prefix_tasks.md
 expect_out 2 "missing routing" env ROUTING_FILE=/nonexistent "$BIN/validate_spec_refs.sh" "$PROJ/docs/features/sync/sync_tasks.md"
 expect_out 0 "result=OK" env ROUTING_FILE=/nonexistent "$BIN/validate_spec_refs.sh" docs/features/sync/spec_sync.md
 

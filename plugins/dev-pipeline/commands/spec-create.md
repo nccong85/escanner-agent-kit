@@ -111,7 +111,9 @@ Questions.
 ```
 validate_spec_refs.sh <features dir>/{feature-name}/spec_{feature-name}.md
 ```
-Every repo path the spec cites must exist. A file the feature will *create* is fine — write "to be created".
+Every repo path the spec cites must exist. A file the feature will *create* is fine, but the marker goes **before**
+the path, on the same line: `` new `app/lib/x.dart` `` or `` create `app/lib/x.dart` ``. A marker after the path
+(`` `app/lib/x.dart` (to be created) ``) is not recognised and the path is reported `MISSING`.
 
 ## Step 4: Save and exit plan mode
 Save `<features dir>/{feature-name}/spec_{feature-name}.md` (bugfix: `spec_fix_{brief}.md` in its own folder the

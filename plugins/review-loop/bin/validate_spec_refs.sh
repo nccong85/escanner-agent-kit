@@ -123,7 +123,10 @@ EOF
     case "$a" in none|None|N/A|-) continue ;; esac
     if is_placeholder "$a"; then skipped=$((skipped+1)); continue; fi
     checked=$((checked+1))
-    if [ ! -f "$AGENTS/${a#*:}.md" ] && ! grep -qF "\`$a\`" "$ROUTING"; then
+    # A project agent is called by its bare name; `<plugin>:<agent>` resolves only through routing.
+    local_ok=0
+    case "$a" in *:*) ;; *) [ -f "$AGENTS/$a.md" ] && local_ok=1 ;; esac
+    if [ "$local_ok" -eq 0 ] && ! grep -qF "\`$a\`" "$ROUTING"; then
       printf '  MISSING  agent "%s" (not in %s, no .claude/agents/%s.md)\n' "$a" "$ROUTING" "${a#*:}"
       bad=1
     fi
@@ -141,7 +144,8 @@ if [ "$bad" -ne 0 ]; then
   echo "  - Wrong path      -> fix the citation."
   echo "  - UNROOTED        -> the path is relative to a subfolder; cite it from the repo root."
   echo "  - Renamed/deleted -> the spec is stale; re-ground it before decomposing."
-  echo "  - Not built yet   -> say so explicitly ('to be created'), don't cite it as a reference."
+  echo "  - Not built yet   -> put the marker BEFORE the path: 'new \`x/y.dart\`' or 'create \`x/y.dart\`'."
+  echo "                       A marker after the path ('x/y.dart (to be created)') is not recognised."
   exit 1
 fi
 exit 0
