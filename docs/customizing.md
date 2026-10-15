@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](customizing.vi.md)
+
 # Customizing
 
 Everything below is optional. The kit works with its defaults after `/review-loop:init`.
@@ -49,13 +51,13 @@ with no row is dropped, so a reviewer cannot invent one.
 
 **When:** you need a coder or reviewer for a part of your codebase the kit does not cover.
 
-1. Name it `<role>-<scope>`, for example `review-web` or `dev-backend`. The roles and what each may do are in
+1. Name it `<scope>-<role>`, for example `web-reviewer` or `backend-coder`. The roles and what each may do are in
    [agent-guideline.md](agent-guideline.md).
 2. Put the file in `.claude/agents/<name>.md` (a project agent) or in your own plugin (see section 4).
 3. In the agent's instructions, tell it to read `.claude/review-loop/review_brief.md` first, and to end its reply
    with the hand-off block from §B7 of that brief.
 4. Add the agent to `routing.md`, next to the folders it is responsible for. Write a plugin agent as
-   `<plugin>:<agent>`, for example `my-stack:review-web`.
+   `<plugin>:<agent>`, for example `my-stack:web-reviewer`.
 
 ## 4. Make a plugin for your own stack
 
@@ -76,5 +78,5 @@ do not need them: the safety hook comes from `review-loop`.
 **When:** you change an agent's name after it has already been used.
 
 Add the old and new names to the "Legacy names" section of `routing.md`, for example
-`code-review-web → review-web`. Older `execution_state.md` files still mention the old name, and the pipeline
+`review-web → web-reviewer`. Older `execution_state.md` files still mention the old name, and the pipeline
 uses this map to find the right agent.

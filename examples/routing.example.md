@@ -2,22 +2,22 @@
 
 | Path prefix | Coder | Reviewer |
 |---|---|---|
-| `lib/core/ffi/**` | main session | `flutter-native-agents:review-flutter` (+ `flutter-native-agents:owner-contract`) |
-| `lib/**`, `test/**` | `flutter-native-agents:dev-flutter` | `flutter-native-agents:review-flutter` |
-| `native/include/**` | `flutter-native-agents:owner-contract` | `flutter-native-agents:owner-contract` |
-| `native/**` | `flutter-native-agents:owner-native-engine` | `flutter-native-agents:owner-native-engine` |
-| `ios/**`, `android/**` | `flutter-native-agents:owner-platform` | `flutter-native-agents:owner-platform` |
-| `fastlane/**`, `.github/**` | `flutter-native-agents:owner-build-release` | `flutter-native-agents:owner-build-release` |
+| `lib/core/ffi/**` | main session | `flutter-native-agents:flutter-reviewer` (+ `flutter-native-agents:contract-expert`) |
+| `lib/**`, `test/**` | `flutter-native-agents:flutter-coder` | `flutter-native-agents:flutter-reviewer` |
+| `native/include/**` | `flutter-native-agents:contract-expert` | `flutter-native-agents:contract-expert` |
+| `native/**` | `flutter-native-agents:cpp-engine-expert` | `flutter-native-agents:cpp-engine-expert` |
+| `ios/**`, `android/**` | `flutter-native-agents:ios-android-expert` | `flutter-native-agents:ios-android-expert` |
+| `fastlane/**`, `.github/**` | `flutter-native-agents:build-release-expert` | `flutter-native-agents:build-release-expert` |
 
 | Trigger | Before coding | After coding |
 |---|---|---|
-| `native/include/**`, `lib/core/ffi/**` | `flutter-native-agents:owner-contract` first | also `flutter-native-agents:owner-contract`; FFI round-trip test passes |
-| `lib/core/crypto/**`, logging, upload | — | also `flutter-native-agents:gate-security` |
-| `native/**`, image pipeline, startup, DB queries | — | also `flutter-native-agents:gate-performance` |
+| `native/include/**`, `lib/core/ffi/**` | `flutter-native-agents:contract-expert` first | also `flutter-native-agents:contract-expert`; FFI round-trip test passes |
+| `lib/core/crypto/**`, logging, upload | — | also `flutter-native-agents:security-checker` |
+| `native/**`, image pipeline, startup, DB queries | — | also `flutter-native-agents:performance-checker` |
 
 | Dimension | Owner |
 |---|---|
-| Performance budgets | `flutter-native-agents:gate-performance` |
-| Security, keys, telemetry leaks | `flutter-native-agents:gate-security` |
-| ABI layout, wire bytes | `flutter-native-agents:owner-contract` |
-| Dart state, routing, boundaries, tests | `flutter-native-agents:review-flutter` |
+| Performance budgets | `flutter-native-agents:performance-checker` |
+| Security, keys, telemetry leaks | `flutter-native-agents:security-checker` |
+| ABI layout, wire bytes | `flutter-native-agents:contract-expert` |
+| Dart state, routing, boundaries, tests | `flutter-native-agents:flutter-reviewer` |

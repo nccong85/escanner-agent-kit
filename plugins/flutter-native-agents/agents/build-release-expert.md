@@ -1,5 +1,5 @@
 ---
-name: owner-build-release
+name: build-release-expert
 description: "Implements and reviews build and release work: CI, store/release lanes, signing, multi-toolchain builds (Flutter, Gradle, CocoaPods, Xcode, CMake), perf-gate scripts, crash/analytics wiring."
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit

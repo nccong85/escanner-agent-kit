@@ -51,7 +51,7 @@ They read `E2E_APP_ID`, `WDA`, `E2E_IOS_UDID`, `E2E_ANDROID_SERIAL` and the opti
    before restarting, make sure the old python process is really gone (`pgrep -fl <suite name>`), because
    stopping the monitor does not stop the suite.
 7. **Triage every FAIL/BLOCKED before reporting it** (below). Fix harness bugs and re-run the case. For an app
-   bug, collect the evidence and report it; when you run as the `test-device-e2e` agent you do not fix the app.
+   bug, collect the evidence and report it; when you run as the `device-tester` agent you do not fix the app.
 8. **Clean up** (below) and report with the result files.
 
 ## Writing cases that can actually fail

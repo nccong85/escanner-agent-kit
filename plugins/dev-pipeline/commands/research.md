@@ -1,5 +1,5 @@
 ---
-description: Research a technical question and save a cited, confidence-tagged report — classified by cost tier, delegating to research-tech only when it pays.
+description: Research a technical question and save a cited, confidence-tagged report — classified by cost tier, delegating to tech-researcher only when it pays.
 argument-hint: "<research question(s)>"
 ---
 
@@ -31,7 +31,7 @@ State the tier and the agent count in your first reply, so the cost is a visible
 
 ## Step 2 — Brief each agent properly (vague briefs are why agents duplicate work)
 
-Every `dev-pipeline:research-tech` brief MUST carry four things. A brief missing any of them gets rewritten, not sent:
+Every `dev-pipeline:tech-researcher` brief MUST carry four things. A brief missing any of them gets rewritten, not sent:
 
 1. **Objective** — the one question this agent owns, restated sharply.
 2. **Output format** — the agent's structured report (Confirmed/Likely/Unverified · comparison table ·
@@ -90,5 +90,5 @@ limits, accuracy targets) in any recommendation. Reference the numbers where Par
 `.claude/review-loop/review_brief.md` and the product spec keep them — don't restate them here.
 
 > **Subagent policy.** The Repo-first, API-lookup and Simple-factual tiers run **inline** — they need no agent.
-> Spawn `dev-pipeline:research-tech` only for Depth or Breadth questions, one agent per independent sub-question.
+> Spawn `dev-pipeline:tech-researcher` only for Depth or Breadth questions, one agent per independent sub-question.
 > When running inline the output contract is unchanged: same structure, confidence tags, citation rule and file.

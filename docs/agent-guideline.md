@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](agent-guideline.vi.md)
+
 # Agent Guideline
 
 How to decide, name, write, and verify Claude Code subagents.
@@ -19,22 +21,23 @@ Create an agent only when you need at least one of these:
 
 If most of the value is knowledge, write a skill. An agent can preload it with `skills:`.
 
-## 2. Name by role, then scope
+## 2. Name by scope, then role
 
-Use `<role>-<scope>`, with the role taken from a small closed set tied to permissions:
+Use `<scope>-<role>`, with the role taken from a small closed set tied to permissions:
 
-| Role | Meaning |
+| Role suffix | Meaning |
 |---|---|
-| `dev-` | Writes code in one area. Does not review. |
-| `owner-` | Owns one layer or contract. Implements and reviews it. |
-| `review-` | Read-only reviewer for one area. |
-| `gate-` | Read-only cross-cutting check (security, performance) added on top of area reviews. |
-| `test-` | Runs tests and reports evidence. |
-| `research-` | Read-only research. |
+| `-coder` | Writes code in one area. Does not review. |
+| `-expert` | Owns one layer or contract. Implements and reviews it. |
+| `-reviewer` | Read-only reviewer for one area. |
+| `-checker` | Read-only cross-cutting check (security, performance, a single finding) added on top of area reviews. |
+| `-tester` | Runs tests and reports evidence. |
+| `-researcher` | Read-only research. |
 
-The prefix tells you what the agent may do, and a sorted list groups related agents together. Avoid vague
-suffixes like `-expert`, `-coder`, or `-architect`: they say nothing about permissions. If you rename an agent,
-keep an old-to-new map so that older plans and logs still resolve.
+A newcomer can read what the agent does from its name, and the suffix still tells you what it may do. Keep the
+set closed: a suffix outside it (`-architect`, `-helper`, `-keeper`) says nothing about permissions. If you rename
+an agent, keep an old-to-new map so that older plans and logs still resolve (the `Legacy names` section of
+`routing.md`).
 
 ## 3. One responsibility per agent
 
@@ -97,7 +100,7 @@ A rule in a prompt is applied differently each time; a rule in a hook, script, o
 
 1. Does this need independence, restricted permissions, or parallel work? If not, use the main session or a skill.
 2. Does it overlap an existing agent's responsibility? If so, extend that agent.
-3. Choose the name: `<role>-<scope>`.
+3. Choose the name: `<scope>-<role>`.
 4. Frontmatter: `name`, a short quoted `description`, minimal `tools`, `model`, `color`, `skills` if needed, and
    `hooks` if it has a shell.
 5. Body: point to the shared project facts, state the role in two or three lines, list the area's hard rules,
@@ -109,7 +112,7 @@ A rule in a prompt is applied differently each time; a rule in a hook, script, o
 
 ```markdown
 ---
-name: <role>-<scope>
+name: <scope>-<role>
 description: "<What it does> in <scope>. Use for <when to call it>."
 tools: Read, Grep, Glob, Bash, <Edit, Write if it writes code>, <mcp__server__tool if needed>
 model: <model>

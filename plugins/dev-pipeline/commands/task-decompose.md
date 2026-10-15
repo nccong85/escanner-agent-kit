@@ -50,7 +50,7 @@ command it names.
 - **One task, one layer**, so it routes to one agent. Take the agent from the **Coder** column of
   `.claude/review-loop/routing.md`; do not restate the mapping.
 - **Contract-first (when contract impact ≠ none):**
-  1. Task 1 changes the contract (header, wire-format section, API shapes). Agent: the contract owner. It blocks
+  1. Task 1 changes the contract (header, wire-format section, API shapes). Agent: the contract expert. It blocks
      every per-layer task.
   2. Then the per-side updates, each depending on Task 1.
   3. Then an interop-test task (round-trip across the boundary, cross-platform vectors plus negative tests).

@@ -1,5 +1,5 @@
 ---
-name: review-filter
+name: finding-checker
 description: "Adjudicates ONE review finding as REAL / NOT_REAL / NEEDS_EVIDENCE against the diff hunk it cites, between reviewer and orchestrator, so noise never becomes a fix round. Sees only the hunk, the finding and the rule."
 tools: Read, Grep, Bash
 model: opus

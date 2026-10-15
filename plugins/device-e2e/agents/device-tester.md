@@ -1,5 +1,5 @@
 ---
-name: test-device-e2e
+name: device-tester
 description: "Runs real-device end-to-end tests of the release app on a physical iPhone (WebDriverAgent) and an Android phone (adb + uiautomator): plans cases, drives the devices, triages every FAIL, cleans up, and reports evidence. Use for testing on a real phone, e2e or regression on device, or verifying a fix on real hardware."
 tools: Read, Grep, Glob, Bash, Edit, Write, Skill, Monitor, TaskStop
 model: inherit

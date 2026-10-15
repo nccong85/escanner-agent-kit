@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](field-notes.vi.md)
+
 # Field notes
 
 Lessons measured while running this loop on a production codebase. Each one changed the design.

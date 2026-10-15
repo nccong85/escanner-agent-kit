@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](README.vi.md)
+
 # eScanner Agent Kit
 
 These are the Claude Code agents, review rules and workflows I built and refined while developing
@@ -12,7 +14,7 @@ and take them further. I would be very happy if any of this helps you.
   call per blocking finding and possibly fix rounds, each a separate session on a strong model. Use it with a
   **Claude Max subscription**; on pay-per-token API billing it gets expensive quickly. For small changes use the
   main session plus `/review-loop:review`.
-- **Models.** Agents use `model: inherit` (your session's model); only `review-filter` is pinned to `opus`,
+- **Models.** Agents use `model: inherit` (your session's model); only `finding-checker` is pinned to `opus`,
   because a smaller model once rejected a true finding.
 
 **Get e-Scanner:** [App Store (iOS)](https://apps.apple.com/app/id6790476934?pt=129164581&ct=github_agent_kit&mt=8) ·
@@ -22,14 +24,43 @@ New here? Follow **[docs/guide-new-feature.md](docs/guide-new-feature.md)** — 
 
 ## Plugins
 
-| Plugin | What you get |
-|---|---|
-| [`review-loop`](plugins/review-loop) | `review-filter` agent · `/review-loop:review` · `/review-loop:init` · rule/spec/citation validators on `PATH` · destructive-git hook · project templates |
-| [`dev-pipeline`](plugins/dev-pipeline) | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md` · `/dev-pipeline:research` · `research-tech` agent |
-| [`flutter-native-agents`](plugins/flutter-native-agents) | Reference stack for Flutter apps with a C/C++ engine and iOS/Android code: `dev-flutter`, `review-flutter`, `owner-native-engine`, `owner-platform`, `owner-contract`, `owner-build-release`, `gate-security`, `gate-performance` |
-| [`device-e2e`](plugins/device-e2e) | `test-device-e2e` agent · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
+The kit is split into four plugins so you install only what fits your project.
 
-`review-loop` is the core and works on its own. The others depend on it.
+| Plugin | Who it is for | Required? | What you get |
+|---|---|---|---|
+| [`review-loop`](plugins/review-loop) | Any project, any language | **Core**, install it first | `finding-checker` agent · `/review-loop:review` · `/review-loop:init` · rule/finding/spec/citation validators · destructive-git hook · project templates |
+| [`flutter-native-agents`](plugins/flutter-native-agents) | Flutter apps with a C/C++ engine and iOS/Android code, like e-Scanner | Optional | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
+| [`dev-pipeline`](plugins/dev-pipeline) | Teams that want the whole flow: spec → tasks → code → review | Optional | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md` · `/dev-pipeline:research` · `tech-researcher` agent |
+| [`device-e2e`](plugins/device-e2e) | Anyone testing a mobile app on a real iPhone or Android phone | Optional | `device-tester` agent · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
+
+`review-loop` works on its own. Each optional plugin depends on it, and installing one installs `review-loop` too.
+Working on another stack (web, backend, …)? Install `review-loop` and add your own agents — see
+[docs/customizing.md](docs/customizing.md).
+
+## Agents
+
+Each name is `<scope>-<role>`, and the role says what the agent may do: a `-coder` writes code, an `-expert` writes
+and reviews one layer, a `-reviewer` or `-checker` only reads, a `-tester` runs tests, a `-researcher` only reads
+sources.
+
+| Agent | Plugin | What it does |
+|---|---|---|
+| `finding-checker` | `review-loop` | Takes one problem a reviewer reported and decides whether it is real, before anyone spends a fix round on it |
+| `tech-researcher` | `dev-pipeline` | Answers a technical question (which library, which API, what a store rule says) with cited sources |
+| `device-tester` | `device-e2e` | Runs end-to-end tests of the app on a real iPhone and Android phone |
+| `flutter-coder` | `flutter-native-agents` | Writes Flutter/Dart feature code: screens, state, routes, storage |
+| `flutter-reviewer` | `flutter-native-agents` | Reviews Flutter/Dart changes |
+| `cpp-engine-expert` | `flutter-native-agents` | Writes and reviews the C++ image-processing engine |
+| `ios-android-expert` | `flutter-native-agents` | Writes and reviews the Swift (iOS) and Kotlin (Android) code the app calls |
+| `contract-expert` | `flutter-native-agents` | Guards the contracts between the parts — C ABI, encrypted file format, API shapes — so both sides stay in sync |
+| `build-release-expert` | `flutter-native-agents` | Writes and reviews CI, signing and store release work |
+| `security-checker` | `flutter-native-agents` | Checks changes that touch encryption, keys, logging or user data |
+| `performance-checker` | `flutter-native-agents` | Checks changes on hot paths (startup, image pipeline, database) against the project's budgets |
+
+**Upgrading from 1.0.x?** The agents were renamed in 1.1.0 (for example `review-filter` → `finding-checker`,
+`owner-contract` → `contract-expert`). Update the names in your `.claude/review-loop/routing.md`; the full old → new
+map is in the `Legacy names` section of [the routing template](plugins/review-loop/templates/routing.md). Copy it
+into your routing file so plans written with 1.0.x still resolve.
 
 ## Install
 
@@ -76,7 +107,7 @@ spec-create ─► spec-validate ─► task-decompose ─► implement
    validate_findings.sh ── drops findings whose file, line or quote is not there (no model call)
         │
         ▼
-   review-filter × each blocking finding ── REAL / NOT_REAL / NEEDS_EVIDENCE
+   finding-checker × each blocking finding ── REAL / NOT_REAL / NEEDS_EVIDENCE
         │
         ▼
    fix round (blocking only, allowed files only) ─► delta review of the fix ─► done (max 2 rounds)

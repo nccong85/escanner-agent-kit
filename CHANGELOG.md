@@ -2,8 +2,36 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [1.1.0] — 2026-10-15
+All four plugins are 1.1.0. **Breaking:** every agent is renamed so a newcomer can read what it does from its name.
+Names are now `<scope>-<role>`, with the role from a closed set tied to permissions: `-coder`, `-expert` (writes and
+reviews one layer), `-reviewer`, `-checker`, `-tester`, `-researcher` (`docs/agent-guideline.md` §2).
+
+| 1.0.x | 1.1 |
+|---|---|
+| `review-loop:review-filter` | `review-loop:finding-checker` |
+| `dev-pipeline:research-tech` | `dev-pipeline:tech-researcher` |
+| `device-e2e:test-device-e2e` | `device-e2e:device-tester` |
+| `flutter-native-agents:dev-flutter` | `flutter-native-agents:flutter-coder` |
+| `flutter-native-agents:review-flutter` | `flutter-native-agents:flutter-reviewer` |
+| `flutter-native-agents:owner-native-engine` | `flutter-native-agents:cpp-engine-expert` |
+| `flutter-native-agents:owner-platform` | `flutter-native-agents:ios-android-expert` |
+| `flutter-native-agents:owner-contract` | `flutter-native-agents:contract-expert` |
+| `flutter-native-agents:owner-build-release` | `flutter-native-agents:build-release-expert` |
+| `flutter-native-agents:gate-security` | `flutter-native-agents:security-checker` |
+| `flutter-native-agents:gate-performance` | `flutter-native-agents:performance-checker` |
+
+**Upgrade:** update the names in `.claude/review-loop/routing.md`, and copy the old → new map from the template's
+`Legacy names` section into it so plans and `execution_state.md` files written with 1.0.x still resolve.
+
+The README gains an Agents section that says in one line what each agent does.
+
+Vietnamese docs: every user-facing doc (README, `docs/`, each plugin README) has a `.vi.md` translation next to it,
+linked from the first line of the English file.
+
 ## [1.0.1] — 2026-10-15
-Fixes from the first field test of 1.0.0. `review-loop` and `dev-pipeline` are 1.0.1; the other two stay 1.0.0.
+Fixes from the first field test of 1.0.0 (never released separately; shipped in 1.1.0). `review-loop` and
+`dev-pipeline` were 1.0.1; the other two stayed 1.0.0.
 
 - `review-loop`: `validate_rule_ids.sh` stops with `FATAL` and exit 2 when the pitfalls or brief file is missing
   or a broken symlink, instead of reporting every `R-PIT-*` / `R-NN-*` ID as `UNKNOWN`, which dropped those

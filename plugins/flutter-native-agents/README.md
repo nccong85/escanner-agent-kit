@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](README.vi.md)
+
 # flutter-native-agents
 
 Reference agents for Flutter apps with a C/C++ engine behind FFI and iOS/Android platform code. Requires
@@ -6,16 +8,16 @@ illustrative defaults inside each agent.
 
 | Agent | Role | Writes code? |
 |---|---|---|
-| `dev-flutter` | Flutter/Dart feature code | yes |
-| `owner-native-engine` | C++ engine behind a C ABI: implements and reviews | yes |
-| `owner-platform` | Swift/Kotlin platform-channel code: implements and reviews | yes |
-| `owner-contract` | ABI headers, wire formats, API shapes, version negotiation | yes (contract files) |
-| `owner-build-release` | CI, signing, store lanes, multi-toolchain builds | yes |
-| `review-flutter` | Dart/Flutter correctness, error contract, test quality | no |
-| `gate-security` | Crypto, keys, privacy, telemetry leaks, supply chain | no |
-| `gate-performance` | Budgets, hot paths, allocations, startup, measured numbers | no |
+| `flutter-coder` | Flutter/Dart feature code | yes |
+| `cpp-engine-expert` | C++ engine behind a C ABI: implements and reviews | yes |
+| `ios-android-expert` | Swift/Kotlin platform-channel code: implements and reviews | yes |
+| `contract-expert` | ABI headers, wire formats, API shapes, version negotiation | yes (contract files) |
+| `build-release-expert` | CI, signing, store lanes, multi-toolchain builds | yes |
+| `flutter-reviewer` | Dart/Flutter correctness, error contract, test quality | no |
+| `security-checker` | Crypto, keys, privacy, telemetry leaks, supply chain | no |
+| `performance-checker` | Budgets, hot paths, allocations, startup, measured numbers | no |
 
-Name scheme: `<role>-<scope>` — `dev-` writes, `owner-` writes and reviews one layer, `review-` and `gate-` are
-read-only. Reviewers get only the read-only serena tools; agents default to `model: inherit`.
+Name scheme: `<scope>-<role>` — `-coder` writes, `-expert` writes and reviews one layer, `-reviewer` and `-checker`
+are read-only. Reviewers get only the read-only serena tools; agents default to `model: inherit`.
 
 Use them as plugin agents (`flutter-native-agents:<name>`) or copy one into `.claude/agents/` and adapt it.

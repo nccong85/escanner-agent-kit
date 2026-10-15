@@ -1,5 +1,5 @@
 ---
-description: Review the current diff with the routed reviewers, validate every rule ID, filter blocking findings through review-filter, and aggregate one verdict.
+description: Review the current diff with the routed reviewers, validate every rule ID, filter blocking findings through finding-checker, and aggregate one verdict.
 argument-hint: "[optional: path or scope]"
 ---
 
@@ -48,7 +48,7 @@ then re-run this gate; still missing → treat it as `NO_QUOTE`.
 legitimate there; scope drift is not); every other survivor gets `scope: in-diff`.
 
 **Gate 2 — precision filter.** For each surviving blocking (Critical/High) finding, launch
-`review-loop:review-filter` in parallel, one per finding, passing only `rule` · `severity` · `confidence` ·
+`review-loop:finding-checker` in parallel, one per finding, passing only `rule` · `severity` · `confidence` ·
 `file:line` · `scope` (from Gate 1b) · the one-sentence `claim` · the cited hunk — **never the reviewer's reasoning or report**.
 `NOT_REAL` → drop and record. `NEEDS_EVIDENCE` → if Critical/High and the named check runs here without a build or a device, run it:
 reproduced → `REAL`; not reproduced → defer with the output attached (never `NOT_REAL`). Otherwise

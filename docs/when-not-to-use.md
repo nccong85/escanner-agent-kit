@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](when-not-to-use.vi.md)
+
 # When not to use this
 
 - **Small fixes.** A handful of local edits is faster in the main session: run the analyzer, the scoped tests and

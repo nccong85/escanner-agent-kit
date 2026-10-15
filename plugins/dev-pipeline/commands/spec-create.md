@@ -22,7 +22,7 @@ Enter plan mode first: explore thoroughly before writing, and get the user's app
   old folder's `execution_state.md` holds that feature's history, and task-decompose writes by fixed name.
 - List the **layers** it touches, using the layout in `.claude/review-loop/review_brief.md` Part A.
 - Flag **contract impact**: does it change an ABI, an encrypted or binary wire format, or a network API shape?
-  If yes it is a **contract change** and needs contract-first sequencing (the contract owner in `routing.md`).
+  If yes it is a **contract change** and needs contract-first sequencing (the contract expert in `routing.md`).
 
 ### 1.2 Ground in the project's source-of-truth documents
 Read the normative specs Part A points to (product requirements, architecture, security spec) before inventing

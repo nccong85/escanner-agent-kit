@@ -9,7 +9,7 @@
     {
       "name": "review-loop",
       "source": "./plugins/review-loop",
-      "description": "Rule-ID-gated code review: the review-filter agent, rule validators, a destructive-git safety hook, project templates, and /review-loop:review.",
+      "description": "Rule-ID-gated code review: the finding-checker agent, rule validators, a destructive-git safety hook, project templates, and /review-loop:review.",
       "category": "development"
     },
     {
@@ -21,13 +21,13 @@
     {
       "name": "flutter-native-agents",
       "source": "./plugins/flutter-native-agents",
-      "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, contract owner, security and performance gates.",
+      "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, experts that write and review one layer, security and performance checkerss.",
       "category": "development"
     },
     {
       "name": "device-e2e",
       "source": "./plugins/device-e2e",
-      "description": "Real-device e2e testing on a physical iPhone (WebDriverAgent) and Android phone (adb): the test-device-e2e agent, its skill, and Python drivers.",
+      "description": "Real-device e2e testing on a physical iPhone (WebDriverAgent) and Android phone (adb): the device-tester agent, its skill, and Python drivers.",
       "category": "development"
     }
   ]

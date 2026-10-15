@@ -1,5 +1,5 @@
 ---
-name: dev-flutter
+name: flutter-coder
 description: "Implements Flutter/Dart feature code: screens and widgets, state controllers, routes, repositories, local persistence and immutable models, following the project's chosen libraries. Mirrors the nearest existing feature, keeps heavy work off the UI isolate, leaves the analyzer at zero."
 tools: Read, Grep, Glob, Bash, Edit, Write, Skill, mcp__serena, mcp__context7
 model: inherit

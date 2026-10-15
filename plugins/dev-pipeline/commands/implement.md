@@ -196,7 +196,7 @@ then re-run this gate; still missing → treat it as `NO_QUOTE`.
 `OUT_OF_DIFF` → keep it and pass `scope: out-of-diff` to the filter (a cross-file contract finding is
 legitimate there; scope drift is not); every other survivor gets `scope: in-diff`.
 
-**Gate 2 — the precision filter.** For each surviving **blocking** finding, launch `review-loop:review-filter`
+**Gate 2 — the precision filter.** For each surviving **blocking** finding, launch `review-loop:finding-checker`
 **in parallel, one per finding**. **Run the filter on the strongest model you have** (a smaller-model pass once returned `NOT_REAL` on a true observation — deleting a true finding is the one error here that
 cannot be recovered, so the tier buys correctness where it matters most).
 
@@ -210,7 +210,7 @@ cannot be recovered, so the tier buys correctness where it matters most).
 
 ```yaml
 Agent tool:
-  subagent_type: "review-loop:review-filter"
+  subagent_type: "review-loop:finding-checker"
   prompt: |
     rule:       <ID>
     severity:   <Critical|High>
@@ -349,7 +349,7 @@ structurally cannot see: interactions between tasks.** Re-reviewing everything i
 - **Last ACTION:** REVIEW_REQUIRED
 - **Files:** native/src/enhance.cpp
 - **Report:** (none yet)
-- **Next Action:** Launch my-plugin:owner-native-engine (review mode) to review the files above
+- **Next Action:** Launch my-plugin:cpp-engine-expert (review mode) to review the files above
 
 ## Progress
 - [x] Task 1: enhance ABI + binding regen (QA_PASSED)
@@ -411,7 +411,7 @@ Continue from Task 2, Step 2 (Review).
 | `ACTION: REVIEW_REQUIRED` with **no** SELF-CHECK | Step unchanged | Re-prompt the same coder for the SELF-CHECK block. Do not spend a review round on it. |
 | `ACTION: QA_PASSED (blocking=0, …)` | Step=DONE | Append any `deferred` to `## Deferred Findings`. Run the interop test if a contract task; → next task (Step 1) or global audit (Step 5). |
 | `ACTION: ISSUES_FOUND (blocking=0, deferred=n)` | Step=DONE | **This is a PASS (rule C1).** Append the n findings to `## Deferred Findings` and move on. Do NOT launch a fix round. |
-| `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-loop:review-filter`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
+| `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-loop:finding-checker`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
 | `ACTION: ISSUES_FOUND (blocking≥1, regressions=0)`, round ≥2 | Step=BLOCKED | **Rule C4** — the new blocking finding is not a regression, so the spec is suspect. Save state, record as `SPEC-DOUBT`, **stop and ask the owner.** |
 | `ACTION: ISSUES_FOUND (blocking≥1, regressions≥1)`, round ≥2 | Step=FIX, Iteration++ | Fix the regressions only. At Iteration ≥ 2 → `FINAL_QA_PARTIAL`, report to owner. |
 | No recognized ACTION | Analyze output | ① Extract file paths → FILES. ② "no issues"/"passed"/blocking=0 → treat as QA_PASSED. ③ blocking issues + report path → ISSUES_FOUND. ④ files but no result → REVIEW_REQUIRED. ⑤ still unclear → save state, report to owner. |

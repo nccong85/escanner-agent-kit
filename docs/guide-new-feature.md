@@ -1,3 +1,5 @@
+**English** · [Tiếng Việt](guide-new-feature.vi.md)
+
 # Guide: building a new feature with the agents
 
 This walkthrough takes one real feature through the whole pipeline. Every output quoted below comes from an
@@ -103,7 +105,7 @@ condition that failed** — fix it and re-run.
 
 It writes `<feature>_tasks.md` and `execution_state.md` (the checkpoint `implement` resumes from). Check:
 - **One task, one layer, one agent** from `routing.md`. In the test run it produced one task for
-  `flutter-native-agents:dev-flutter`, and explained why: code and tests route to the same coder and reviewer,
+  `flutter-native-agents:flutter-coder`, and explained why: code and tests route to the same coder and reviewer,
   and the tests are the proof of five goals.
 - **A Definition of Done the reviewer can grade**: pasted `flutter analyze` (0 issues) and
   `flutter test test/features/notes/notes_controller_test.dart` output, named tests, and diff-checkable rules
@@ -115,15 +117,15 @@ It writes `<feature>_tasks.md` and `execution_state.md` (the checkpoint `impleme
 
 The orchestrator reads `execution_state.md` on every turn, so you can stop and resume at any point. For each task
 it dispatches the coder, then the reviewers from `routing.md` plus any gate the diff triggers, validates every rule
-ID, sends each blocking finding through `review-filter`, and runs at most two fix rounds with delta reviews.
+ID, sends each blocking finding through `finding-checker`, and runs at most two fix rounds with delta reviews.
 
 What happened in the test run:
 
 | Step | Result |
 |---|---|
-| Coder (`dev-flutter`) | Changed exactly the three files the spec allows; wrote 11 tests |
+| Coder (`flutter-coder`) | Changed exactly the three files the spec allows; wrote 11 tests |
 | Its hand-off | `SELF-CHECK` block, then `ACTION: REVIEW_REQUIRED` with the file list |
-| Reviewer (`review-flutter`) | `QA_PASSED (blocking=0, deferred=1)` — round 1, so no fix round and no filter calls |
+| Reviewer (`flutter-reviewer`) | `QA_PASSED (blocking=0, deferred=1)` — round 1, so no fix round and no filter calls |
 | Evidence re-run by the orchestrator | `flutter analyze` → *No issues found!* · `flutter test …` → *+11: All tests passed!* |
 | Cost ledger in `execution_state.md` | 1 review round · 1 finding raised (+2 without a rule ID) · 0 fix rounds |
 
@@ -165,4 +167,4 @@ Things to watch in your own runs:
   `/review-loop:review` on the diff — the same validator and filter, without spec and tasks.
 - **Exploration or a prototype:** the loop optimizes a finished change, not discovery.
 - **Research questions:** `/dev-pipeline:research "<question>"` answers inline when it can and only spawns
-  `research-tech` for depth or breadth questions.
+  `tech-researcher` for depth or breadth questions.

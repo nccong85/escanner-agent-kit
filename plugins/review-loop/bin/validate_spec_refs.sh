@@ -107,7 +107,7 @@ $(grep -oE '(^|[[:space:]`(|])\.?/?[A-Za-z0-9_@-][A-Za-z0-9_.@-]*(/[A-Za-z0-9_.@
 EOF
 
   # ---- 2. Agent: fields ----------------------------------------------------
-  # Real rows look like: **Agent:** `dev-flutter`  /  my-plugin:review-x (notes) + owner-contract
+  # Real rows look like: **Agent:** `flutter-coder`  /  my-plugin:review-x (notes) + contract-expert
   # so: strip markdown, split on + and , and ;, cut prose after the first '(' or '_' or em-dash,
   # then keep only a bare agent-name token.
   agents=$(grep -oE '^\*\*Agent:\*\*[^|]*' "$doc" 2>/dev/null \

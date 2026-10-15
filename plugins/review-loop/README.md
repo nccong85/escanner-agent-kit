@@ -1,10 +1,12 @@
+**English** · [Tiếng Việt](README.vi.md)
+
 # review-loop
 
 The core of the marketplace: rule-ID-gated review that terminates.
 
 | Component | Path | Notes |
 |---|---|---|
-| `review-filter` agent | `agents/review-filter.md` | Judges ONE finding against its hunk: `REAL` / `NOT_REAL` / `NEEDS_EVIDENCE`. Runs on `opus`. |
+| `finding-checker` agent | `agents/finding-checker.md` | Judges ONE finding against its hunk: `REAL` / `NOT_REAL` / `NEEDS_EVIDENCE`. Runs on `opus`. |
 | `/review-loop:review` | `commands/review.md` | Route the diff → reviewers in parallel → validate rule IDs → filter blockers → aggregate. |
 | `/review-loop:init` | `commands/init.md` | Create `.claude/review-loop/` from `templates/` without overwriting, and draft Part A from your code. |
 | Validators | `bin/validate_rule_ids.sh`, `bin/validate_findings.sh`, `bin/validate_spec_refs.sh`, `bin/validate_citations.sh` | On the Bash `PATH` while the plugin is enabled. |
