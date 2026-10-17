@@ -2,6 +2,44 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [device-e2e 2.1.0] — 2026-10-18
+Test cases are designed by a procedure instead of one line ("plan the cases first"), and the agent has a written
+input and output contract. An audit of two e-Scanner plans found goals with no case, cases repeated per language
+when the code path does not depend on language, expected results that could not fail ("coverage ≥ before"), and
+planned IDs missing from the results. The e-Scanner runs themselves showed where device time went: about 7 hours
+for one feature, mostly re-importing a 300-page fixture per case; a release with 50 minutes of device work inside
+11 hours of waiting for cable, unlock and the owner; about 21 harness, oracle, fixture or environment problems
+against 2 fixed app bugs.
+- `references/test-design.md`: a 12-step procedure (ISTQB CTFL 4.0 §4, CT-MAT §2) with two modes, feature and
+  release. The basis comes from three sources (spec goals, the Part A budgets the change can break, the change list
+  and diff), traced both ways. Risk sets the depth; a factor enters only when the code branches on it; every
+  long-running task gets a State × event table; an item goes to a lower test level only with a named test;
+  platforms follow the code; duplicates go by coverage item; costly setup is shared. Each case has device minutes
+  and a run order that fit a **Device budget**. The rules for cases that can actually fail moved here from
+  `SKILL.md`, plus "observe during the interruption".
+- `references/glossary.md`: one meaning per term (test basis, coverage item, oracle, run step, harness bug vs app
+  bug, severity), and PASS, FAIL, BLOCKED, NOT RUN.
+- `e2e_test_plan.template.md`: the plan, with the run steps `READY` (devices usable), `DRY` (harness and
+  assertions proven) and `DIAG` (the whole run's diagnostics), and the results layout: header, table, `BUG-n`
+  defect entries, the `E2E:` line.
+- `bin/validate_e2e_plan.py` checks the plan: traceability, redundancy, empty State × event cells, weak oracles,
+  run steps, budget. With `--results` it checks the results: header, one row per planned case and run step per
+  platform, a complete `BUG-n` for every FAIL, hand-off counts. Tests: `tests/e2e_plan_test.py`.
+- `device-tester` takes a brief with fixed lines (`SPEC`, `PLAN`, `PLAN_APPROVED`, `BUILD`, `PLATFORMS`, `CASES`,
+  `BUDGET`, `RESULTS`). Approval comes only from the brief. It writes and validates the plan and stops `BLOCKED`
+  until the owner approves it, runs cases by order within the budget, and ends with `E2E:` (now counting
+  `not_run`), `APP_BUGS` (`BUG-n` IDs), `BLOCKERS` and `REPORT`. A run that missed the plan's condition is
+  `BLOCKED`, never PASS. `task-decompose` gives device tasks the brief lines and says the owner gate covers the plan.
+- From a trial run on a Redmi (E1 of `search_index_resume`):
+  - A search probe said 22 to 27 of 48 pages were indexed at Home. The app's diagnostics showed all 48 OCR calls
+    done 1 s before Home. `test-design.md` now says to read progress from the app's own record when the visible
+    signal lags.
+  - The validator now rejects a pushed-down item or a `below:` cell that does not name `file::name`, or whose
+    test is "to be created".
+  - Cases that repeat a costly precondition share one setup or say why not.
+  - Cleanup turned off stay-awake on a phone that had it on. Cleanup now restores what `READY` recorded; the
+    Android driver gains `current_stay_on()` and `restore_stay_on()`.
+
 ## [2.0.0] — 2026-10-18
 All four plugins are 2.0.0. **Breaking:** two plugins are renamed so the name says what the plugin does.
 `review-loop` runs one gated review pass (rule IDs, cited code, the finding-checker filter) and holds the git safety

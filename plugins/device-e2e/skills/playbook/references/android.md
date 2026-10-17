@@ -2,7 +2,8 @@
 
 Device serial, screen size, OS flavour and install command come from `.claude/device-e2e/project.md`.
 `AndroidDriver` finds adb through `E2E_ADB`, then `PATH`, then the default SDK folders. Keep the screen on during
-a run with `keep_screen_on(True)`; restore it with `keep_screen_on(False)` afterwards.
+a run with `keep_screen_on(True)`. Save the previous value with `current_stay_on()` at `READY` and put it back with
+`restore_stay_on()`; `keep_screen_on(False)` turns it off even on a phone that had it on.
 
 ## Installing
 

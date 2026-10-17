@@ -37,42 +37,34 @@ They read `E2E_APP_ID`, `WDA`, `E2E_IOS_UDID`, `E2E_ANDROID_SERIAL` and the opti
 
 ## Workflow
 
-1. **Plan the cases first.** Write them into the feature's e2e test plan (ID, steps, expected, how it is checked).
-   Each expected result must be observable from the UI or a file the app writes — "works" is not a check.
+1. **Plan the cases first**, by the procedure in `references/test-design.md` and from
+   `${CLAUDE_SKILL_DIR}/e2e_test_plan.template.md`: every spec goal, budget and change traced to a case, a
+   lower-level test or a *Not covered* line, and an expected result that can fail. Run
+   `validate_e2e_plan.py <plan> --spec <spec>` until it exits 0. Each case has its device minutes and run
+   order, and the total fits the **Device budget**. The owner approves the plan together with the device time; no
+   device run before that. Terms are defined in `references/glossary.md`.
 2. **Build and install the code under test** only with the commands in `project.md`, and only when the brief
    says the owner approved a build. Otherwise test the build already installed and say which one it is.
-3. **Bring up the drivers** — iOS: `references/ios.md`; Android: `references/android.md`.
+3. **Bring up the drivers** — iOS: `references/ios.md`; Android: `references/android.md`. Then the `READY` run
+   step: cable or tunnel, unlocked phone, WDA authorized, no old suite process, owner reachable.
 4. **Stage fixtures on each device.** Regenerating fixtures means re-staging them on **every** device — a stale
    copy on one phone silently tests old content.
 5. **Calibrate on a dry run** of one cheap case per platform before the long run (for example import → search →
-   delete → empty trash → diagnostics pull). Fix the harness until this passes cleanly.
+   delete → empty trash → diagnostics pull). Fix the harness until this passes cleanly. This is the `DRY` run
+   step; make each new assertion fail once while you are at it.
 6. **Run long suites in the background** and watch them with a monitor that greps
    `^\[(PASS|FAIL|BLOCKED)\]|progress|Traceback`. Monitors expire; re-arm them. One suite per device at a time;
    before restarting, make sure the old python process is really gone (`pgrep -fl <suite name>`), because
    stopping the monitor does not stop the suite.
 7. **Triage every FAIL/BLOCKED before reporting it** (below). Fix harness bugs and re-run the case. For an app
    bug, collect the evidence and report it; when you run as the `device-tester` agent you do not fix the app.
-8. **Clean up** (below) and report with the result files.
+8. **Pull the run's diagnostics** (the `DIAG` run step), then **clean up** (below) and report.
 
 ## Writing cases that can actually fail
 
-These rules come from cases that passed while proving nothing:
-
-- **Prove the precondition you mean to test.** "Leave the app mid-task" is only tested if the task was mid-way
-  when you left. Measure progress *before* the interruption and mark the case BLOCKED (not PASS) if the work had
-  already finished. A slow probe can finish the work for you.
-- **Probe progress cheaply.** If the work is sequential, binary-search checkpoints (about 5 probes) instead of
-  probing every one.
-- **Use tokens the device reads reliably.** On-device OCR misreads look-alike characters (one engine read `0`
-  after letters as `O`), so letter+digit tokens produce false FAILs on one platform only. All-digit tokens and
-  real words are safer.
-- **Match the right item.** Results can include the user's real data; check the fixture's own title too, and
-  allow for truncated names in grids (`abc…xyz.pdf`).
-- **Assert absence structurally.** "The removed thing is gone" must look for something that would come back with
-  it (an icon, a key), not for the deleted literal string — a deleted string can never be found, so the test can
-  never fail. Mutation-check new assertions when cheap.
-- **Read the app's own record.** After an interruption pull the app's diagnostics or log file and count the
-  failure events it recorded.
+The oracle rules (prove the precondition, observe during the interruption, OCR-safe tokens, structural absence
+checks, the app's own record) are in `references/test-design.md`, with the procedure they belong to. Read it
+before writing or changing a case.
 
 ## Triage: harness bug or app bug?
 
@@ -98,15 +90,20 @@ Mac (for PDFs: PyMuPDF, `qpdf`, `pypdfium2`).
 
 ## Cleanup (always, even after a failed run)
 
+Put every phone setting back to the value `READY` recorded, not to a default: a phone that stayed awake on USB
+before the run stays awake after it.
+
 1. Delete the test documents and empty the app's trash on each device.
 2. Switch the app back to the user's language if a case changed it.
-3. Android: restore the keyboard, uninstall ADB Keyboard if you installed it, `svc power stayon false`, remove the
-   staged fixture folder.
+3. Android: restore the keyboard, uninstall ADB Keyboard if you installed it, restore stay-awake
+   (`restore_stay_on()` with the value `current_stay_on()` read at `READY`), remove the staged fixture folder.
 4. Stop the background WDA and the fixture HTTP server.
 5. Anything else `project.md` lists under cleanup.
 
 ## Report
 
-Write the results summary where `project.md` says (one row per case per device with the evidence — numbers, not
-adjectives — the app bugs found, and what was **not** verified). Delete the result files of aborted runs so
-they do not read as results.
+Write the results summary where `project.md` says, in the plan template's results layout: a header (build,
+commit, devices, date, plan), one row per planned case and run step per platform with `PASS`, `FAIL`, `BLOCKED`
+or `NOT RUN` and the evidence (numbers, not adjectives) or the reason, a `BUG-n` entry for every FAIL, what was
+**not** verified, and the `E2E:` counts. A run that did not meet the plan's condition is `BLOCKED`. Then run `validate_e2e_plan.py <plan> --results <summary>` until it exits 0. Delete the result files of aborted
+runs so they do not read as results.

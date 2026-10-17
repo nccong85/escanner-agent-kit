@@ -241,6 +241,14 @@ class AndroidDriver:
     def keep_screen_on(self, on=True):
         self._shell(f"svc power stayon {'usb' if on else 'false'}", check=False)
 
+    def current_stay_on(self):
+        """The stay-awake setting before the run (0 off, 2 USB, 7 any); give it to restore_stay_on at cleanup."""
+        return self._shell("settings get global stay_on_while_plugged_in", check=False).strip()
+
+    def restore_stay_on(self, value):
+        if str(value).isdigit():
+            self._shell(f"settings put global stay_on_while_plugged_in {value}", check=False)
+
     def restore_ime(self, ime):
         if ime:
             self._shell(f"ime set {shlex.quote(ime)}", check=False)

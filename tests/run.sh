@@ -8,4 +8,5 @@ bash "$HERE/security_test.sh" || status=1
 bash "$HERE/parser_test.sh" || status=1
 bash "$HERE/templates_test.sh" || status=1
 python3 "$HERE/drivers_test.py" || status=1
+python3 "$HERE/e2e_plan_test.py" || status=1
 exit $status

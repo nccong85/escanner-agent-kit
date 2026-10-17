@@ -172,6 +172,12 @@ for text in ("hợp đồng & co", "x'; reboot; echo '"):
 del os.environ["FAKE_IME"]
 r.restore_ime("com.x/.Ime; reboot")
 check("android restore_ime quotes the IME", device_argv("ime set") == ["ime", "set", "com.x/.Ime; reboot"])
+r.restore_stay_on("2")
+check("android restore_stay_on puts the recorded value back",
+      device_argv("stay_on_while_plugged_in") == ["settings", "put", "global", "stay_on_while_plugged_in", "2"])
+LOG.write_text("")
+r.restore_stay_on("2; reboot")
+check("android restore_stay_on ignores a value that is not a number", "stay_on_while_plugged_in" not in LOG.read_text())
 
 SOURCE = (
     "Application, 0x1, {{0.0, 0.0}, {390.0, 844.0}}, label: 'App'\n"

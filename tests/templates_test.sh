@@ -83,5 +83,14 @@ grep -q 'in any column of the "Legacy names" section' "$CMD/implement.md" && ok 
 for f in "$CMD"/implement.md "$CMD"/spec-create.md "$CMD"/task-decompose.md "$CMD"/research.md "$AGENTS/review-gate/commands/review.md"; do
   grep -q '^\*\*Pre-2.0 project:\*\*' "$f" && ok || ko "$(basename "$f") does not stop on a pre-2.0 folder"
 done
+# device-tester's brief and hand-off are a contract with task-decompose and implement; the validator checks the counts.
+DT="$AGENTS/device-e2e/agents/device-tester.md"
+for k in 'SPEC:' 'PLAN:' 'PLAN_APPROVED:' 'BUILD:' 'PLATFORMS:' 'CASES:' 'BUDGET:' 'RESULTS:' 'BLOCKERS:' 'not_run=<n>' 'BLOCKED: brief missing'; do
+  grep -qF "$k" "$DT" && ok || ko "device-tester.md lacks '$k'"
+done
+grep -q "Brief\* lines" "$CMD/task-decompose.md" && ok || ko "task-decompose.md does not give device tasks the Brief lines"
+for f in references/test-design.md references/glossary.md e2e_test_plan.template.md; do
+  grep -q "$(basename "$f")" "$AGENTS/device-e2e/skills/playbook/SKILL.md" "$AGENTS/device-e2e/skills/playbook/references/test-design.md" && ok || ko "$f is not linked from the playbook"
+done
 echo "templates: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

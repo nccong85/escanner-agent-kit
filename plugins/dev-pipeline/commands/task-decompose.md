@@ -62,7 +62,8 @@ command it names.
 - **Owner gate:** a task whose DoD needs a build, a device run or a bench that the project says only the owner may
   approve (Part A, or `.claude/device-e2e/project.md` for a device task) gets `**Gate:** owner approval — <what>`.
   `implement` stops before that task until the approval is recorded, so the stop is visible in the plan, not a
-  surprise at dispatch. Keep the gated work in its own task so it does not hold up code that can be reviewed now.
+  surprise at dispatch. For a device task the approval also covers its e2e test plan: `device-tester`
+  writes the plan and stops `BLOCKED` until the owner approves it. Keep the gated work in its own task so it does not hold up code that can be reviewed now.
 - Prefer larger cohesive tasks; split only across layers or for contract-first ordering.
 
 ## Step 3: Initialize `execution_state.md`
@@ -123,7 +124,9 @@ ordered foundation → features.
 **Device tasks.** When a task routes to `device-e2e:device-tester`, check `.claude/device-e2e/project.md`. Missing,
 or its *App* or *Devices* table still holding a `` `<…>` `` slot → say so in the report and point to
 `/device-e2e:init`. Slots elsewhere (harness paths, optional environment) are the agent's to settle. The agent reports
-`BLOCKED` without that file, so finding out here saves a dispatch.
+`BLOCKED` without that file, so finding out here saves a dispatch. The task body gives the agent's *Brief* lines
+(`SPEC`, `PLAN`, `PLATFORMS`, `BUDGET` at least; `agents/device-tester.md` lists them all); a missing one is another
+`BLOCKED` at dispatch.
 
 ## Step 5: Report
 The task count, whether contract-first applies, the two files created, any device-task warning from Step 4, and the

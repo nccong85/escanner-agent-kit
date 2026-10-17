@@ -30,7 +30,7 @@ Four plugins, so you install only what fits your project.
 | [`review-gate`](plugins/review-gate) | Any project, any language | **Core**, install it first | `finding-checker` agent · `/review-gate:review` · `/review-gate:init` · rule/finding/spec/citation validators · destructive-git hook · project templates |
 | [`flutter-native`](plugins/flutter-native) | Flutter apps with a C/C++ engine and iOS/Android code, like e-Scanner | Optional | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev-pipeline`](plugins/dev-pipeline) | Teams that want the whole flow: spec → tasks → code → review | Optional | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md` · `/dev-pipeline:research` · `tech-researcher` agent |
-| [`device-e2e`](plugins/device-e2e) | Anyone testing a mobile app on a real iPhone or Android phone | Optional | `device-tester` agent · `/device-e2e:init` · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
+| [`device-e2e`](plugins/device-e2e) | Anyone testing a mobile app on a real iPhone or Android phone | Optional | `device-tester` agent · `/device-e2e:init` · `device-e2e:playbook` skill · e2e test-plan template and validator · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
 
 `review-gate` works on its own. Each optional plugin depends on it and installs it too. On another stack (web,
 backend, …), install `review-gate` and add your own agents: see [docs/customizing.md](docs/customizing.md).

@@ -36,9 +36,11 @@ app container>`, `E2E_ANDROID_DIAG_PATH=<path on the device>`.
 
 ## Plans and results
 
-- Test plans: `<e.g. docs/features/FEATURE/e2e_test_plan_*.md>`
-- Results summary: `<e.g. docs/features/FEATURE/e2e_results_summary_YYYYMMDD.md>`
+- Test plans: `<e.g. docs/features/FEATURE/e2e_test_plan_*.md>` (from the playbook's `e2e_test_plan.template.md`)
+- Results summary: `<e.g. docs/features/FEATURE/e2e_results_summary_YYYYMMDD.md>` (with the template's results table)
 
 ## Cleanup specific to this app
+
+Restore settings to what `READY` recorded, never to a fixed value.
 
 - `<delete test documents, empty trash, reset language, …>`
