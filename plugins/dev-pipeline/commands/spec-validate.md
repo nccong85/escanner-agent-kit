@@ -1,5 +1,5 @@
 ---
-description: Gate a spec for implementation readiness with six objective conditions (four settled by commands), and save the verdict next to the spec.
+description: Gate a spec for implementation readiness with six objective conditions (three settled by commands), and save the verdict next to the spec.
 argument-hint: "<path-to-spec-file>"
 ---
 

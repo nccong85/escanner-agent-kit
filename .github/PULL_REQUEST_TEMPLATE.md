@@ -11,4 +11,5 @@
 
 ## Checklist
 - [ ] No project-specific paths or names in shared files
+- [ ] English docs and their `.vi.md` twins changed together
 - [ ] Version bumped in the changed plugin's `plugin.json` and `CHANGELOG.md` updated

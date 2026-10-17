@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "escanner-agent-kit",
-  "description": "A review loop for Claude Code that terminates: closed rule vocabulary, deterministic validators, a precision filter, delta re-reviews — plus a spec-to-ship pipeline and a reference Flutter + native agent stack.",
+  "description": "Gated code review for Claude Code: a closed rule vocabulary, deterministic validators and a precision filter, plus a spec-to-ship pipeline whose fix loop ends, and a reference Flutter + native agent stack.",
   "owner": {
     "name": "Nguyen Chi Cong"
   },
@@ -30,5 +30,9 @@
       "description": "Real-device e2e testing on a physical iPhone (WebDriverAgent) and Android phone (adb): the device-tester agent, its skill, and Python drivers.",
       "category": "development"
     }
-  ]
+  ],
+  "renames": {
+    "review-loop": "review-gate",
+    "flutter-native-agents": "flutter-native"
+  }
 }

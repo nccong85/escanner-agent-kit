@@ -8,10 +8,10 @@
 # Checks two things a model should never be trusted to eyeball:
 #   1. Every repo path the document cites actually exists.
 #      ("Reference files cited don't exist in the repo" is an auto-Not-Ready red flag in
-#       /dev:spec-validate, and it is the only red flag on that list a machine can settle.)
+#       /dev-pipeline:spec-validate, and it is the only red flag on that list a machine can settle.)
 #   2. Every `**Agent:** <name>` in a task breakdown names an agent the routing file declares
 #      (or a project agent in .claude/agents/).
-#      A typo there makes /dev:implement dispatch a subagent_type that does not exist.
+#      A typo there makes /dev-pipeline:implement dispatch a subagent_type that does not exist.
 #
 # Exit 0 = all references resolve. Exit 1 = at least one does not.
 #

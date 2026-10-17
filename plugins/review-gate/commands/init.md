@@ -8,10 +8,10 @@ Set up `.claude/review-gate/` in the current project.
    `.claude/review-loop/`. If that folder exists and `.claude/review-gate/` does not, move it (`git mv` when it is
    tracked, else `mv`); never copy, so there is one source. In the moved files that are regular files (not
    symlinks), rewrite the agent prefixes `review-loop:` → `review-gate:` and `flutter-native-agents:` →
-   `flutter-native:`. In the *Legacy names* table rewrite only the last column (the name to dispatch now); the
-   columns before it are old names on purpose. A
-   symlinked file belongs to the project's own docs: do not edit it, list the lines that still use an old prefix.
-   If both folders exist, touch neither: report the conflict and stop. Then go on with step 1, which only adds
+   `flutter-native:`, except in the *Legacy names* table: its cells are the old names older plans still use. If
+   that table has no `2.0 name` column (a 1.1 project), add one holding each row's last name with the prefixes
+   rewritten, then add the template's rows it lacks. A symlinked file belongs to the project's own docs: do not
+   edit it, list the lines that still use an old prefix. If both folders exist, touch neither: report the conflict and stop. Then go on with step 1, which only adds
    the files the moved folder lacks.
 1. For each template below, copy it from `${CLAUDE_PLUGIN_ROOT}/templates/` to `.claude/review-gate/` **only if the
    target does not exist yet**. Never overwrite a file the project already has; list the ones you skipped.

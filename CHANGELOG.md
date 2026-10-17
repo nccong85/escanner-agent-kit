@@ -4,8 +4,8 @@ All notable changes are documented here. Versions follow [Semantic Versioning](h
 
 ## [2.0.0] — 2026-10-18
 All four plugins are 2.0.0. **Breaking:** two plugins are renamed so the name says what the plugin does.
-`review-loop` does one gated review pass (rule IDs, cited code, the finding-checker filter) and holds the git safety
-hook; the fix loop lives in `dev-pipeline`. `flutter-native-agents` drops the suffix no other plugin has.
+`review-loop` runs one gated review pass (rule IDs, cited code, the finding-checker filter) and holds the git safety
+hook; the fix loop is in `dev-pipeline`. `flutter-native-agents` drops a suffix no other plugin has.
 
 | 1.x | 2.0 |
 |---|---|
@@ -17,13 +17,15 @@ hook; the fix loop lives in `dev-pipeline`. `flutter-native-agents` drops the su
 | `.claude/review-loop/` | `.claude/review-gate/` |
 | `REVIEW_LOOP_PROJECT_DIR` | `REVIEW_GATE_PROJECT_DIR` (the old one is still read) |
 
-- Agent names inside the plugins are unchanged; `dev-pipeline` and `device-e2e` change only their dependency.
+- Agent names are unchanged; `dev-pipeline` and `device-e2e` change only their dependency.
 - `/review-gate:init` moves a pre-2.0 `.claude/review-loop/` folder (`git mv` when tracked) and rewrites the old
-  agent prefixes in its regular files; symlinked files are listed, not edited, and two folders at once stop it.
-- Until then the validators read `.claude/review-loop/` with a `NOTE`, and the pipeline commands and
-  `/review-gate:review` stop and ask for init.
-- The routing template's *Legacy names* table maps 1.0.x and 1.1 names to the 2.0 names.
-- Tests: the old names may appear only in history and in the migration, and the fallback is pinned.
+  agent prefixes in its regular files. Symlinked files are listed, not edited; two folders at once stop it.
+- Until then the validators and `spec-validate` read `.claude/review-loop/` with a `NOTE`; `implement`,
+  `spec-create`, `task-decompose`, `research` and `/review-gate:review` stop and ask for init.
+- The routing template's *Legacy names* table maps 1.0.x and 1.1 names to 2.0 names. In a moved 1.1 project, init
+  adds the `2.0 name` column to the project's table, and `implement` looks up an old name in any column.
+- `marketplace.json` lists both renames under `renames`, so an installed plugin follows the new name.
+- Tests: old names may appear only in history and in the migration; the fallback is pinned.
 
 ## [dev-pipeline 1.3.0 · device-e2e 1.2.0 · review-loop 1.1.1 · flutter-native-agents 1.1.1] — 2026-10-18
 Fixes from the e-Scanner field test (TODO #11, #12, #8, #9, #5). New behavior in `dev-pipeline` and `device-e2e`;
@@ -43,7 +45,7 @@ wording-only fixes in `review-loop` and `flutter-native-agents`.
   that reports `BLOCKED` with a reason now has its own routing row: save, stop, report, no retry. Stop 3 covers
   both, so there are still six sanctioned stops. In the field test the orchestrator had to make this stop up.
 - `device-e2e`: new `/device-e2e:init` creates `.claude/device-e2e/project.md` from the playbook template (never
-  over an existing file or symlink), fills only what it can read from the project (the app id), and lists every
+  over an existing file or symlink), fills only what it can read from the project (the app id and the build or install scripts), and lists every
   slot left as `<VERIFY>`. `task-decompose` warns when a task routes to `device-tester` and that file is missing or
   unfilled. Before, it was copied by hand, and a missing file showed up only as `BLOCKED` at dispatch.
 - `dev-pipeline`: a `spec-create` question about performance or budget now quotes the Part A rule it touches, and an

@@ -32,3 +32,9 @@ Flutter 3.x · Riverpod `Notifier` · Freezed + json_serializable · go_router �
 3. Heavy work (image filters, export, crypto) runs off the UI isolate.
 4. Every native allocation is freed by its paired `engine_free_*` in `try/finally`.
 5. Generated files are never edited by hand; the analyzer stays at zero.
+
+## Defect corpus and evidence
+- **`.claude/review-gate/common_pitfalls.md`** holds Symptom → Cause → Rule entries. Read the ones for the diff's
+  layer and cite them as `R-PIT-<n>`. Add an entry when you fix a new class of defect.
+- **Verify API claims against the installed source** (pub cache, the NDK and Xcode SDK headers, `pubspec.lock`),
+  never from memory. If you cannot reach the source, mark the claim unverified.

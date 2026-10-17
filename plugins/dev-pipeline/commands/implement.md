@@ -24,9 +24,9 @@ conversation. If context was compressed, this file has your full recovery state.
 
 **If `execution_state.md` not found** → run `/dev-pipeline:task-decompose` first.
 
-**Renamed agents.** If `execution_state.md` or `{feature}_tasks.md` names an agent that no longer exists, look it
-up in the "Legacy names" section of `.claude/review-gate/routing.md`, dispatch the new name, and update that line of
-Pipeline State.
+**Renamed agents.** If `execution_state.md` or `{feature}_tasks.md` names an agent that no longer exists, find it
+in any column of the "Legacy names" section of `.claude/review-gate/routing.md`, dispatch the name in that row's last
+column, and update that line of Pipeline State.
 
 ---
 

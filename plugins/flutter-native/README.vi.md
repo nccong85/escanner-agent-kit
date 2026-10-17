@@ -2,9 +2,9 @@
 
 # flutter-native
 
-Các agent mẫu cho app Flutter có engine C/C++ đứng sau FFI và code nền tảng iOS/Android. Cần có `review-gate`. Agent nào
-cũng đọc `.claude/review-gate/review_brief.md` trước tiên, nên thông tin dự án của bạn sẽ ghi đè các giá trị mặc định
-minh họa bên trong từng agent.
+Các agent mẫu cho app Flutter có engine C/C++ sau FFI và code nền tảng iOS/Android. Cần `review-gate`. Mỗi agent đọc
+`.claude/review-gate/review_brief.md` trước, nên thông tin dự án của bạn ghi đè các giá trị mặc định minh họa trong
+agent.
 
 | Agent | Vai trò | Viết code? |
 |---|---|---|
@@ -17,8 +17,12 @@ minh họa bên trong từng agent.
 | `security-checker` | Mã hóa, khóa, quyền riêng tư, rò rỉ qua telemetry, chuỗi cung ứng | không |
 | `performance-checker` | Ngân sách hiệu năng, hot path, cấp phát bộ nhớ, khởi động, số liệu đo thật | không |
 
-Cách đặt tên: `<scope>-<role>` — `-coder` viết code, `-expert` viết và review một tầng, `-reviewer` và `-checker` chỉ
-đọc. Reviewer chỉ được dùng các tool chỉ-đọc của serena; mặc định agent dùng `model: inherit`.
+Tên theo dạng `<scope>-<role>`: `-coder` viết code, `-expert` viết và review một tầng, `-reviewer` và `-checker` chỉ
+đọc. Reviewer chỉ dùng các tool chỉ-đọc của serena. Agent mặc định dùng `model: inherit`.
 
-Bạn có thể dùng chúng như agent của plugin (`flutter-native:<name>`) hoặc chép một agent vào `.claude/agents/`
-rồi chỉnh lại.
+Cài bằng `claude plugin install flutter-native@escanner-agent-kit` (cài luôn `review-gate`). Sau đó ghi tên các agent
+bạn dùng vào cột Coder và Reviewer của `.claude/review-gate/routing.md` dưới dạng `flutter-native:<name>`, hoặc chép
+một agent vào `.claude/agents/` rồi chỉnh lại.
+
+Đổi tên ở bản 2.0.0 (`flutter-native-agents` → `flutter-native`); `/review-gate:init` đổi các tên cũ trong
+`routing.md`.

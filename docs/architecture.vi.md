@@ -3,11 +3,11 @@
 # Kiến trúc
 
 ## Mục tiêu thiết kế
-1. **Vòng lặp phải dừng được.** Chu trình review → sửa → review mà cứ tìm ra cái mới là kiểu thất bại mặc định của
+1. **Vòng lặp phải dừng được.** Chu trình review → sửa → review cứ tìm ra cái mới là kiểu thất bại thường gặp của
    review nhiều agent.
-2. **Finding phải là thật.** Một finding chặn sai (finding là lỗi mà reviewer báo) tốn một lần chạy coder cộng
-   thêm một lần review lại.
-3. **Thông tin chỉ viết một lần.** Agent nào cũng tự tìm hiểu lại dự án từ đầu thì vừa chậm vừa dễ lệch nhau.
+2. **Finding phải là thật.** Một finding chặn sai (finding là lỗi mà reviewer báo) tốn một lần chạy coder và một
+   lần review lại.
+3. **Thông tin chỉ viết một lần.** Agent nào cũng tự tìm hiểu lại dự án thì vừa chậm vừa lệch nhau.
 
 ## Thành phần
 
@@ -30,26 +30,26 @@
 
 - **Chỉ Critical/High mới chặn.** Medium/Low được hoãn lại và phân loại một lần ở cuối. Nếu không, vòng nào cũng
   sinh ra lỗi vặt mới và vòng lặp không bao giờ hội tụ.
-- **Từ vòng 2 chỉ review phần thay đổi.** Lần review lại kiểm tra bản sửa, không kiểm tra lại cả tính năng. Lỗi
-  mà vòng 1 bỏ sót thì để xử lý sau; nó không kéo dài vòng lặp.
-- **Lỗi chặn mới mà không phải regression thì dừng lượt chạy.** Nếu bản sửa đúng mà vẫn lòi ra lỗi chặn mới, thì
-  spec sai, và sửa code mãi cũng không giải quyết được.
+- **Từ vòng 2 chỉ review phần thay đổi.** Lần review lại chỉ kiểm tra bản sửa. Lỗi vòng 1 bỏ sót thì để xử lý sau,
+  không kéo dài vòng lặp.
+- **Lỗi chặn mới mà không phải regression thì dừng lượt chạy.** Nếu bản sửa đúng mà vẫn lòi ra lỗi chặn mới thì
+  spec sai, và sửa code thêm cũng không giải quyết được.
 - **Rule ID.** Output có cấu trúc chỉ cố định *định dạng* của finding, không đảm bảo nó *đúng*. Bắt buộc dẫn một
-  rule có sẵn sẽ ngăn reviewer tự đặt ra tiêu chuẩn, và một script có thể kiểm tra việc đó mà không tốn gì.
-- **Bộ lọc chỉ thấy nhận định và hunk.** Reviewer đọc lập luận của tác giả thì sẽ bị lập luận đó dẫn dắt; giá trị
-  của ý kiến thứ hai nằm ở chỗ độc lập. Bộ lọc không đối xứng: với mất dữ liệu, quyền riêng tư và crash thì ưu tiên
-  không bỏ sót; với hiệu năng thì ưu tiên bằng chứng; với mọi thứ khác thì ưu tiên độ chính xác.
+  rule có sẵn ngăn reviewer tự đặt ra tiêu chuẩn, và script kiểm tra việc đó mà không tốn gì.
+- **Bộ lọc chỉ thấy nhận định và hunk.** Reviewer đọc lập luận của tác giả sẽ bị lập luận đó dẫn dắt, mà ý kiến thứ
+  hai chỉ có giá trị khi độc lập. Bộ lọc không đối xứng: với mất dữ liệu, quyền riêng tư và crash thì ưu tiên không
+  bỏ sót; với hiệu năng thì ưu tiên bằng chứng; với mọi thứ khác thì ưu tiên độ chính xác.
 - **Quyền sở hữu độc quyền.** Mỗi khía cạnh chỉ một agent được báo finding. Hai reviewer cùng báo một finding thì
   tốn gấp đôi và sinh ra các bản sửa mâu thuẫn nhau.
 - **Khối bàn giao cố định.** Orchestrator đọc các dòng `ACTION:` thay vì đoán từ văn xuôi.
-- **Snapshot, không dùng SHA.** Team không commit giữa các task sẽ nhận được `git diff <sha>..` rỗng. Pipeline
+- **Snapshot, không dùng SHA.** Team không commit giữa các task sẽ nhận được `git diff <sha>..` rỗng, nên pipeline
   diff với một snapshot tạo bằng `git stash create` và khôi phục các thay đổi ngoài phạm vi từ snapshot đó.
 
 ## Liên hệ với các hướng dẫn đã công bố
 
 - [Hệ thống nghiên cứu nhiều agent](https://www.anthropic.com/engineering/multi-agent-research-system) của Anthropic:
   làm việc nhiều agent tốn khoảng 15 lần một cuộc chat và chỉ đáng khi công việc song song, trải rộng. Ở đây coder
-  chạy lần lượt theo từng task; chỉ reviewer chỉ-đọc mới chạy song song.
+  chỉ chạy song song trên các tầng khác nhau; reviewer chạy song song và chỉ ghi report của chính mình.
 - [Don't build multi-agents](https://cognition.com/blog/dont-build-multi-agents) của Cognition: các agent song song
   cùng viết code sẽ đưa ra quyết định mâu thuẫn nhau. Ở đây không có hai agent nào viết cùng một tầng cùng lúc, và
   subagent chỉ trả lời các câu hỏi hẹp.

@@ -71,9 +71,15 @@ grep -q "fix the regressions plus every prior finding verdicted \`NOT CLOSED\`" 
 KIT="$(cd "$CMD/../../.." && pwd)"
 stale=$(cd "$KIT" && git ls-files | grep -vxE 'CHANGELOG.md|tests/.*|plugins/review-gate/(bin/lib_config.sh|commands/init.md)' \
   | xargs grep -n 'review-loop\|flutter-native-agents\|REVIEW_LOOP' 2>/dev/null \
-  | grep -v '^plugins/review-gate/templates/routing.md:\(.*| `\|[0-9]*:`flutter-native-agents` → \)\|Pre-2.0 project\|REVIEW_LOOP_PROJECT_DIR:-\|2.0.0 (`review-loop`\|`review-loop` →\|`flutter-native-agents` →\|`.claude/review-loop/` t')
+  | grep -v '^plugins/review-gate/templates/routing.md:\(.*| `\|[0-9]*:`flutter-native-agents` → \)\|Pre-2.0 project\|REVIEW_LOOP_PROJECT_DIR:-\|2.0.0 (`review-loop`\|`review-loop` →\|`flutter-native-agents` →\|`.claude/review-loop/` t\|": "review-gate"\|": "flutter-native"\|install flutter-native@.*# .*flutter-native-agents$')
 [ -z "$stale" ] && ok || { ko "old plugin names outside history/migration:"; echo "$stale" | head -5; }
+# An installed plugin follows a rename only through marketplace.json `renames`.
+grep -q '"review-loop": "review-gate"' "$KIT/.claude-plugin/marketplace.json" && grep -q '"flutter-native-agents": "flutter-native"' "$KIT/.claude-plugin/marketplace.json" \
+  && ok || ko "marketplace.json renames lacks the 2.0 renames"
 grep -q '^0\. \*\*Move a pre-2.0 folder first' "$AGENTS/review-gate/commands/init.md" && ok || ko "review-gate init does not move .claude/review-loop/"
+# A 1.1 project's Legacy table has no 2.0 column; rewriting its last cells would lose the 1.1 names old plans use.
+grep -q 'no `2.0 name` column (a 1.1 project), add one' "$AGENTS/review-gate/commands/init.md" && ok || ko "review-gate init does not add the 2.0 column to a 1.1 Legacy table"
+grep -q 'in any column of the "Legacy names" section' "$CMD/implement.md" && ok || ko "implement.md does not look old names up in every Legacy column"
 for f in "$CMD"/implement.md "$CMD"/spec-create.md "$CMD"/task-decompose.md "$CMD"/research.md "$AGENTS/review-gate/commands/review.md"; do
   grep -q '^\*\*Pre-2.0 project:\*\*' "$f" && ok || ko "$(basename "$f") does not stop on a pre-2.0 folder"
 done

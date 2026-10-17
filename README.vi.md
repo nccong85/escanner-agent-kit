@@ -2,30 +2,27 @@
 
 # eScanner Agent Kit
 
-Đây là các agent Claude Code, bộ rule review và quy trình làm việc mà mình xây dựng và mài giũa trong lúc phát triển
-**e-Scanner**, một app quét tài liệu cho iPhone và Android.
+Các agent Claude Code, bộ rule review và quy trình làm việc mà mình xây dựng trong lúc phát triển **e-Scanner**, một
+app quét tài liệu cho iPhone và Android.
 
-Đây là bài học cá nhân rút ra từ một dự án và được may đo cho dự án đó, nên bạn hãy xem chúng là tài liệu tham khảo chứ
-không phải giải pháp dùng ngay: chép lại các pattern rồi chỉnh agent, bộ từ vựng rule và routing cho hợp với dự án của
-bạn (các agent trong `flutter-native` sẽ không khớp với một codebase khác nếu để nguyên). Bạn cứ thoải mái cải
-tiến và phát triển chúng thêm. Nếu có phần nào giúp được bạn thì mình rất vui.
+Chúng rút ra từ một dự án và được may đo cho dự án đó. Hãy xem chúng là tài liệu tham khảo: chép các pattern rồi chỉnh
+agent, bộ từ vựng rule và routing cho dự án của bạn (các agent `flutter-native` để nguyên sẽ không khớp với codebase
+khác). Bạn cứ thoải mái cải tiến, và nếu có phần nào giúp được bạn thì mình rất vui.
 
-- **Agent ngốn rất nhiều token.** Một feature chạy qua pipeline sẽ gọi một coder, vài reviewer, một lần lọc cho mỗi
-  finding chặn và có thể thêm vài vòng sửa, mỗi bước là một session riêng trên model mạnh. Hãy dùng với **gói Claude
-  Max**; nếu trả tiền API theo token thì chi phí tăng rất nhanh. Với thay đổi nhỏ, hãy dùng session chính kèm
-  `/review-gate:review`.
-- **Model.** Các agent dùng `model: inherit` (model của session bạn đang dùng); chỉ `finding-checker` được gắn cố định
-  vào `opus`, vì từng có lần một model nhỏ hơn bác bỏ một finding đúng.
+- **Agent ngốn nhiều token.** Một feature chạy qua pipeline gọi một coder, vài reviewer, một lần lọc cho mỗi finding
+  chặn và có thể thêm vài vòng sửa, mỗi bước là một session riêng trên model mạnh. Hãy dùng **gói Claude Max**; trả
+  tiền API theo token thì chi phí tăng rất nhanh. Với thay đổi nhỏ, dùng session chính kèm `/review-gate:review`.
+- **Model.** Các agent dùng `model: inherit` (model của session bạn). Chỉ `finding-checker` được gắn cố định vào
+  `opus`, vì từng có lần một model nhỏ hơn bác bỏ một finding đúng.
 
 **Tải e-Scanner:** [App Store (iOS)](https://apps.apple.com/app/id6790476934?pt=129164581&ct=github_agent_kit&mt=8) ·
 [Google Play (Android)](https://play.google.com/store/apps/details?id=io.pbsolutions.escanner&referrer=utm_source%3Dgithub%26utm_medium%3Dreadme%26utm_campaign%3Dagent_kit)
 
-Mới bắt đầu? Hãy làm theo **[docs/guide-new-feature.vi.md](docs/guide-new-feature.vi.md)** — một feature thật được đi
-qua từng bước.
+Mới bắt đầu? **[docs/guide-new-feature.vi.md](docs/guide-new-feature.vi.md)** đưa một feature thật qua từng bước.
 
 ## Plugin
 
-Kit được chia thành bốn plugin để bạn chỉ cài những gì hợp với dự án.
+Bốn plugin, để bạn chỉ cài những gì hợp với dự án.
 
 | Plugin | Dành cho ai | Bắt buộc? | Bạn nhận được gì |
 |---|---|---|---|
@@ -34,38 +31,48 @@ Kit được chia thành bốn plugin để bạn chỉ cài những gì hợp v
 | [`dev-pipeline`](plugins/dev-pipeline/README.vi.md) | Nhóm muốn chạy trọn quy trình: spec → task → code → review | Tùy chọn | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, lưu checkpoint trong `execution_state.md` · `/dev-pipeline:research` · agent `tech-researcher` |
 | [`device-e2e`](plugins/device-e2e/README.vi.md) | Ai cần test app mobile trên iPhone hoặc điện thoại Android thật | Tùy chọn | agent `device-tester` · `/device-e2e:init` · skill `device-e2e:playbook` · driver cho iPhone (WebDriverAgent) và Android (adb + uiautomator) dùng chung một interface · template dự án |
 
-`review-gate` chạy độc lập được. Mỗi plugin tùy chọn đều phụ thuộc vào nó, và khi cài một plugin tùy chọn thì
-`review-gate` cũng được cài theo. Bạn làm stack khác (web, backend, …)? Hãy cài `review-gate` rồi thêm agent của riêng
-bạn — xem [docs/customizing.vi.md](docs/customizing.vi.md).
+`review-gate` chạy độc lập được. Mỗi plugin tùy chọn đều phụ thuộc vào nó và cài nó theo. Làm stack khác (web,
+backend, …) thì cài `review-gate` rồi thêm agent của riêng bạn: xem [docs/customizing.vi.md](docs/customizing.vi.md).
 
 ## Agent
 
-Mỗi tên có dạng `<scope>-<role>`, và phần role cho biết agent được phép làm gì: `-coder` viết code, `-expert` viết và
-review một tầng, `-reviewer` hoặc `-checker` chỉ đọc, `-tester` chạy test, `-researcher` chỉ đọc nguồn tài liệu.
+Tên có dạng `<scope>-<role>`, và role cho biết agent được làm gì: `-coder` viết code, `-expert` viết và review một
+tầng, `-reviewer` hoặc `-checker` chỉ đọc và ghi report của chính nó, `-tester` chạy test, `-researcher` chỉ đọc nguồn
+tài liệu.
 
 | Agent | Plugin | Làm gì |
 |---|---|---|
-| `finding-checker` | `review-gate` | Nhận một lỗi mà reviewer báo (finding) và quyết định nó có thật không, trước khi ai đó tốn một vòng sửa cho nó |
+| `finding-checker` | `review-gate` | Quyết định một lỗi reviewer báo (finding) có thật không, trước khi ai đó tốn một vòng sửa cho nó |
 | `tech-researcher` | `dev-pipeline` | Trả lời câu hỏi kỹ thuật (dùng thư viện nào, API nào, quy định của store nói gì) kèm nguồn trích dẫn |
 | `device-tester` | `device-e2e` | Chạy test end-to-end cho app trên iPhone và điện thoại Android thật |
 | `flutter-coder` | `flutter-native` | Viết code feature Flutter/Dart: màn hình, state, route, lưu trữ |
 | `flutter-reviewer` | `flutter-native` | Review thay đổi Flutter/Dart |
 | `cpp-engine-expert` | `flutter-native` | Viết và review engine xử lý ảnh bằng C++ |
 | `ios-android-expert` | `flutter-native` | Viết và review code Swift (iOS) và Kotlin (Android) mà app gọi tới |
-| `contract-expert` | `flutter-native` | Giữ các contract (hợp đồng giao tiếp giữa các phần) — C ABI, định dạng file mã hóa, cấu trúc API — để hai phía luôn khớp nhau |
+| `contract-expert` | `flutter-native` | Giữ hai phía của mỗi contract (hợp đồng giao tiếp giữa các phần: C ABI, định dạng file mã hóa, cấu trúc API) luôn khớp nhau |
 | `build-release-expert` | `flutter-native` | Viết và review CI, ký app và việc phát hành lên store |
 | `security-checker` | `flutter-native` | Kiểm tra các thay đổi đụng tới mã hóa, khóa, log hoặc dữ liệu người dùng |
 | `performance-checker` | `flutter-native` | Kiểm tra các thay đổi trên hot path (khởi động, pipeline xử lý ảnh, database) so với ngân sách hiệu năng của dự án |
 
 **Nâng cấp từ 1.x?** Bản 2.0.0 đổi tên hai plugin: `review-loop` → `review-gate` và
-`flutter-native-agents` → `flutter-native`. Gỡ plugin cũ, cài plugin mới, rồi chạy `/review-gate:init`: lệnh này
-chuyển `.claude/review-loop/` thành `.claude/review-gate/` và sửa tiền tố agent trong đó. Trước khi chạy, các
-validator vẫn đọc thư mục cũ (kèm dòng NOTE), còn các lệnh của pipeline sẽ dừng lại và nhắc bạn chạy init.
+`flutter-native-agents` → `flutter-native`. Marketplace đã ánh xạ tên cũ, nên chỉ cần cập nhật nó và cài tên mới một
+lần:
 
-**Nâng cấp từ 1.0.x?** Các agent đã được đổi tên ở bản 1.1.0 (ví dụ `review-filter` → `finding-checker`,
-`owner-contract` → `contract-expert`). Hãy cập nhật tên trong `.claude/review-gate/routing.md` của bạn; bảng đối chiếu
-đầy đủ tên cũ → tên mới nằm ở mục `Legacy names` trong [template routing](plugins/review-gate/templates/routing.md).
-Chép mục đó vào file routing của bạn để các plan viết bằng 1.0.x vẫn tìm ra đúng agent.
+```bash
+claude plugin marketplace update escanner-agent-kit
+claude plugin install review-gate@escanner-agent-kit
+claude plugin install flutter-native@escanner-agent-kit   # nếu bạn đã dùng flutter-native-agents
+```
+
+Sau đó chạy `/review-gate:init` trong từng dự án. Lệnh này chuyển `.claude/review-loop/` thành `.claude/review-gate/`,
+sửa tiền tố agent, và thêm cột `2.0 name` vào bảng *Legacy names* để plan viết bằng tên 1.x vẫn tìm ra agent. Trước
+khi chạy init, các validator và `spec-validate` vẫn đọc thư mục cũ (kèm dòng NOTE), còn `implement`, `spec-create`,
+`task-decompose`, `research` và `/review-gate:review` sẽ dừng và nhắc bạn chạy init.
+
+**Nâng cấp từ 1.0.x?** Bản 1.1.0 đổi tên các agent (ví dụ `review-filter` → `finding-checker`,
+`owner-contract` → `contract-expert`). Hãy cập nhật tên trong `.claude/review-gate/routing.md` của bạn. Bảng đối
+chiếu đầy đủ tên cũ → tên mới là mục `Legacy names` trong
+[template routing](plugins/review-gate/templates/routing.md); chép mục đó vào file routing của bạn để plan viết bằng 1.0.x vẫn tìm ra đúng agent.
 
 ## Cài đặt
 
@@ -73,7 +80,7 @@ Chép mục đó vào file routing của bạn để các plan viết bằng 1.0
 claude plugin marketplace add nccong85/escanner-agent-kit
 claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
-claude plugin install flutter-native@escanner-agent-kit   # optional, Flutter + native stacks
+claude plugin install flutter-native@escanner-agent-kit          # optional, Flutter + native stacks
 claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
 ```
 
@@ -93,8 +100,12 @@ Sau đó, trong dự án của bạn:
 | `common_pitfalls.md` | Kho lỗi đã gặp của bạn (Triệu chứng → Nguyên nhân → Rule). |
 | `config.env` | Các đường dẫn mà validator dùng, nếu tài liệu của bạn nằm ở chỗ khác. |
 
-Review một diff bằng `/review-gate:review`. Chạy một feature từ đầu đến cuối bằng
-`/dev-pipeline:spec-create "<feature>"`.
+Ví dụ brief và routing đã điền sẵn nằm trong [examples/](examples).
+
+Review một diff bằng `/review-gate:review`. Chạy một feature bằng `/dev-pipeline:spec-create "<feature>"`, rồi
+`spec-validate`, `task-decompose` và `implement`. `implement` dừng sau mỗi task để task sau chạy trong session mới:
+chạy `/clear`, rồi chạy lại `implement` (`--continuous` chạy hết các task trong một session, hợp với feature nhỏ).
+Nó cũng dừng trước task cần bạn duyệt (build hoặc chạy trên máy thật).
 
 ## Cách hoạt động
 
@@ -117,23 +128,28 @@ spec-create ─► spec-validate ─► task-decompose ─► implement
         │
         ▼
    fix round (blocking only, allowed files only) ─► delta review of the fix ─► done (max 2 rounds)
+        │
+        ▼
+   xong task ── dừng: /clear, rồi chạy lại implement cho task sau
+                (sau task cuối: chạy thêm một lần cho bước audit toàn feature)
 ```
 
-Xem [docs/architecture.vi.md](docs/architecture.vi.md) để hiểu lý do đằng sau từng bước, và
-[docs/field-notes.vi.md](docs/field-notes.vi.md) để biết những gì đã đo được trong lúc xây dựng nó.
+[docs/architecture.vi.md](docs/architecture.vi.md) giải thích từng bước, còn
+[docs/field-notes.vi.md](docs/field-notes.vi.md) ghi lại những gì đã đo được trong lúc xây dựng nó.
 
 ## Khi nào không nên dùng
 
-Sửa nhỏ, thay đổi trong một file và việc mày mò thử nghiệm thì làm trong một session duy nhất sẽ nhanh hơn. Chạy nhiều
-agent tốn số token gấp nhiều lần một cuộc chat. Xem [docs/when-not-to-use.vi.md](docs/when-not-to-use.vi.md).
+Sửa nhỏ, thay đổi trong một file và việc mày mò thử nghiệm làm trong một session sẽ nhanh hơn. Chạy nhiều agent tốn
+số token gấp nhiều lần một cuộc chat. Xem [docs/when-not-to-use.vi.md](docs/when-not-to-use.vi.md).
 
 ## Yêu cầu
 
-**Bắt buộc**
+Bắt buộc:
 - Claude Code có hỗ trợ plugin
-- `bash`, `git`, và `jq` hoặc `python3` (hook an toàn cần dùng)
+- `bash`, `git`, và `jq` hoặc `python3` (hook an toàn cần dùng; thiếu cả hai thì hook chặn mọi lệnh git)
+- `curl`, cho `/dev-pipeline:research` (để kiểm URL được trích dẫn có tồn tại)
 
-**Nên có** — không có thì agent vẫn chạy, chỉ kém chính xác hơn
+Nên có (không có thì agent vẫn chạy, chỉ kém chính xác hơn):
 - `serena`: tìm nơi gọi hàm và symbol
 - `context7`: tài liệu thư viện bản mới nhất
 
@@ -144,29 +160,30 @@ claude mcp add --scope user serena -- serena start-mcp-server --context claude-c
 
 Tên phải đúng chính xác là `serena` và `context7`.
 
-**Công cụ riêng của dự án bạn** (Flutter, CMake, …) phải có trong `PATH` để agent chạy được test của bạn.
+Công cụ riêng của dự án bạn (Flutter, CMake, …) phải có trong `PATH` để agent chạy được test của bạn.
 
 ## Hook an toàn
 
 `review-gate` cài một hook `PreToolUse` cho `Bash`:
-- **Session chính:** chỉ chặn những lệnh xóa mất phần việc chưa commit — `git checkout` lên đường dẫn (có hoặc không
+- **Session chính:** chỉ chặn những lệnh xóa mất phần việc chưa commit: `git checkout` lên đường dẫn (có hoặc không
   có `--`, `.`, `--force`, `--patch`), `git restore` (chỉ cho phép `--staged` đứng một mình), `git stash` (trừ
-  `create|list|show`), `git clean` (trừ `-n`), `git reset --hard|--merge|--keep`, `git worktree remove --force`.
-  Chuyển branch, commit và push vẫn dùng bình thường.
+  `create|list|show`), `git clean` (trừ `-n`), `git reset --hard|--merge|--keep`, các dạng `--force` của `switch`,
+  `checkout-index`, `rm` (trừ `--cached`), `mv`, `worktree remove` và `submodule deinit|update`, cùng
+  `switch --discard-changes` và `read-tree -u`. Chuyển branch, commit và push vẫn dùng bình thường.
 - **Bên trong subagent** (nhận biết qua `agent_id`): chặn thêm commit, push, rebase, merge, chuyển branch, thay đổi
   branch/tag/ref, gc/hết hạn reflog, và `git apply` khi không có `--check`.
-- Lệnh được chuẩn hóa trước theo cách shell sẽ đọc nó (nối các dòng ngắt bằng `\`, bỏ `$'…'` và cặp nháy rỗng, gỡ escape
-  `\x` và nháy bao quanh một từ), rồi từng phần của lệnh nối chuỗi (`;`, `&&`, `||`, `|`, xuống dòng) được kiểm tra
-  riêng. Lệnh git được dựng qua alias, biến `$GIT`, `eval` hoặc command substitution đều bị từ chối.
+- Hook chuẩn hóa lệnh trước theo cách shell sẽ đọc nó (nối các dòng ngắt bằng `\`, bỏ `$'…'` và cặp nháy rỗng, gỡ
+  escape `\x` và nháy bao quanh một từ), rồi kiểm tra riêng từng phần của lệnh nối chuỗi (`;`, `&&`, `||`, `|`, xuống
+  dòng). Alias git và nội dung `eval` được mở ra và kiểm tra như lệnh thường. Thứ gì không kiểm tra được (biến `$GIT`,
+  command substitution, alias định nghĩa ngay trong lệnh) thì bị từ chối.
 
-Đây là lớp chắn tai nạn, không phải ranh giới bảo mật — xem [SECURITY.md](SECURITY.md).
+Hook này chắn tai nạn, không phải ranh giới bảo mật: xem [SECURITY.md](SECURITY.md).
 
-Nếu bạn thật sự muốn chạy một lệnh bị chặn, hãy tự chạy nó bằng tiền tố `!` của Claude Code.
+Muốn chạy một lệnh bị chặn thì tự chạy nó bằng tiền tố `!` của Claude Code.
 
 ## Đóng góp
 
-Xem [CONTRIBUTING.md](CONTRIBUTING.md). Chạy `bash tests/run.sh` và `claude plugin validate --strict .` trước khi
-mở PR.
+Xem [CONTRIBUTING.md](CONTRIBUTING.md) để biết các bước kiểm tra trước khi mở PR.
 
 ## Giấy phép
 

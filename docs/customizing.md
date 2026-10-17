@@ -2,14 +2,15 @@
 
 # Customizing
 
-Everything below is optional. The kit works with its defaults after `/review-gate:init`.
+All of this is optional. After `/review-gate:init` the kit works with its defaults.
 
 ## 1. Keep your files somewhere else
 
-**When:** your brief, rules or specs do not live in the default folders.
+**When:** your brief, rules or specs are not in the default folders.
 
-By default the kit looks in `.claude/review-gate/` for its files and in `docs/specs/` and `docs/features/` for
-specs. To change that, create `.claude/review-gate/config.env` and set only the keys you need:
+The kit looks for its files in `.claude/review-gate/` and for specs in `docs/specs/` and `docs/features/`. To
+change where the validator scripts look, set only the keys you need in `.claude/review-gate/config.env` (`init`
+copies it):
 
 ```
 BRIEF_FILE=$ROOT/docs/agents/review_brief.md
@@ -27,14 +28,18 @@ SPECS_DIR=$ROOT/documentation/specs
 | `FEATURES_DIR` | Feature folders (tasks, state) | `docs/features` |
 
 Values may use only `$ROOT` (the project root) and `$CONTEXT_DIR` (`.claude/review-gate`). The file is read as
-plain data and never executed.
+plain data, never executed.
 
-The project root is found in this order: `REVIEW_GATE_PROJECT_DIR` if you set it, then `CLAUDE_PROJECT_DIR`,
-then the git root.
+Only the validator scripts read `config.env`; agent and command prompts always read `.claude/review-gate/<file>`.
+To keep a file elsewhere, also symlink it there, for example
+`ln -s ../../docs/agents/review_brief.md .claude/review-gate/review_brief.md`.
+
+The project root is, in order: `REVIEW_GATE_PROJECT_DIR` if set, `CLAUDE_PROJECT_DIR`, the git root, the current
+directory.
 
 ## 2. Add rules for your own stack
 
-**When:** you want reviewers to cite rules that are specific to your stack (web, backend, game, …).
+**When:** you want reviewers to cite rules for your stack (web, backend, game, …).
 
 Rule IDs look like `R-<NAMESPACE>-<number>`. To add a namespace, add rows to the table in section 2b of
 `review_rules.md`, one rule per row:
@@ -44,39 +49,39 @@ Rule IDs look like `R-<NAMESPACE>-<number>`. To add a namespace, add rows to the
 | `R-WEB-2` | Every API call has a timeout | Medium |
 ```
 
-That is all. As soon as a row exists, reviewers may cite `R-WEB-1` and `validate_rule_ids.sh` accepts it. An ID
-with no row is dropped, so a reviewer cannot invent one.
+Once a row exists, reviewers may cite `R-WEB-1` and `validate_rule_ids.sh` accepts it. An ID with no row is
+dropped, so reviewers cannot invent one.
 
 ## 3. Add your own agent
 
 **When:** you need a coder or reviewer for a part of your codebase the kit does not cover.
 
-1. Name it `<scope>-<role>`, for example `web-reviewer` or `backend-coder`. The roles and what each may do are in
+1. Name it `<scope>-<role>`, for example `web-reviewer` or `backend-coder`. Roles and their permissions are in
    [agent-guideline.md](agent-guideline.md).
 2. Put the file in `.claude/agents/<name>.md` (a project agent) or in your own plugin (see section 4).
-3. In the agent's instructions, tell it to read `.claude/review-gate/review_brief.md` first, and to end its reply
-   with the hand-off block from §B7 of that brief.
-4. Add the agent to `routing.md`, next to the folders it is responsible for. Write a plugin agent as
-   `<plugin>:<agent>`, for example `my-stack:web-reviewer`.
+3. Tell the agent to read `.claude/review-gate/review_brief.md` first and to end its reply with the hand-off block
+   from §B7 of that brief. A reviewer also needs `Write` in its `tools:` line to write its report file (§B7), and
+   no `Edit`.
+4. Add the agent to `routing.md` next to the folders it owns. Write a plugin agent as `<plugin>:<agent>`, for
+   example `my-stack:web-reviewer`.
 
 ## 4. Make a plugin for your own stack
 
-**When:** you want to reuse a set of agents across several projects, the way `flutter-native` does for
-Flutter.
+**When:** you want to reuse a set of agents across projects, as `flutter-native` does for Flutter.
 
-1. Copy the folder `plugins/flutter-native` and rename it.
-2. Replace the agents inside it with your own.
-3. In its `.claude-plugin/plugin.json`, keep `"dependencies": ["review-gate"]`, so the git safety hook and the
-   validators are installed with it.
+1. Copy `plugins/flutter-native` and rename it. In its `.claude-plugin/plugin.json`, change `name`, `displayName`
+   and `description`, or the copy clashes with the original.
+2. Replace its agents with your own.
+3. Keep `"dependencies": ["review-gate"]` in that `plugin.json` so the git safety hook and the validators install
+   with it.
 4. List the plugin in your own marketplace file.
 
-Note: Claude Code ignores `hooks`, `mcpServers` and `permissionMode` in the frontmatter of a **plugin** agent. You
-do not need them: the safety hook comes from `review-gate`.
+Claude Code ignores `hooks`, `mcpServers` and `permissionMode` in a plugin agent's frontmatter. You do not need
+them: the safety hook comes from `review-gate`.
 
 ## 5. Rename an agent
 
-**When:** you change an agent's name after it has already been used.
+**When:** you rename an agent that has already been used.
 
-Add the old and new names to the "Legacy names" section of `routing.md`, for example
-`review-web → web-reviewer`. Older `execution_state.md` files still mention the old name, and the pipeline
-uses this map to find the right agent.
+Add the old and new names to the "Legacy names" section of `routing.md`, for example `review-web → web-reviewer`.
+Older `execution_state.md` files still use the old name, and the pipeline uses this map to find the right agent.
