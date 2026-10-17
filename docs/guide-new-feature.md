@@ -10,7 +10,7 @@ notes"**. Use it as a map, not a script: your project facts, agents and rules wi
 
 > **This kit is a reference base, not a finished product.** It shows *how* to structure agents, rules and a
 > review loop. Copy the patterns, then adapt the agents, the rule vocabulary and the routing to your own project.
-> Do not expect the agents in `flutter-native-agents` to fit your codebase unchanged.
+> Do not expect the agents in `flutter-native` to fit your codebase unchanged.
 
 > **Running agents costs a lot of tokens.** One feature through the pipeline launches a coder, several
 > reviewers, one filter call per blocking finding and possibly fix rounds — each a separate model session on a
@@ -30,9 +30,9 @@ notes"**. Use it as a map, not a script: your project facts, agents and rules wi
 
 ```bash
 claude plugin marketplace add nccong85/escanner-agent-kit
-claude plugin install review-loop@escanner-agent-kit
+claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit
-claude plugin install flutter-native-agents@escanner-agent-kit   # or your own stack plugin
+claude plugin install flutter-native@escanner-agent-kit   # or your own stack plugin
 ```
 Add `--scope local` to keep the plugins to one project.
 
@@ -43,7 +43,7 @@ still runs the old copy — check `claude plugin list` in that project, and if t
 install the plugin again there. Local installs are recorded per project path, so a moved project folder needs the
 same reinstall.
 
-Inside the project, run `/review-loop:init`. It creates `.claude/review-loop/` and drafts the project facts from
+Inside the project, run `/review-gate:init`. It creates `.claude/review-gate/` and drafts the project facts from
 your code. Then **settle every `<VERIFY>` it leaves** — this is the step that decides the quality of every later
 review:
 
@@ -61,8 +61,8 @@ correctly marked as `<VERIFY>` everything it had to assume (budgets, test comman
 the files it just created; for the rest it prints suggestions. To check that a re-run left them alone:
 
 ```bash
-shasum .claude/review-loop/* > /tmp/before.sha    # before /review-loop:init
-shasum .claude/review-loop/* | diff /tmp/before.sha - && echo unchanged   # after
+shasum .claude/review-gate/* > /tmp/before.sha    # before /review-gate:init
+shasum .claude/review-gate/* | diff /tmp/before.sha - && echo unchanged   # after
 ```
 
 ## 1. Write the spec — `/dev-pipeline:spec-create "<feature>"`
@@ -114,7 +114,7 @@ condition that failed** — fix it and re-run.
 
 It writes `<feature>_tasks.md` and `execution_state.md` (the checkpoint `implement` resumes from). Check:
 - **One task, one layer, one agent** from `routing.md`. In the test run it produced one task for
-  `flutter-native-agents:flutter-coder`, and explained why: code and tests route to the same coder and reviewer,
+  `flutter-native:flutter-coder`, and explained why: code and tests route to the same coder and reviewer,
   and the tests are the proof of five goals.
 - **A Definition of Done the reviewer can grade**: pasted `flutter analyze` (0 issues) and
   `flutter test test/features/notes/notes_controller_test.dart` output, named tests, and diff-checkable rules
@@ -174,7 +174,7 @@ Things to watch in your own runs:
 ## When to skip the pipeline
 
 - **A small fix or one-file change:** make it in the main session, run the analyzer and the scoped tests, then
-  `/review-loop:review` on the diff — the same validator and filter, without spec and tasks.
+  `/review-gate:review` on the diff — the same validator and filter, without spec and tasks.
 - **Exploration or a prototype:** the loop optimizes a finished change, not discovery.
 - **Research questions:** `/dev-pipeline:research "<question>"` answers inline when it can and only spawns
   `tech-researcher` for depth or breadth questions.

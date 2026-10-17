@@ -5,6 +5,9 @@ argument-hint: "<research question(s)>"
 
 Research the question(s) in `$ARGUMENTS` for this project.
 
+**Pre-2.0 project:** if `.claude/review-gate/` does not exist but `.claude/review-loop/` does, stop and ask the
+user to run `/review-gate:init` first; it moves the folder and rewrites the old agent names.
+
 ## Step 1 — Classify BEFORE researching (this decides the bill)
 
 Most questions here do not need an agent. Multi-agent research costs roughly **3–10× a single agent and
@@ -87,7 +90,7 @@ The research file stays as the evidence trail, not as the place the decision liv
 
 Always surface licence compatibility, data-locality rules and the project's hard constraints (budgets, size
 limits, accuracy targets) in any recommendation. Reference the numbers where Part A of
-`.claude/review-loop/review_brief.md` and the product spec keep them — don't restate them here.
+`.claude/review-gate/review_brief.md` and the product spec keep them — don't restate them here.
 
 > **Subagent policy.** The Repo-first, API-lookup and Simple-factual tiers run **inline** — they need no agent.
 > Spawn `dev-pipeline:tech-researcher` only for Depth or Breadth questions, one agent per independent sub-question.

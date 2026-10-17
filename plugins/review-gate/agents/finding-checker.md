@@ -26,7 +26,7 @@ the model.
 ## Input you receive
 
 ```
-rule:       <ID from .claude/review-loop/review_rules.md>
+rule:       <ID from .claude/review-gate/review_rules.md>
 severity:   Critical | High | Medium | Low
 confidence: high | medium | low
 file:line:  <where>

@@ -7,13 +7,13 @@ These are the Claude Code agents, review rules and workflows I built and refined
 
 They are personal lessons from one project and are tailored to it, so treat them as a reference rather than a
 ready-made solution: copy the patterns and adapt the agents, rule vocabulary and routing to your own project (the
-agents in `flutter-native-agents` will not fit an unrelated codebase unchanged). You are welcome to improve them
+agents in `flutter-native` will not fit an unrelated codebase unchanged). You are welcome to improve them
 and take them further. I would be very happy if any of this helps you.
 
 - **Agents are token-hungry.** A single feature through the pipeline runs a coder, several reviewers, one filter
   call per blocking finding and possibly fix rounds, each a separate session on a strong model. Use it with a
   **Claude Max subscription**; on pay-per-token API billing it gets expensive quickly. For small changes use the
-  main session plus `/review-loop:review`.
+  main session plus `/review-gate:review`.
 - **Models.** Agents use `model: inherit` (your session's model); only `finding-checker` is pinned to `opus`,
   because a smaller model once rejected a true finding.
 
@@ -28,13 +28,13 @@ The kit is split into four plugins so you install only what fits your project.
 
 | Plugin | Who it is for | Required? | What you get |
 |---|---|---|---|
-| [`review-loop`](plugins/review-loop) | Any project, any language | **Core**, install it first | `finding-checker` agent · `/review-loop:review` · `/review-loop:init` · rule/finding/spec/citation validators · destructive-git hook · project templates |
-| [`flutter-native-agents`](plugins/flutter-native-agents) | Flutter apps with a C/C++ engine and iOS/Android code, like e-Scanner | Optional | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
+| [`review-gate`](plugins/review-gate) | Any project, any language | **Core**, install it first | `finding-checker` agent · `/review-gate:review` · `/review-gate:init` · rule/finding/spec/citation validators · destructive-git hook · project templates |
+| [`flutter-native`](plugins/flutter-native) | Flutter apps with a C/C++ engine and iOS/Android code, like e-Scanner | Optional | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev-pipeline`](plugins/dev-pipeline) | Teams that want the whole flow: spec → tasks → code → review | Optional | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md` · `/dev-pipeline:research` · `tech-researcher` agent |
 | [`device-e2e`](plugins/device-e2e) | Anyone testing a mobile app on a real iPhone or Android phone | Optional | `device-tester` agent · `/device-e2e:init` · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
 
-`review-loop` works on its own. Each optional plugin depends on it, and installing one installs `review-loop` too.
-Working on another stack (web, backend, …)? Install `review-loop` and add your own agents — see
+`review-gate` works on its own. Each optional plugin depends on it, and installing one installs `review-gate` too.
+Working on another stack (web, backend, …)? Install `review-gate` and add your own agents — see
 [docs/customizing.md](docs/customizing.md).
 
 ## Agents
@@ -45,40 +45,46 @@ sources.
 
 | Agent | Plugin | What it does |
 |---|---|---|
-| `finding-checker` | `review-loop` | Takes one problem a reviewer reported and decides whether it is real, before anyone spends a fix round on it |
+| `finding-checker` | `review-gate` | Takes one problem a reviewer reported and decides whether it is real, before anyone spends a fix round on it |
 | `tech-researcher` | `dev-pipeline` | Answers a technical question (which library, which API, what a store rule says) with cited sources |
 | `device-tester` | `device-e2e` | Runs end-to-end tests of the app on a real iPhone and Android phone |
-| `flutter-coder` | `flutter-native-agents` | Writes Flutter/Dart feature code: screens, state, routes, storage |
-| `flutter-reviewer` | `flutter-native-agents` | Reviews Flutter/Dart changes |
-| `cpp-engine-expert` | `flutter-native-agents` | Writes and reviews the C++ image-processing engine |
-| `ios-android-expert` | `flutter-native-agents` | Writes and reviews the Swift (iOS) and Kotlin (Android) code the app calls |
-| `contract-expert` | `flutter-native-agents` | Guards the contracts between the parts — C ABI, encrypted file format, API shapes — so both sides stay in sync |
-| `build-release-expert` | `flutter-native-agents` | Writes and reviews CI, signing and store release work |
-| `security-checker` | `flutter-native-agents` | Checks changes that touch encryption, keys, logging or user data |
-| `performance-checker` | `flutter-native-agents` | Checks changes on hot paths (startup, image pipeline, database) against the project's budgets |
+| `flutter-coder` | `flutter-native` | Writes Flutter/Dart feature code: screens, state, routes, storage |
+| `flutter-reviewer` | `flutter-native` | Reviews Flutter/Dart changes |
+| `cpp-engine-expert` | `flutter-native` | Writes and reviews the C++ image-processing engine |
+| `ios-android-expert` | `flutter-native` | Writes and reviews the Swift (iOS) and Kotlin (Android) code the app calls |
+| `contract-expert` | `flutter-native` | Guards the contracts between the parts — C ABI, encrypted file format, API shapes — so both sides stay in sync |
+| `build-release-expert` | `flutter-native` | Writes and reviews CI, signing and store release work |
+| `security-checker` | `flutter-native` | Checks changes that touch encryption, keys, logging or user data |
+| `performance-checker` | `flutter-native` | Checks changes on hot paths (startup, image pipeline, database) against the project's budgets |
+
+**Upgrading from 1.x?** Two plugins were renamed in 2.0.0: `review-loop` → `review-gate` and
+`flutter-native-agents` → `flutter-native`. Uninstall the old ones, install the new ones, then run
+`/review-gate:init`: it moves `.claude/review-loop/` to `.claude/review-gate/` and rewrites the agent prefixes in
+it. Until you do, the validators still read the old folder (with a NOTE), and the pipeline commands stop and ask you
+to run init.
 
 **Upgrading from 1.0.x?** The agents were renamed in 1.1.0 (for example `review-filter` → `finding-checker`,
-`owner-contract` → `contract-expert`). Update the names in your `.claude/review-loop/routing.md`; the full old → new
-map is in the `Legacy names` section of [the routing template](plugins/review-loop/templates/routing.md). Copy it
+`owner-contract` → `contract-expert`). Update the names in your `.claude/review-gate/routing.md`; the full old → new
+map is in the `Legacy names` section of [the routing template](plugins/review-gate/templates/routing.md). Copy it
 into your routing file so plans written with 1.0.x still resolve.
 
 ## Install
 
 ```bash
 claude plugin marketplace add nccong85/escanner-agent-kit
-claude plugin install review-loop@escanner-agent-kit
+claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
-claude plugin install flutter-native-agents@escanner-agent-kit   # optional, Flutter + native stacks
+claude plugin install flutter-native@escanner-agent-kit   # optional, Flutter + native stacks
 claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
 ```
 
 Then, inside your project:
 
 ```
-/review-loop:init
+/review-gate:init
 ```
 
-`init` creates `.claude/review-loop/` from the templates and drafts the project facts from your code:
+`init` creates `.claude/review-gate/` from the templates and drafts the project facts from your code:
 
 | File | Holds |
 |---|---|
@@ -88,7 +94,7 @@ Then, inside your project:
 | `common_pitfalls.md` | Your defect corpus (Symptom → Cause → Rule). |
 | `config.env` | Paths the validators use, if your docs live somewhere else. |
 
-Review a diff with `/review-loop:review`. Run a feature end to end with `/dev-pipeline:spec-create "<feature>"`.
+Review a diff with `/review-gate:review`. Run a feature end to end with `/dev-pipeline:spec-create "<feature>"`.
 
 ## How it works
 
@@ -142,7 +148,7 @@ The names must be exactly `serena` and `context7`.
 
 ## Safety hook
 
-`review-loop` installs a `PreToolUse` hook on `Bash`:
+`review-gate` installs a `PreToolUse` hook on `Bash`:
 - **Main session:** blocks only commands that destroy uncommitted work — `git checkout` of paths (with or
   without `--`, `.`, `--force`, `--patch`), `git restore` (only `--staged` alone is allowed), `git stash` (not
   `create|list|show`), `git clean` (not `-n`), `git reset --hard|--merge|--keep`, `git worktree remove --force`.

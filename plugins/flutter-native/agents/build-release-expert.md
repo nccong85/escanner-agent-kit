@@ -6,7 +6,7 @@ model: inherit
 color: yellow
 ---
 
-## Binding context — read `.claude/review-loop/review_brief.md` FIRST
+## Binding context — read `.claude/review-gate/review_brief.md` FIRST
 
 It overrides this file on conflict. **Part A** = verified project facts (layout, stack, commands, budgets,
 non-negotiables): do not re-derive them; grep only for what Part A does not answer, inside the diff.
@@ -80,7 +80,7 @@ regression threshold from the project's perf spec / config, not from memory.
 - Do NOT write tests or native algorithm code — recommend the better-fit agent and stop.
 
 ## Method
-1. **Orient:** read `.claude/review-loop/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
+1. **Orient:** read `.claude/review-gate/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
 2. Place the change in the pipeline; note whether it touches a gate, a lane, the cache, or a deploy target.
 3. Implement/review against the real, discovered toolchain matrix; keep CI fast, cacheable, reproducible.
 4. Verify locally with the Part A commands where feasible; confirm the perf gate stays wired and blocking and

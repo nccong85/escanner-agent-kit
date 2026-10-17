@@ -1,9 +1,9 @@
 **English** · [Tiếng Việt](README.vi.md)
 
-# flutter-native-agents
+# flutter-native
 
 Reference agents for Flutter apps with a C/C++ engine behind FFI and iOS/Android platform code. Requires
-`review-loop`. Every agent reads `.claude/review-loop/review_brief.md` first, so your project's facts override the
+`review-gate`. Every agent reads `.claude/review-gate/review_brief.md` first, so your project's facts override the
 illustrative defaults inside each agent.
 
 | Agent | Role | Writes code? |
@@ -20,4 +20,4 @@ illustrative defaults inside each agent.
 Name scheme: `<scope>-<role>` — `-coder` writes, `-expert` writes and reviews one layer, `-reviewer` and `-checker`
 are read-only. Reviewers get only the read-only serena tools; agents default to `model: inherit`.
 
-Use them as plugin agents (`flutter-native-agents:<name>`) or copy one into `.claude/agents/` and adapt it.
+Use them as plugin agents (`flutter-native:<name>`) or copy one into `.claude/agents/` and adapt it.

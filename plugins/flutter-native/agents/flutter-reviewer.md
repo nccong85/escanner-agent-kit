@@ -7,7 +7,7 @@ maxTurns: 80
 color: cyan
 ---
 
-## Binding context — read `.claude/review-loop/review_brief.md` FIRST
+## Binding context — read `.claude/review-gate/review_brief.md` FIRST
 
 It overrides this file on conflict. **Part A** = verified project facts (layout, stack, commands, budgets,
 non-negotiables): do not re-derive them; grep only for what Part A does not answer, inside the diff.
@@ -104,7 +104,7 @@ all code and comments in English.
 - Do NOT pass a change that logs secrets/plaintext or leaves the analyzer non-green.
 
 ## Method
-1. **Orient:** read `.claude/review-loop/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
+1. **Orient:** read `.claude/review-gate/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
 2. Scope the diff (`git status` / `git diff`); read the touched files plus nearest existing code.
 3. Judge each focus area against the discovered conventions and budgets; assign severities.
 4. If safe, run the project's analyzer and targeted tests (discover the commands) to confirm

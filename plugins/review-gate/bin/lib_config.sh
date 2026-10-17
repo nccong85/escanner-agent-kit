@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
-ROOT="${REVIEW_LOOP_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
-CONTEXT_DIR="${CONTEXT_DIR:-$ROOT/.claude/review-loop}"
+ROOT="${REVIEW_GATE_PROJECT_DIR:-${REVIEW_LOOP_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}}"
+# Before 2.0.0 the plugin was review-loop and its files lived in .claude/review-loop/. Keep reading them until
+# /review-gate:init moves them, and say so on every run.
+if [ -z "${CONTEXT_DIR:-}" ] && [ ! -e "$ROOT/.claude/review-gate" ] && [ -d "$ROOT/.claude/review-loop" ]; then
+  echo "NOTE: reading .claude/review-loop/ (the pre-2.0 name); run /review-gate:init to move it to .claude/review-gate/" >&2
+  CONTEXT_DIR="$ROOT/.claude/review-loop"
+fi
+CONTEXT_DIR="${CONTEXT_DIR:-$ROOT/.claude/review-gate}"
 
 read_config() {
   local file="$1" line key value
@@ -48,7 +54,7 @@ require_file() {
   if [ -L "$1" ]; then
     echo "FATAL: broken symlink for the $2 file: $1 -> $(readlink "$1") (fix the link or config.env)"
   else
-    echo "FATAL: missing $2 file $1 (run /review-loop:init or fix config.env)"
+    echo "FATAL: missing $2 file $1 (run /review-gate:init or fix config.env)"
   fi
   exit 2
 }

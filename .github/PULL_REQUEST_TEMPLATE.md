@@ -2,7 +2,7 @@
 
 ## Evidence
 - [ ] `bash tests/run.sh` passes (paste the counts)
-- [ ] `shellcheck -S warning plugins/review-loop/bin/*.sh tests/*.sh` is clean
+- [ ] `shellcheck -S warning plugins/review-gate/bin/*.sh tests/*.sh` is clean
 - [ ] `claude plugin validate --strict` passes for the marketplace and every changed plugin
 - [ ] Changed agents/commands were tried in a fresh Claude Code session — what you ran:
 

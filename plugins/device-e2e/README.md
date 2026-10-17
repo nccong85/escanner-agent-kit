@@ -16,7 +16,7 @@ and keeps the traps that cost real device time there.
 
 ## Set up
 
-1. `claude plugin install device-e2e@escanner-agent-kit` (it depends on `review-loop`, whose hook keeps the agent
+1. `claude plugin install device-e2e@escanner-agent-kit` (it depends on `review-gate`, whose hook keeps the agent
    from running destructive git commands).
 2. Run `/device-e2e:init` in your project. It creates `.claude/device-e2e/project.md` from `project.template.md`
    (never over an existing one) and lists the slots you still have to fill.

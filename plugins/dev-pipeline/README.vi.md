@@ -2,7 +2,7 @@
 
 # dev-pipeline
 
-Từ spec đến lúc ship, có một bước người duyệt ngay sau spec và một vòng review luôn có điểm dừng. Cần có `review-loop`.
+Từ spec đến lúc ship, có một bước người duyệt ngay sau spec và một vòng review luôn có điểm dừng. Cần có `review-gate`.
 
 | Lệnh | Làm gì |
 |---|---|

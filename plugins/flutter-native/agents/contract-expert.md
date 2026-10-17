@@ -6,7 +6,7 @@ model: inherit
 color: red
 ---
 
-## Binding context — read `.claude/review-loop/review_brief.md` FIRST
+## Binding context — read `.claude/review-gate/review_brief.md` FIRST
 
 It overrides this file on conflict. **Part A** = verified project facts (layout, stack, commands, budgets,
 non-negotiables): do not re-derive them; grep only for what Part A does not answer, inside the diff.
@@ -110,7 +110,7 @@ field, new wire field behind a version gate) are lower-risk but **STILL need a v
 - DO reserve removed enum values / document deprecated fields rather than deleting them.
 
 ## Process for a contract task
-1. **Orient:** read `.claude/review-loop/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
+1. **Orient:** read `.claude/review-gate/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
 2. Decide if the change is contract-breaking (use the list above). If yes, drive the header/spec/schema-first sequence.
 3. Update the source of truth; pin field widths, enum values, version behavior, AAD/framing, API shape.
 4. Regenerate bindings + update the native impl together (ABI), or update every platform's encode/decode together (wire/API).

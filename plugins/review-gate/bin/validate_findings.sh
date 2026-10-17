@@ -8,7 +8,7 @@ usage() {
   exit 2
 }
 
-ROOT="${REVIEW_LOOP_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}"
+ROOT="${REVIEW_GATE_PROJECT_DIR:-${REVIEW_LOOP_PROJECT_DIR:-${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}}}"
 BASE="HEAD"
 if [ "${1:-}" = "--base" ]; then
   [ $# -ge 2 ] || usage

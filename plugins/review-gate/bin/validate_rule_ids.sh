@@ -8,7 +8,7 @@ set -uo pipefail
 . "$(dirname "${BASH_SOURCE[0]}")/lib_config.sh"
 shopt -s globstar nullglob 2>/dev/null || true
 
-[ -f "$RULES" ] || { echo "FATAL: missing rules index $RULES (run /review-loop:init)"; exit 2; }
+[ -f "$RULES" ] || { echo "FATAL: missing rules index $RULES (run /review-gate:init)"; exit 2; }
 [ $# -gt 0 ] || { echo "usage: $(basename "$0") <RULE_ID>..."; exit 2; }
 # Check the pitfalls/brief files only for the families actually cited, so a project that never cites one
 # family need not keep its file. A missing file used to turn every such ID into a silent UNKNOWN, and the

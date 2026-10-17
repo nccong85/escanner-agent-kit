@@ -2,7 +2,7 @@
 
 # dev-pipeline
 
-Spec → ship with a human gate after the spec and a review loop that ends. Requires `review-loop`.
+Spec → ship with a human gate after the spec and a review loop that ends. Requires `review-gate`.
 
 | Command | Does |
 |---|---|

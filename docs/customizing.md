@@ -2,14 +2,14 @@
 
 # Customizing
 
-Everything below is optional. The kit works with its defaults after `/review-loop:init`.
+Everything below is optional. The kit works with its defaults after `/review-gate:init`.
 
 ## 1. Keep your files somewhere else
 
 **When:** your brief, rules or specs do not live in the default folders.
 
-By default the kit looks in `.claude/review-loop/` for its files and in `docs/specs/` and `docs/features/` for
-specs. To change that, create `.claude/review-loop/config.env` and set only the keys you need:
+By default the kit looks in `.claude/review-gate/` for its files and in `docs/specs/` and `docs/features/` for
+specs. To change that, create `.claude/review-gate/config.env` and set only the keys you need:
 
 ```
 BRIEF_FILE=$ROOT/docs/agents/review_brief.md
@@ -19,17 +19,17 @@ SPECS_DIR=$ROOT/documentation/specs
 
 | Key | What it points to | Default |
 |---|---|---|
-| `BRIEF_FILE` | Project facts and review protocol | `.claude/review-loop/review_brief.md` |
-| `RULES_FILE` | The list of rule IDs | `.claude/review-loop/review_rules.md` |
-| `ROUTING_FILE` | Which agent handles which folder | `.claude/review-loop/routing.md` |
-| `PITFALLS_FILE` | Your project's pitfalls list | `.claude/review-loop/common_pitfalls.md` |
+| `BRIEF_FILE` | Project facts and review protocol | `.claude/review-gate/review_brief.md` |
+| `RULES_FILE` | The list of rule IDs | `.claude/review-gate/review_rules.md` |
+| `ROUTING_FILE` | Which agent handles which folder | `.claude/review-gate/routing.md` |
+| `PITFALLS_FILE` | Your project's pitfalls list | `.claude/review-gate/common_pitfalls.md` |
 | `SPECS_DIR` | Specs | `docs/specs` |
 | `FEATURES_DIR` | Feature folders (tasks, state) | `docs/features` |
 
-Values may use only `$ROOT` (the project root) and `$CONTEXT_DIR` (`.claude/review-loop`). The file is read as
+Values may use only `$ROOT` (the project root) and `$CONTEXT_DIR` (`.claude/review-gate`). The file is read as
 plain data and never executed.
 
-The project root is found in this order: `REVIEW_LOOP_PROJECT_DIR` if you set it, then `CLAUDE_PROJECT_DIR`,
+The project root is found in this order: `REVIEW_GATE_PROJECT_DIR` if you set it, then `CLAUDE_PROJECT_DIR`,
 then the git root.
 
 ## 2. Add rules for your own stack
@@ -54,24 +54,24 @@ with no row is dropped, so a reviewer cannot invent one.
 1. Name it `<scope>-<role>`, for example `web-reviewer` or `backend-coder`. The roles and what each may do are in
    [agent-guideline.md](agent-guideline.md).
 2. Put the file in `.claude/agents/<name>.md` (a project agent) or in your own plugin (see section 4).
-3. In the agent's instructions, tell it to read `.claude/review-loop/review_brief.md` first, and to end its reply
+3. In the agent's instructions, tell it to read `.claude/review-gate/review_brief.md` first, and to end its reply
    with the hand-off block from §B7 of that brief.
 4. Add the agent to `routing.md`, next to the folders it is responsible for. Write a plugin agent as
    `<plugin>:<agent>`, for example `my-stack:web-reviewer`.
 
 ## 4. Make a plugin for your own stack
 
-**When:** you want to reuse a set of agents across several projects, the way `flutter-native-agents` does for
+**When:** you want to reuse a set of agents across several projects, the way `flutter-native` does for
 Flutter.
 
-1. Copy the folder `plugins/flutter-native-agents` and rename it.
+1. Copy the folder `plugins/flutter-native` and rename it.
 2. Replace the agents inside it with your own.
-3. In its `.claude-plugin/plugin.json`, keep `"dependencies": ["review-loop"]`, so the git safety hook and the
+3. In its `.claude-plugin/plugin.json`, keep `"dependencies": ["review-gate"]`, so the git safety hook and the
    validators are installed with it.
 4. List the plugin in your own marketplace file.
 
 Note: Claude Code ignores `hooks`, `mcpServers` and `permissionMode` in the frontmatter of a **plugin** agent. You
-do not need them: the safety hook comes from `review-loop`.
+do not need them: the safety hook comes from `review-gate`.
 
 ## 5. Rename an agent
 

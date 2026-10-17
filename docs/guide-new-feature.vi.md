@@ -11,7 +11,7 @@ agent và rule của bạn sẽ khác.
 
 > **Bộ kit này là nền tham khảo, không phải sản phẩm hoàn chỉnh.** Nó cho thấy *cách* tổ chức agent, rule và một
 > vòng review. Hãy chép lại các pattern, rồi chỉnh agent, bộ từ vựng rule và routing cho hợp với project của bạn.
-> Đừng mong các agent trong `flutter-native-agents` dùng được ngay cho codebase của bạn mà không cần sửa.
+> Đừng mong các agent trong `flutter-native` dùng được ngay cho codebase của bạn mà không cần sửa.
 
 > **Chạy agent tốn rất nhiều token.** Một tính năng đi qua pipeline sẽ khởi chạy một coder, vài reviewer, một lần
 > gọi bộ lọc cho mỗi finding chặn (finding là lỗi mà reviewer báo) và có thể thêm các vòng sửa — mỗi cái là một
@@ -31,9 +31,9 @@ agent và rule của bạn sẽ khác.
 
 ```bash
 claude plugin marketplace add nccong85/escanner-agent-kit
-claude plugin install review-loop@escanner-agent-kit
+claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit
-claude plugin install flutter-native-agents@escanner-agent-kit   # or your own stack plugin
+claude plugin install flutter-native@escanner-agent-kit   # or your own stack plugin
 ```
 Thêm `--scope local` để plugin chỉ áp dụng cho một project.
 
@@ -44,7 +44,7 @@ project đó vẫn chạy bản cũ — hãy kiểm tra `claude plugin list` tro
 cài lại plugin ở đó. Bản cài local được ghi theo đường dẫn project, nên nếu bạn di chuyển thư mục project thì cũng
 phải cài lại như vậy.
 
-Trong project, chạy `/review-loop:init`. Lệnh này tạo `.claude/review-loop/` và soạn sẵn thông tin project từ code
+Trong project, chạy `/review-gate:init`. Lệnh này tạo `.claude/review-gate/` và soạn sẵn thông tin project từ code
 của bạn. Sau đó **xử lý hết mọi `<VERIFY>` nó để lại** — đây là bước quyết định chất lượng của mọi lần review về sau:
 
 | File | Bạn phải kiểm tra gì |
@@ -62,8 +62,8 @@ dung vào các file nó vừa tạo; với các file còn lại nó chỉ in ra 
 chúng:
 
 ```bash
-shasum .claude/review-loop/* > /tmp/before.sha    # before /review-loop:init
-shasum .claude/review-loop/* | diff /tmp/before.sha - && echo unchanged   # after
+shasum .claude/review-gate/* > /tmp/before.sha    # before /review-gate:init
+shasum .claude/review-gate/* | diff /tmp/before.sha - && echo unchanged   # after
 ```
 
 ## 1. Viết spec — `/dev-pipeline:spec-create "<feature>"`
@@ -117,7 +117,7 @@ rồi chạy lại.
 
 Lệnh này ghi ra `<feature>_tasks.md` và `execution_state.md` (checkpoint mà `implement` dùng để chạy tiếp). Kiểm tra:
 - **Mỗi task một layer, một agent** theo `routing.md`. Trong lần chạy thử, nó tạo một task cho
-  `flutter-native-agents:flutter-coder` và giải thích lý do: code và test đều được route tới cùng một coder và
+  `flutter-native:flutter-coder` và giải thích lý do: code và test đều được route tới cùng một coder và
   reviewer, và test chính là bằng chứng cho năm mục tiêu.
 - **Một Definition of Done (DoD) mà reviewer chấm được**: dán output của `flutter analyze` (0 issues) và
   `flutter test test/features/notes/notes_controller_test.dart`, các test có tên cụ thể, và các rule kiểm tra được
@@ -178,7 +178,7 @@ Những điều cần để ý khi bạn tự chạy:
 ## Khi nào nên bỏ qua pipeline
 
 - **Sửa nhỏ hoặc thay đổi trong một file:** làm trong session chính, chạy analyzer và các test liên quan, rồi chạy
-  `/review-loop:review` trên diff — cùng validator và bộ lọc, nhưng không cần spec và task.
+  `/review-gate:review` trên diff — cùng validator và bộ lọc, nhưng không cần spec và task.
 - **Khám phá hoặc làm prototype:** vòng lặp này tối ưu một thay đổi đã hoàn chỉnh, không phải để khám phá.
 - **Câu hỏi nghiên cứu:** `/dev-pipeline:research "<question>"` trả lời ngay nếu được, và chỉ gọi `tech-researcher`
   khi câu hỏi cần đào sâu hoặc phủ rộng.

@@ -8,6 +8,9 @@ argument-hint: "<path-to-spec-file>"
 **Input:** the spec at `$ARGUMENTS`.
 **Output (same folder as the spec):** `{feature}_tasks.md` and `execution_state.md`.
 
+**Pre-2.0 project:** if `.claude/review-gate/` does not exist but `.claude/review-loop/` does, stop and ask the
+user to run `/review-gate:init` first; it moves the folder and rewrites the old agent names.
+
 ## Step 0: Refuse to overwrite another spec's plan
 If `{feature}_tasks.md` or `execution_state.md` already exists in the spec's folder, read its `**Source:**` /
 `**Spec:**` line. When it names a different spec, **stop**: name the conflicting file and tell the user to move
@@ -49,7 +52,7 @@ command it names.
 
 ### Sizing and boundary rules
 - **One task, one layer**, so it routes to one agent. Take the agent from the **Coder** column of
-  `.claude/review-loop/routing.md`; do not restate the mapping.
+  `.claude/review-gate/routing.md`; do not restate the mapping.
 - **Contract-first (when contract impact ≠ none):**
   1. Task 1 changes the contract (header, wire-format section, API shapes). Agent: the contract expert. It blocks
      every per-layer task.

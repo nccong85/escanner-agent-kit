@@ -16,7 +16,7 @@ từng làm tốn thời gian trên máy thật.
 
 ## Cài đặt
 
-1. `claude plugin install device-e2e@escanner-agent-kit` (plugin này phụ thuộc `review-loop`, có hook ngăn agent chạy
+1. `claude plugin install device-e2e@escanner-agent-kit` (plugin này phụ thuộc `review-gate`, có hook ngăn agent chạy
    các lệnh git phá dữ liệu).
 2. Chạy `/device-e2e:init` trong dự án. Lệnh này tạo `.claude/device-e2e/project.md` từ `project.template.md`
    (không bao giờ ghi đè file đã có) và liệt kê các ô bạn còn phải điền.

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -uo pipefail
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
-H="$HERE/plugins/review-loop/bin/block_destructive_git.sh"
-BIN="$HERE/plugins/review-loop/bin"
+H="$HERE/plugins/review-gate/bin/block_destructive_git.sh"
+BIN="$HERE/plugins/review-gate/bin"
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/rl_sec.XXXXXX")"
 trap 'rm -rf "$WORK"' EXIT
 
@@ -64,20 +64,20 @@ for c in 'grep -n "git restore" notes.txt' "rg 'git stash' docs" 'git commit -m 
   t 0 main "$c"
 done
 
-PROJ="$WORK/proj"; mkdir -p "$PROJ/.claude/review-loop"
-cp "$HERE/plugins/review-loop/templates/review_rules.md" "$PROJ/.claude/review-loop/"
-printf '1. rule\n' > "$PROJ/.claude/review-loop/review_brief.md"
-cat > "$PROJ/.claude/review-loop/config.env" <<EOF
+PROJ="$WORK/proj"; mkdir -p "$PROJ/.claude/review-gate"
+cp "$HERE/plugins/review-gate/templates/review_rules.md" "$PROJ/.claude/review-gate/"
+printf '1. rule\n' > "$PROJ/.claude/review-gate/review_brief.md"
+cat > "$PROJ/.claude/review-gate/config.env" <<EOF
 RULES_FILE="\$(touch $WORK/pwned1)\$CONTEXT_DIR/review_rules.md"
 BRIEF_FILE=\`touch $WORK/pwned2\`
 SPECS_DIR=\$ROOT/docs/specs; touch $WORK/pwned3
 PATH=/tmp/evil
 EOF
-( cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$BIN/validate_rule_ids.sh" R-NN-1 >/dev/null 2>&1 )
+( cd "$PROJ" && REVIEW_GATE_PROJECT_DIR="$PROJ" "$BIN/validate_rule_ids.sh" R-NN-1 >/dev/null 2>&1 )
 if ls "$WORK"/pwned* >/dev/null 2>&1; then fail=$((fail+1)); echo "FAIL config.env executed code"; else pass=$((pass+1)); fi
 
-printf 'RULES_FILE="$CONTEXT_DIR/review_rules.md"\nBRIEF_FILE=$ROOT/.claude/review-loop/review_brief.md\n' > "$PROJ/.claude/review-loop/config.env"
-if ( cd "$PROJ" && REVIEW_LOOP_PROJECT_DIR="$PROJ" "$BIN/validate_rule_ids.sh" R-NN-1 >/dev/null 2>&1 ); then
+printf 'RULES_FILE="$CONTEXT_DIR/review_rules.md"\nBRIEF_FILE=$ROOT/.claude/review-gate/review_brief.md\n' > "$PROJ/.claude/review-gate/config.env"
+if ( cd "$PROJ" && REVIEW_GATE_PROJECT_DIR="$PROJ" "$BIN/validate_rule_ids.sh" R-NN-1 >/dev/null 2>&1 ); then
   pass=$((pass+1)); else fail=$((fail+1)); echo "FAIL a safe config.env was not honoured"; fi
 
 echo "security: pass=$pass fail=$fail"

@@ -8,7 +8,10 @@ argument-hint: "<feature-or-bugfix-description>"
 **Goal:** a spec that is the source of truth for `/dev-pipeline:task-decompose`.
 **Input:** the feature description in `$ARGUMENTS`.
 **Output:** `<features dir>/{feature-name}/spec_{feature-name}.md` — the features dir is `FEATURES_DIR` in
-`.claude/review-loop/config.env` (default `docs/features`).
+`.claude/review-gate/config.env` (default `docs/features`).
+
+**Pre-2.0 project:** if `.claude/review-gate/` does not exist but `.claude/review-loop/` does, stop and ask the
+user to run `/review-gate:init` first; it moves the folder and rewrites the old agent names.
 
 Enter plan mode first: explore thoroughly before writing, and get the user's approval before finalizing.
 
@@ -20,7 +23,7 @@ Enter plan mode first: explore thoroughly before writing, and get the user's app
   this is a follow-up: pick a distinct feature name (e.g. `{feature-name}_v2`, or what the follow-up actually
   does) and tell the user. A follow-up gets its own folder too, even when it extends an existing feature: the
   old folder's `execution_state.md` holds that feature's history, and task-decompose writes by fixed name.
-- List the **layers** it touches, using the layout in `.claude/review-loop/review_brief.md` Part A.
+- List the **layers** it touches, using the layout in `.claude/review-gate/review_brief.md` Part A.
 - Flag **contract impact**: does it change an ABI, an encrypted or binary wire format, or a network API shape?
   If yes it is a **contract change** and needs contract-first sequencing (the contract expert in `routing.md`).
 

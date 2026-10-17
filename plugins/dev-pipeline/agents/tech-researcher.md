@@ -104,7 +104,7 @@ answer settles a decision or a constraint, end with a **Graduation** line naming
 | The finding is… | It belongs in |
 |---|---|
 | A constraint, budget, ceiling, or banned option | `CLAUDE.md` (or the spec it governs, if that is the normative source) |
-| A defect class with a Symptom→Cause→Rule shape | `.claude/review-loop/common_pitfalls.md` |
+| A defect class with a Symptom→Cause→Rule shape | `.claude/review-gate/common_pitfalls.md` |
 | A settled choice + the reasons it was chosen over the alternatives | the feature spec |
 | A durable fact about environment, tooling, or an external service | a memory entry |
 

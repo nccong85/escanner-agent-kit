@@ -6,7 +6,7 @@ model: inherit
 color: blue
 ---
 
-## Binding context — read `.claude/review-loop/review_brief.md` FIRST
+## Binding context — read `.claude/review-gate/review_brief.md` FIRST
 
 It overrides this file on conflict. **Part A** = verified project facts (layout, stack, commands, budgets,
 non-negotiables): do not re-derive them; grep only for what Part A does not answer, inside the diff.
@@ -124,7 +124,7 @@ Dispatch on the project's filter enum; the default case returns the invalid-inpu
 - Do NOT regress the discovered perf budget beyond the project's threshold. Measure, don't guess.
 
 ## Method
-1. **Orient:** read `.claude/review-loop/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
+1. **Orient:** read `.claude/review-gate/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
 2. Place the change behind the existing ABI; note whether it touches a public signature, struct, or enum.
 3. Implement against vetted OpenCV ops + the discovered conventions; keep allocate/free paired.
 4. Build + test; benchmark every hot path against the discovered budget.

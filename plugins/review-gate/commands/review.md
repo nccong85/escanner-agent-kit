@@ -3,9 +3,12 @@ description: Review the current diff with the routed reviewers, validate every r
 argument-hint: "[optional: path or scope]"
 ---
 
-Project files live in `.claude/review-loop/` (create them with `/review-loop:init`): `review_brief.md`,
+Project files live in `.claude/review-gate/` (create them with `/review-gate:init`): `review_brief.md`,
 `review_rules.md`, `routing.md`, the pitfalls file. Reports go to the reports directory named in
 `review_brief.md` Part B §B7.
+
+**Pre-2.0 project:** if `.claude/review-gate/` does not exist but `.claude/review-loop/` does, stop and ask the
+user to run `/review-gate:init` first; it moves the folder and rewrites the old agent names.
 
 ## Step 1 — Determine scope
 Use `$ARGUMENTS` if given; otherwise review the working-tree diff (`git status`, `git diff`), including
@@ -13,17 +16,17 @@ untracked files.
 
 ## Step 2 — Route
 Group the changed files by directory and pick reviewers from the **Reviewer** column of
-`.claude/review-loop/routing.md`, **plus every overlay gate** the diff triggers. Do not restate the mapping
+`.claude/review-gate/routing.md`, **plus every overlay gate** the diff triggers. Do not restate the mapping
 here — `routing.md` is authoritative.
 
 ## Step 3 — Launch concurrently
 Launch the matched agents in parallel. Open every prompt with:
 
 ```
-Read `.claude/review-loop/review_brief.md` FIRST — Part A replaces your orientation step, Part B is the
+Read `.claude/review-gate/review_brief.md` FIRST — Part A replaces your orientation step, Part B is the
 binding protocol: only Critical/High block, diff-only scope, stay in your column (§B4, see routing.md),
 report ≤120 lines / ≤8 findings. Every finding MUST carry `rule: <ID>` from
-`.claude/review-loop/review_rules.md`, plus `severity:` and `confidence:`. A finding with no resolvable ID
+`.claude/review-gate/review_rules.md`, plus `severity:` and `confidence:`. A finding with no resolvable ID
 is dropped. Never file a MECHANIZED rule (§3).
 Write your report to the §B7 path with the Write tool; it is the one file you write, and it is required.
 End with: ACTION: QA_PASSED (blocking=0, deferred=<n>) or ACTION: ISSUES_FOUND (blocking=<n>, deferred=<n>).
@@ -52,7 +55,7 @@ then re-run this gate; still missing → treat it as `NO_QUOTE`.
 legitimate there; scope drift is not); every other survivor gets `scope: in-diff`.
 
 **Gate 2 — precision filter.** For each surviving blocking (Critical/High) finding, launch
-`review-loop:finding-checker` in parallel, one per finding, passing only `rule` · `severity` · `confidence` ·
+`review-gate:finding-checker` in parallel, one per finding, passing only `rule` · `severity` · `confidence` ·
 `file:line` · `scope` (from Gate 1b) · the one-sentence `claim` · the cited hunk — **never the reviewer's reasoning or report**.
 `NOT_REAL` → drop and record. `NEEDS_EVIDENCE` → if Critical/High and the named check runs here without a build or a device, run it:
 reproduced → `REAL`; not reproduced → defer with the output attached (never `NOT_REAL`). Otherwise

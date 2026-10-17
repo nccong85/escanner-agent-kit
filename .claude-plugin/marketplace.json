@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "review-loop",
-      "source": "./plugins/review-loop",
-      "description": "Rule-ID-gated code review: the finding-checker agent, rule validators, a destructive-git safety hook, project templates, and /review-loop:review.",
+      "name": "review-gate",
+      "source": "./plugins/review-gate",
+      "description": "Rule-ID-gated code review: the finding-checker agent, rule validators, a destructive-git safety hook, project templates, and /review-gate:review.",
       "category": "development"
     },
     {
@@ -19,9 +19,9 @@
       "category": "development"
     },
     {
-      "name": "flutter-native-agents",
-      "source": "./plugins/flutter-native-agents",
-      "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, experts that write and review one layer, security and performance checkerss.",
+      "name": "flutter-native",
+      "source": "./plugins/flutter-native",
+      "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, experts that write and review one layer, security and performance checkers.",
       "category": "development"
     },
     {

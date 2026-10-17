@@ -6,7 +6,7 @@ Thanks for helping. This repository values **measured** changes over clever ones
 - Fixes to agents, commands, hooks and validators, with a test or a reproduction.
 - New rules or protocol changes **backed by a case you observed** (what failed, how you measured it). Add it to
   `docs/field-notes.md`.
-- New stack plugins that follow [docs/agent-guideline.md](docs/agent-guideline.md) and depend on `review-loop`.
+- New stack plugins that follow [docs/agent-guideline.md](docs/agent-guideline.md) and depend on `review-gate`.
 
 ## What we do not accept
 - Agents that duplicate an existing agent's responsibility.
@@ -16,7 +16,7 @@ Thanks for helping. This repository values **measured** changes over clever ones
 ## Before you open a pull request
 ```bash
 bash tests/run.sh
-shellcheck -S warning plugins/review-loop/bin/*.sh tests/*.sh
+shellcheck -S warning plugins/review-gate/bin/*.sh tests/*.sh
 claude plugin validate --strict .
 for p in plugins/*; do claude plugin validate --strict "$p"; done
 ```

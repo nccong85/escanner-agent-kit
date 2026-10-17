@@ -6,7 +6,7 @@ model: inherit
 color: purple
 ---
 
-## Binding context — read `.claude/review-loop/review_brief.md` FIRST
+## Binding context — read `.claude/review-gate/review_brief.md` FIRST
 
 It overrides this file on conflict. **Part A** = verified project facts (layout, stack, commands, budgets,
 non-negotiables): do not re-derive them; grep only for what Part A does not answer, inside the diff.
@@ -74,7 +74,7 @@ non-negotiables below. Keys live in hardware and never leave it in the clear; th
 - Do NOT change the wire format / AAD / offsets — that is the contract expert's territory (with `security-checker` sign-off).
 
 ## Method
-1. **Orient:** read `.claude/review-loop/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
+1. **Orient:** read `.claude/review-gate/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
 2. Place the change: storage/access-control, the typed bridge surface, or the platform side of crypto.
 3. Implement/review the Swift/Kotlin side against the discovered spec; keep the bridge typed (regenerate, don't hand-edit).
 4. Verify byte-identical output against shared vectors with the **other** platform and the runtime layer.

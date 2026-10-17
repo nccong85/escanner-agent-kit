@@ -1,10 +1,19 @@
 ---
-description: Create the project files the review loop reads (.claude/review-loop/) from the plugin templates, without overwriting existing ones.
+description: Create the project files review-gate reads (.claude/review-gate/) from the plugin templates, moving a pre-2.0 .claude/review-loop/ folder, without overwriting existing ones.
 ---
 
-Set up `.claude/review-loop/` in the current project.
+Set up `.claude/review-gate/` in the current project.
 
-1. For each template below, copy it from `${CLAUDE_PLUGIN_ROOT}/templates/` to `.claude/review-loop/` **only if the
+0. **Move a pre-2.0 folder first.** Before 2.0.0 the plugin was `review-loop` and its files lived in
+   `.claude/review-loop/`. If that folder exists and `.claude/review-gate/` does not, move it (`git mv` when it is
+   tracked, else `mv`); never copy, so there is one source. In the moved files that are regular files (not
+   symlinks), rewrite the agent prefixes `review-loop:` → `review-gate:` and `flutter-native-agents:` →
+   `flutter-native:`. In the *Legacy names* table rewrite only the last column (the name to dispatch now); the
+   columns before it are old names on purpose. A
+   symlinked file belongs to the project's own docs: do not edit it, list the lines that still use an old prefix.
+   If both folders exist, touch neither: report the conflict and stop. Then go on with step 1, which only adds
+   the files the moved folder lacks.
+1. For each template below, copy it from `${CLAUDE_PLUGIN_ROOT}/templates/` to `.claude/review-gate/` **only if the
    target does not exist yet**. Never overwrite a file the project already has; list the ones you skipped.
    - `review_brief.md` — project facts (Part A) + the protocol (Part B)
    - `review_rules.md` — the closed rule vocabulary
@@ -27,4 +36,4 @@ Set up `.claude/review-loop/` in the current project.
 5. Create the reports directory named in `review_brief.md` §B7 (default `docs/reviews/`) if it does not exist.
 6. Run `validate_rule_ids.sh R-NN-1` to confirm the scripts find the files; the template pitfall headings are
    unnumbered on purpose, so `R-PIT-*` resolves only after you add a real entry.
-7. Report what was created, what was skipped, and every `<VERIFY>` the user still has to settle.
+7. Report what was moved, created and skipped, and every `<VERIFY>` the user still has to settle.

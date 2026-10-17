@@ -8,6 +8,9 @@ argument-hint: "<path-to-spec-file> [--continuous]"
 Implement the specification at: $ARGUMENTS (the first token is the spec path; `--continuous` is a flag, see
 "Session boundary" below).
 
+**Pre-2.0 project:** if `.claude/review-gate/` does not exist but `.claude/review-loop/` does, stop and ask the
+user to run `/review-gate:init` first; it moves the folder and rewrites the old agent names.
+
 ## ⚠️ RULE: Read Pipeline State EVERY Turn (NON-NEGOTIABLE)
 
 **BEFORE doing anything, ALWAYS read `execution_state.md` in the spec folder.**
@@ -22,7 +25,7 @@ conversation. If context was compressed, this file has your full recovery state.
 **If `execution_state.md` not found** → run `/dev-pipeline:task-decompose` first.
 
 **Renamed agents.** If `execution_state.md` or `{feature}_tasks.md` names an agent that no longer exists, look it
-up in the "Legacy names" section of `.claude/review-loop/routing.md`, dispatch the new name, and update that line of
+up in the "Legacy names" section of `.claude/review-gate/routing.md`, dispatch the new name, and update that line of
 Pipeline State.
 
 ---
@@ -32,7 +35,7 @@ Pipeline State.
 - Update Pipeline State BEFORE launching the next agent.
 - **Compact prompts:** pass only spec path, task requirements, file list. No conversation history.
 - **Compression recovery:** re-read `execution_state.md` → Pipeline State tells you where to resume.
-- **Every agent prompt cites `.claude/review-loop/review_brief.md`** so the agent skips re-deriving the
+- **Every agent prompt cites `.claude/review-gate/review_brief.md`** so the agent skips re-deriving the
   project's layout, commands and budgets. That orientation cost is otherwise paid again by every agent
   in every round.
 
@@ -86,7 +89,7 @@ the code.** Do not spend a fix round on it. Save state, record it under `## Defe
 
 ## Routing
 
-**Route every coder/review dispatch by `.claude/review-loop/routing.md` (directory table + overlay gates).**
+**Route every coder/review dispatch by `.claude/review-gate/routing.md` (directory table + overlay gates).**
 That file is authoritative; do not restate it here. It covers the coder agent, the review agent, the
 contract-first / security / performance gates, and the mixed-directory (parallel-by-layer) rule. Apply the most-specific path prefix; apply EVERY overlay gate
 that the changed files trigger, in addition to the base routing.
@@ -119,7 +122,7 @@ Agent tool:
   subagent_type: <coder from routing.md, e.g. "my-plugin:dev-x">
   description: "Implement: [brief]"
   prompt: |
-    Read `.claude/review-loop/review_brief.md` FIRST — Part A replaces your orientation step.
+    Read `.claude/review-gate/review_brief.md` FIRST — Part A replaces your orientation step.
     Spec file: <SPEC_FILE_PATH>
     Implement: <TASK_REQUIREMENTS>
     If the task references "See spec Section X.Y", read the spec for full detail.
@@ -128,7 +131,7 @@ Agent tool:
     spec's §3 Performance / NFRs, within its scope only.
     SHIFT-LEFT — you are graded on exactly this list, so run it over your OWN diff before handing off:
       · review_brief.md Part A "Non-negotiables" (all 9)
-      · .claude/review-loop/common_pitfalls.md — every entry that touches your layer
+      · .claude/review-gate/common_pitfalls.md — every entry that touches your layer
       · the task's own Definition of Done in {feature}_tasks.md
     Output MUST include, in this order:
       SELF-CHECK: one line per item above — ok / n/a / fixed <what> / open: <why>
@@ -153,7 +156,7 @@ multiple layers, or trigger an overlay gate, launch reviewers **in parallel**.
 Agent tool:
   subagent_type: <reviewer(s) from routing.md, plus every triggered gate>
   prompt: |
-    Read `.claude/review-loop/review_brief.md` FIRST — Part A replaces your orientation step,
+    Read `.claude/review-gate/review_brief.md` FIRST — Part A replaces your orientation step,
     Part B is the binding review protocol (severity gate, diff-only scope, ownership, report cap).
     Review these files: <FILES_TO_REVIEW>
     Round: 1 (full review of the diff).
@@ -161,7 +164,7 @@ Agent tool:
     Approved budget exceptions (spec §3 Performance / NFRs, verbatim, or "none"): <EXCEPTION_LINES>
     Inside its scope an exception is the effective limit; beyond that limit it still blocks.
     Unresolved items the coder flagged: <OPEN_LINES_ONLY>
-    Every finding MUST carry rule: <ID> from .claude/review-loop/review_rules.md, plus severity and
+    Every finding MUST carry rule: <ID> from .claude/review-gate/review_rules.md, plus severity and
     confidence. No ID = the finding is dropped. Never file a MECHANIZED rule (§3).
     Focus: requirement fulfillment vs the Definition of Done, plus your own exclusive column
     per review_brief.md §B4. Do not file findings in another reviewer's column.
@@ -186,7 +189,7 @@ predate the fix: route it as a regression (next fix round, iteration cap applies
 Agent tool:
   subagent_type: <same reviewer as round 1>
   prompt: |
-    Read `.claude/review-loop/review_brief.md` §B3 — this is a DELTA re-review, not a fresh review.
+    Read `.claude/review-gate/review_brief.md` §B3 — this is a DELTA re-review, not a fresh review.
     Prior report: <PRIOR_REPORT_PATH>
     Blocking findings the fix claims to close: <LIST>
     Approved budget exceptions (same lines as round 1, or "none"): <EXCEPTION_LINES>
@@ -240,7 +243,7 @@ then re-run this gate; still missing → treat it as `NO_QUOTE`.
 `OUT_OF_DIFF` → keep it and pass `scope: out-of-diff` to the filter (a cross-file contract finding is
 legitimate there; scope drift is not); every other survivor gets `scope: in-diff`.
 
-**Gate 2 — the precision filter.** For each surviving **blocking** finding, launch `review-loop:finding-checker`
+**Gate 2 — the precision filter.** For each surviving **blocking** finding, launch `review-gate:finding-checker`
 **in parallel, one per finding**. **Run the filter on the strongest model you have** (a smaller-model pass once returned `NOT_REAL` on a true observation — deleting a true finding is the one error here that
 cannot be recovered, so the tier buys correctness where it matters most).
 
@@ -254,7 +257,7 @@ cannot be recovered, so the tier buys correctness where it matters most).
 
 ```yaml
 Agent tool:
-  subagent_type: "review-loop:finding-checker"
+  subagent_type: "review-gate:finding-checker"
   prompt: |
     rule:       <ID>
     severity:   <Critical|High>
@@ -308,7 +311,7 @@ earlier run ended partial (turn cap or compaction), or the session was restarted
 Agent tool:
   subagent_type: <coder agent per the directory of the issue files>
   prompt: |
-    Read `.claude/review-loop/review_brief.md` FIRST (Part A replaces orientation).
+    Read `.claude/review-gate/review_brief.md` FIRST (Part A replaces orientation).
     Fix ONLY these blocking findings from <REPORT_FILE_PATH>: <CRITICAL_AND_HIGH_LIST>
     Do NOT fix, refactor, or "while I'm here" anything else in the report or the file — the Medium/Low
     findings are deliberately deferred to the end-of-feature triage. Every extra line you touch buys
@@ -463,7 +466,7 @@ Continue from Task 2, Step 2 (Review).
 | `ACTION: REVIEW_REQUIRED` with **no** SELF-CHECK | Step unchanged | Re-prompt the same coder for the SELF-CHECK block. Do not spend a review round on it. |
 | `ACTION: QA_PASSED (blocking=0, …)` | Step=DONE | Append any `deferred` to `## Deferred Findings`. Run the interop test if a contract task; → Step 4, then the session boundary (`--continuous`: next task or Step 5). |
 | `ACTION: ISSUES_FOUND (blocking=0, deferred=n)` | Step=DONE | **This is a PASS (rule C1).** Append the n findings to `## Deferred Findings` and move on. Do NOT launch a fix round. |
-| `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-loop:finding-checker`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, take the Step 3 snapshot, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
+| `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-gate:finding-checker`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, take the Step 3 snapshot, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
 | `ACTION: ISSUES_FOUND (blocking≥1, regressions=0)`, round ≥2, with a **new** blocking finding | Step=BLOCKED | **Rule C4** — the new blocking finding is not a regression, so the spec is suspect. Save state, record as `SPEC-DOUBT`, **stop and ask the owner.** |
 | `ACTION: ISSUES_FOUND (blocking≥1, regressions≥1)`, round ≥2 — or the only blocking findings are prior ones verdicted `NOT CLOSED` | Step=FIX, Iteration++ | Take a fresh Step 3 snapshot, then fix the regressions plus every prior finding verdicted `NOT CLOSED`, nothing else. At Iteration ≥ 2 → `FINAL_QA_PARTIAL`, report to owner. |
 | An agent reports `BLOCKED` with a reason (instead of an `ACTION:` or `E2E:` line) | Step=BLOCKED | Save state with the reason, **stop and report it to the owner** (sanctioned stop 3). Do not retry or re-route: the agent stopped on purpose, e.g. no owner approval, a phone in use, or a missing project file. |

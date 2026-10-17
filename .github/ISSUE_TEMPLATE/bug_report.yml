@@ -6,7 +6,7 @@ body:
     id: component
     attributes:
       label: Component
-      description: Plugin and file, e.g. review-loop/bin/validate_rule_ids.sh
+      description: Plugin and file, e.g. review-gate/bin/validate_rule_ids.sh
     validations:
       required: true
   - type: textarea

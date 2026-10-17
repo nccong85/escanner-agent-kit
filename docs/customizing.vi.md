@@ -2,14 +2,14 @@
 
 # Tùy chỉnh
 
-Mọi thứ dưới đây đều không bắt buộc. Sau `/review-loop:init`, kit chạy được với cấu hình mặc định.
+Mọi thứ dưới đây đều không bắt buộc. Sau `/review-gate:init`, kit chạy được với cấu hình mặc định.
 
 ## 1. Để file của bạn ở chỗ khác
 
 **Khi nào:** brief, rule hoặc spec của bạn không nằm trong các thư mục mặc định.
 
-Mặc định kit tìm file của nó trong `.claude/review-loop/`, và tìm spec trong `docs/specs/` và `docs/features/`.
-Muốn đổi, bạn tạo file `.claude/review-loop/config.env` và chỉ đặt những key cần thiết:
+Mặc định kit tìm file của nó trong `.claude/review-gate/`, và tìm spec trong `docs/specs/` và `docs/features/`.
+Muốn đổi, bạn tạo file `.claude/review-gate/config.env` và chỉ đặt những key cần thiết:
 
 ```
 BRIEF_FILE=$ROOT/docs/agents/review_brief.md
@@ -19,17 +19,17 @@ SPECS_DIR=$ROOT/documentation/specs
 
 | Key | Trỏ tới gì | Mặc định |
 |---|---|---|
-| `BRIEF_FILE` | Thông tin dự án và giao thức review | `.claude/review-loop/review_brief.md` |
-| `RULES_FILE` | Danh sách rule ID | `.claude/review-loop/review_rules.md` |
-| `ROUTING_FILE` | Agent nào lo thư mục nào | `.claude/review-loop/routing.md` |
-| `PITFALLS_FILE` | Danh sách lỗi hay gặp của dự án | `.claude/review-loop/common_pitfalls.md` |
+| `BRIEF_FILE` | Thông tin dự án và giao thức review | `.claude/review-gate/review_brief.md` |
+| `RULES_FILE` | Danh sách rule ID | `.claude/review-gate/review_rules.md` |
+| `ROUTING_FILE` | Agent nào lo thư mục nào | `.claude/review-gate/routing.md` |
+| `PITFALLS_FILE` | Danh sách lỗi hay gặp của dự án | `.claude/review-gate/common_pitfalls.md` |
 | `SPECS_DIR` | Spec | `docs/specs` |
 | `FEATURES_DIR` | Thư mục tính năng (task, trạng thái) | `docs/features` |
 
-Giá trị chỉ được dùng `$ROOT` (thư mục gốc dự án) và `$CONTEXT_DIR` (`.claude/review-loop`). File được đọc như dữ
+Giá trị chỉ được dùng `$ROOT` (thư mục gốc dự án) và `$CONTEXT_DIR` (`.claude/review-gate`). File được đọc như dữ
 liệu thuần và không bao giờ bị thực thi.
 
-Thư mục gốc dự án được xác định theo thứ tự: `REVIEW_LOOP_PROJECT_DIR` nếu bạn đặt, rồi `CLAUDE_PROJECT_DIR`, rồi
+Thư mục gốc dự án được xác định theo thứ tự: `REVIEW_GATE_PROJECT_DIR` nếu bạn đặt, rồi `CLAUDE_PROJECT_DIR`, rồi
 git root.
 
 ## 2. Thêm rule cho stack của bạn
@@ -54,23 +54,23 @@ nào không có dòng tương ứng sẽ bị bỏ, nên reviewer không thể t
 1. Đặt tên theo dạng `<scope>-<role>`, ví dụ `web-reviewer` hoặc `backend-coder`. Các role và quyền của từng role có
    trong [agent-guideline.vi.md](agent-guideline.vi.md).
 2. Đặt file ở `.claude/agents/<name>.md` (agent của dự án) hoặc trong plugin của bạn (xem mục 4).
-3. Trong hướng dẫn của agent, bảo nó đọc `.claude/review-loop/review_brief.md` trước, và kết thúc câu trả lời bằng
+3. Trong hướng dẫn của agent, bảo nó đọc `.claude/review-gate/review_brief.md` trước, và kết thúc câu trả lời bằng
    khối bàn giao ở §B7 của brief đó.
 4. Thêm agent vào `routing.md`, cạnh các thư mục nó phụ trách. Agent trong plugin thì viết dạng
    `<plugin>:<agent>`, ví dụ `my-stack:web-reviewer`.
 
 ## 4. Tạo plugin cho stack của bạn
 
-**Khi nào:** bạn muốn dùng lại một bộ agent cho nhiều dự án, giống như `flutter-native-agents` làm cho Flutter.
+**Khi nào:** bạn muốn dùng lại một bộ agent cho nhiều dự án, giống như `flutter-native` làm cho Flutter.
 
-1. Copy thư mục `plugins/flutter-native-agents` và đổi tên.
+1. Copy thư mục `plugins/flutter-native` và đổi tên.
 2. Thay các agent bên trong bằng agent của bạn.
-3. Trong `.claude-plugin/plugin.json` của nó, giữ `"dependencies": ["review-loop"]` để hook an toàn git và các
+3. Trong `.claude-plugin/plugin.json` của nó, giữ `"dependencies": ["review-gate"]` để hook an toàn git và các
    validator được cài kèm.
 4. Khai báo plugin trong file marketplace của bạn.
 
 Lưu ý: Claude Code bỏ qua `hooks`, `mcpServers` và `permissionMode` trong frontmatter của agent **trong plugin**.
-Bạn không cần chúng: hook an toàn đã có từ `review-loop`.
+Bạn không cần chúng: hook an toàn đã có từ `review-gate`.
 
 ## 5. Đổi tên agent
 

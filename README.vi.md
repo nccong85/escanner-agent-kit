@@ -7,13 +7,13 @@
 
 Đây là bài học cá nhân rút ra từ một dự án và được may đo cho dự án đó, nên bạn hãy xem chúng là tài liệu tham khảo chứ
 không phải giải pháp dùng ngay: chép lại các pattern rồi chỉnh agent, bộ từ vựng rule và routing cho hợp với dự án của
-bạn (các agent trong `flutter-native-agents` sẽ không khớp với một codebase khác nếu để nguyên). Bạn cứ thoải mái cải
+bạn (các agent trong `flutter-native` sẽ không khớp với một codebase khác nếu để nguyên). Bạn cứ thoải mái cải
 tiến và phát triển chúng thêm. Nếu có phần nào giúp được bạn thì mình rất vui.
 
 - **Agent ngốn rất nhiều token.** Một feature chạy qua pipeline sẽ gọi một coder, vài reviewer, một lần lọc cho mỗi
   finding chặn và có thể thêm vài vòng sửa, mỗi bước là một session riêng trên model mạnh. Hãy dùng với **gói Claude
   Max**; nếu trả tiền API theo token thì chi phí tăng rất nhanh. Với thay đổi nhỏ, hãy dùng session chính kèm
-  `/review-loop:review`.
+  `/review-gate:review`.
 - **Model.** Các agent dùng `model: inherit` (model của session bạn đang dùng); chỉ `finding-checker` được gắn cố định
   vào `opus`, vì từng có lần một model nhỏ hơn bác bỏ một finding đúng.
 
@@ -29,13 +29,13 @@ Kit được chia thành bốn plugin để bạn chỉ cài những gì hợp v
 
 | Plugin | Dành cho ai | Bắt buộc? | Bạn nhận được gì |
 |---|---|---|---|
-| [`review-loop`](plugins/review-loop/README.vi.md) | Mọi dự án, mọi ngôn ngữ | **Lõi**, cài trước tiên | agent `finding-checker` · `/review-loop:review` · `/review-loop:init` · validator cho rule/finding/spec/trích dẫn · hook chặn lệnh git phá dữ liệu · template dự án |
-| [`flutter-native-agents`](plugins/flutter-native-agents/README.vi.md) | App Flutter có engine C/C++ và code iOS/Android, giống e-Scanner | Tùy chọn | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
+| [`review-gate`](plugins/review-gate/README.vi.md) | Mọi dự án, mọi ngôn ngữ | **Lõi**, cài trước tiên | agent `finding-checker` · `/review-gate:review` · `/review-gate:init` · validator cho rule/finding/spec/trích dẫn · hook chặn lệnh git phá dữ liệu · template dự án |
+| [`flutter-native`](plugins/flutter-native/README.vi.md) | App Flutter có engine C/C++ và code iOS/Android, giống e-Scanner | Tùy chọn | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev-pipeline`](plugins/dev-pipeline/README.vi.md) | Nhóm muốn chạy trọn quy trình: spec → task → code → review | Tùy chọn | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, lưu checkpoint trong `execution_state.md` · `/dev-pipeline:research` · agent `tech-researcher` |
 | [`device-e2e`](plugins/device-e2e/README.vi.md) | Ai cần test app mobile trên iPhone hoặc điện thoại Android thật | Tùy chọn | agent `device-tester` · `/device-e2e:init` · skill `device-e2e:playbook` · driver cho iPhone (WebDriverAgent) và Android (adb + uiautomator) dùng chung một interface · template dự án |
 
-`review-loop` chạy độc lập được. Mỗi plugin tùy chọn đều phụ thuộc vào nó, và khi cài một plugin tùy chọn thì
-`review-loop` cũng được cài theo. Bạn làm stack khác (web, backend, …)? Hãy cài `review-loop` rồi thêm agent của riêng
+`review-gate` chạy độc lập được. Mỗi plugin tùy chọn đều phụ thuộc vào nó, và khi cài một plugin tùy chọn thì
+`review-gate` cũng được cài theo. Bạn làm stack khác (web, backend, …)? Hãy cài `review-gate` rồi thêm agent của riêng
 bạn — xem [docs/customizing.vi.md](docs/customizing.vi.md).
 
 ## Agent
@@ -45,40 +45,45 @@ review một tầng, `-reviewer` hoặc `-checker` chỉ đọc, `-tester` chạ
 
 | Agent | Plugin | Làm gì |
 |---|---|---|
-| `finding-checker` | `review-loop` | Nhận một lỗi mà reviewer báo (finding) và quyết định nó có thật không, trước khi ai đó tốn một vòng sửa cho nó |
+| `finding-checker` | `review-gate` | Nhận một lỗi mà reviewer báo (finding) và quyết định nó có thật không, trước khi ai đó tốn một vòng sửa cho nó |
 | `tech-researcher` | `dev-pipeline` | Trả lời câu hỏi kỹ thuật (dùng thư viện nào, API nào, quy định của store nói gì) kèm nguồn trích dẫn |
 | `device-tester` | `device-e2e` | Chạy test end-to-end cho app trên iPhone và điện thoại Android thật |
-| `flutter-coder` | `flutter-native-agents` | Viết code feature Flutter/Dart: màn hình, state, route, lưu trữ |
-| `flutter-reviewer` | `flutter-native-agents` | Review thay đổi Flutter/Dart |
-| `cpp-engine-expert` | `flutter-native-agents` | Viết và review engine xử lý ảnh bằng C++ |
-| `ios-android-expert` | `flutter-native-agents` | Viết và review code Swift (iOS) và Kotlin (Android) mà app gọi tới |
-| `contract-expert` | `flutter-native-agents` | Giữ các contract (hợp đồng giao tiếp giữa các phần) — C ABI, định dạng file mã hóa, cấu trúc API — để hai phía luôn khớp nhau |
-| `build-release-expert` | `flutter-native-agents` | Viết và review CI, ký app và việc phát hành lên store |
-| `security-checker` | `flutter-native-agents` | Kiểm tra các thay đổi đụng tới mã hóa, khóa, log hoặc dữ liệu người dùng |
-| `performance-checker` | `flutter-native-agents` | Kiểm tra các thay đổi trên hot path (khởi động, pipeline xử lý ảnh, database) so với ngân sách hiệu năng của dự án |
+| `flutter-coder` | `flutter-native` | Viết code feature Flutter/Dart: màn hình, state, route, lưu trữ |
+| `flutter-reviewer` | `flutter-native` | Review thay đổi Flutter/Dart |
+| `cpp-engine-expert` | `flutter-native` | Viết và review engine xử lý ảnh bằng C++ |
+| `ios-android-expert` | `flutter-native` | Viết và review code Swift (iOS) và Kotlin (Android) mà app gọi tới |
+| `contract-expert` | `flutter-native` | Giữ các contract (hợp đồng giao tiếp giữa các phần) — C ABI, định dạng file mã hóa, cấu trúc API — để hai phía luôn khớp nhau |
+| `build-release-expert` | `flutter-native` | Viết và review CI, ký app và việc phát hành lên store |
+| `security-checker` | `flutter-native` | Kiểm tra các thay đổi đụng tới mã hóa, khóa, log hoặc dữ liệu người dùng |
+| `performance-checker` | `flutter-native` | Kiểm tra các thay đổi trên hot path (khởi động, pipeline xử lý ảnh, database) so với ngân sách hiệu năng của dự án |
+
+**Nâng cấp từ 1.x?** Bản 2.0.0 đổi tên hai plugin: `review-loop` → `review-gate` và
+`flutter-native-agents` → `flutter-native`. Gỡ plugin cũ, cài plugin mới, rồi chạy `/review-gate:init`: lệnh này
+chuyển `.claude/review-loop/` thành `.claude/review-gate/` và sửa tiền tố agent trong đó. Trước khi chạy, các
+validator vẫn đọc thư mục cũ (kèm dòng NOTE), còn các lệnh của pipeline sẽ dừng lại và nhắc bạn chạy init.
 
 **Nâng cấp từ 1.0.x?** Các agent đã được đổi tên ở bản 1.1.0 (ví dụ `review-filter` → `finding-checker`,
-`owner-contract` → `contract-expert`). Hãy cập nhật tên trong `.claude/review-loop/routing.md` của bạn; bảng đối chiếu
-đầy đủ tên cũ → tên mới nằm ở mục `Legacy names` trong [template routing](plugins/review-loop/templates/routing.md).
+`owner-contract` → `contract-expert`). Hãy cập nhật tên trong `.claude/review-gate/routing.md` của bạn; bảng đối chiếu
+đầy đủ tên cũ → tên mới nằm ở mục `Legacy names` trong [template routing](plugins/review-gate/templates/routing.md).
 Chép mục đó vào file routing của bạn để các plan viết bằng 1.0.x vẫn tìm ra đúng agent.
 
 ## Cài đặt
 
 ```bash
 claude plugin marketplace add nccong85/escanner-agent-kit
-claude plugin install review-loop@escanner-agent-kit
+claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
-claude plugin install flutter-native-agents@escanner-agent-kit   # optional, Flutter + native stacks
+claude plugin install flutter-native@escanner-agent-kit   # optional, Flutter + native stacks
 claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
 ```
 
 Sau đó, trong dự án của bạn:
 
 ```
-/review-loop:init
+/review-gate:init
 ```
 
-`init` tạo `.claude/review-loop/` từ các template và soạn sẵn thông tin dự án dựa trên code của bạn:
+`init` tạo `.claude/review-gate/` từ các template và soạn sẵn thông tin dự án dựa trên code của bạn:
 
 | File | Chứa gì |
 |---|---|
@@ -88,7 +93,7 @@ Sau đó, trong dự án của bạn:
 | `common_pitfalls.md` | Kho lỗi đã gặp của bạn (Triệu chứng → Nguyên nhân → Rule). |
 | `config.env` | Các đường dẫn mà validator dùng, nếu tài liệu của bạn nằm ở chỗ khác. |
 
-Review một diff bằng `/review-loop:review`. Chạy một feature từ đầu đến cuối bằng
+Review một diff bằng `/review-gate:review`. Chạy một feature từ đầu đến cuối bằng
 `/dev-pipeline:spec-create "<feature>"`.
 
 ## Cách hoạt động
@@ -143,7 +148,7 @@ Tên phải đúng chính xác là `serena` và `context7`.
 
 ## Hook an toàn
 
-`review-loop` cài một hook `PreToolUse` cho `Bash`:
+`review-gate` cài một hook `PreToolUse` cho `Bash`:
 - **Session chính:** chỉ chặn những lệnh xóa mất phần việc chưa commit — `git checkout` lên đường dẫn (có hoặc không
   có `--`, `.`, `--force`, `--patch`), `git restore` (chỉ cho phép `--staged` đứng một mình), `git stash` (trừ
   `create|list|show`), `git clean` (trừ `-n`), `git reset --hard|--merge|--keep`, `git worktree remove --force`.

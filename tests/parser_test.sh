@@ -1,5 +1,5 @@
 #!/bin/bash
-H="$(cd "$(dirname "$0")/.." && pwd)/plugins/review-loop/bin/block_destructive_git.sh"
+H="$(cd "$(dirname "$0")/.." && pwd)/plugins/review-gate/bin/block_destructive_git.sh"
 CWD="$(mktemp -d "${TMPDIR:-/tmp}/rl_parser.XXXXXX")"; trap 'rm -rf "$CWD"' EXIT
 git -C "$CWD" init -q; echo v > "$CWD/notes.txt"; echo x > "$CWD/f"; git -C "$CWD" add .; git -C "$CWD" -c user.email=t@t -c user.name=t commit -qm init
 pass=0; fail=0

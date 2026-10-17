@@ -6,7 +6,7 @@ model: inherit
 color: cyan
 ---
 
-## Binding context — read `.claude/review-loop/review_brief.md` FIRST
+## Binding context — read `.claude/review-gate/review_brief.md` FIRST
 
 It overrides this file on conflict. **Part A** = verified project facts (layout, stack, commands, budgets,
 non-negotiables): do not re-derive them; grep only for what Part A does not answer, inside the diff.
@@ -116,7 +116,7 @@ in the project's router, never pushed ad hoc.
 - Do NOT leave analyzer warnings or skip formatting.
 
 ## Method
-1. **Orient:** read `.claude/review-loop/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
+1. **Orient:** read `.claude/review-gate/review_brief.md` (Part A = the project's facts; Part B = the review protocol), then scope the diff. Grep only for what the brief does not answer.
 2. Place the change in the correct layer; decide which models/persistence/repositories/state/widgets it touches.
 3. Implement by mirroring the reference feature's patterns and the project's chosen libraries.
 4. Re-run the project's codegen after any codegen-source change; never hand-edit generated output.

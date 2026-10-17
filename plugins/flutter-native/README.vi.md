@@ -1,9 +1,9 @@
 [English](README.md) · **Tiếng Việt**
 
-# flutter-native-agents
+# flutter-native
 
-Các agent mẫu cho app Flutter có engine C/C++ đứng sau FFI và code nền tảng iOS/Android. Cần có `review-loop`. Agent nào
-cũng đọc `.claude/review-loop/review_brief.md` trước tiên, nên thông tin dự án của bạn sẽ ghi đè các giá trị mặc định
+Các agent mẫu cho app Flutter có engine C/C++ đứng sau FFI và code nền tảng iOS/Android. Cần có `review-gate`. Agent nào
+cũng đọc `.claude/review-gate/review_brief.md` trước tiên, nên thông tin dự án của bạn sẽ ghi đè các giá trị mặc định
 minh họa bên trong từng agent.
 
 | Agent | Vai trò | Viết code? |
@@ -20,5 +20,5 @@ minh họa bên trong từng agent.
 Cách đặt tên: `<scope>-<role>` — `-coder` viết code, `-expert` viết và review một tầng, `-reviewer` và `-checker` chỉ
 đọc. Reviewer chỉ được dùng các tool chỉ-đọc của serena; mặc định agent dùng `model: inherit`.
 
-Bạn có thể dùng chúng như agent của plugin (`flutter-native-agents:<name>`) hoặc chép một agent vào `.claude/agents/`
+Bạn có thể dùng chúng như agent của plugin (`flutter-native:<name>`) hoặc chép một agent vào `.claude/agents/`
 rồi chỉnh lại.

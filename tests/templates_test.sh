@@ -37,7 +37,7 @@ for f in "$AGENTS"/*/agents/*.md; do
   grep -q 'it is required even$' "$f" && grep -q 'modify nothing else' "$f" && ok || ko "$(basename "$f") lacks the report-file exception"
 done
 grep -q '^\*\*Check the report file first\*\*' "$CMD/implement.md" && ok || ko "implement.md Step 2 does not check the report file"
-grep -q 'names no report file that exists is re-prompted once' "$AGENTS/review-loop/commands/review.md" && ok || ko "review.md does not check the report file"
+grep -q 'names no report file that exists is re-prompted once' "$AGENTS/review-gate/commands/review.md" && ok || ko "review.md does not check the report file"
 
 # A task that needs the owner's yes for a build or device run is marked in the plan, gated in implement, and an
 # agent that stops itself with BLOCKED has its own routing row instead of falling to "no recognized ACTION".
@@ -65,5 +65,17 @@ e=$(grep -c '<EXCEPTION_LINES>' "$CMD/implement.md")
 # A prior finding the fix did not close goes back to the coder; it is neither a regression nor a C4 spec doubt.
 grep -q "fix the regressions plus every prior finding verdicted \`NOT CLOSED\`" "$CMD/implement.md" && ok || ko "implement.md does not route NOT CLOSED findings back to the fix"
 
+# 2.0.0 renamed review-loop → review-gate and flutter-native-agents → flutter-native. Old names stay only where they
+# are history (CHANGELOG, the Legacy names table) or the migration that reads them; anywhere else they are a stale
+# install id, folder or agent prefix.
+KIT="$(cd "$CMD/../../.." && pwd)"
+stale=$(cd "$KIT" && git ls-files | grep -vxE 'CHANGELOG.md|tests/.*|plugins/review-gate/(bin/lib_config.sh|commands/init.md)' \
+  | xargs grep -n 'review-loop\|flutter-native-agents\|REVIEW_LOOP' 2>/dev/null \
+  | grep -v '^plugins/review-gate/templates/routing.md:\(.*| `\|[0-9]*:`flutter-native-agents` → \)\|Pre-2.0 project\|REVIEW_LOOP_PROJECT_DIR:-\|2.0.0 (`review-loop`\|`review-loop` →\|`flutter-native-agents` →\|`.claude/review-loop/` t')
+[ -z "$stale" ] && ok || { ko "old plugin names outside history/migration:"; echo "$stale" | head -5; }
+grep -q '^0\. \*\*Move a pre-2.0 folder first' "$AGENTS/review-gate/commands/init.md" && ok || ko "review-gate init does not move .claude/review-loop/"
+for f in "$CMD"/implement.md "$CMD"/spec-create.md "$CMD"/task-decompose.md "$CMD"/research.md "$AGENTS/review-gate/commands/review.md"; do
+  grep -q '^\*\*Pre-2.0 project:\*\*' "$f" && ok || ko "$(basename "$f") does not stop on a pre-2.0 folder"
+done
 echo "templates: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

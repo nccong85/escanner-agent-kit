@@ -1,5 +1,5 @@
 #!/bin/bash
-H="$(cd "$(dirname "$0")/.." && pwd)/plugins/review-loop/bin/block_destructive_git.sh"
+H="$(cd "$(dirname "$0")/.." && pwd)/plugins/review-gate/bin/block_destructive_git.sh"
 pass=0; fail=0
 t() {
   exp=$1; mode=$2; c=$3
