@@ -1,7 +1,7 @@
 {
   "name": "flutter-native",
   "displayName": "Flutter + Native",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Reference coder, reviewer, contract-owner and gate agents for Flutter apps with a C/C++ engine and iOS/Android platform code.",
   "author": {
     "name": "Nguyen Chi Cong"

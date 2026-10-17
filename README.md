@@ -159,7 +159,9 @@ claude mcp add --transport http context7 https://mcp.context7.com/mcp
 claude mcp add --scope user serena -- serena start-mcp-server --context claude-code --project-from-cwd
 ```
 
-The names must be exactly `serena` and `context7`.
+The names must be exactly `serena` and `context7`: the agents list their tools as `mcp__serena__*` and
+`mcp__context7__*`. A connector with another name (claude.ai's Context7 shows up as `claude_ai_Context7`) is not
+seen by the agents.
 
 Your project's own tools (Flutter, CMake, …) must be on `PATH` so the agents can run your tests.
 

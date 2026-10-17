@@ -2,6 +2,20 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [flutter-native 2.0.1 · dev-pipeline 2.0.1 · device-e2e 2.1.1] — 2026-10-18
+An audit against Anthropic's skill, subagent and plugin docs. `claude plugin validate --strict .` passed before and
+after; these are the best-practice gaps it does not check.
+- Agents list a whole MCP server as `mcp__serena__*` and `mcp__context7__*`, the documented form. The bare
+  `mcp__serena` / `mcp__context7` may have given the agent no MCP tools. Seven agents (six in flutter-native,
+  `tech-researcher` in dev-pipeline). README: a connector with another name, such as claude.ai's
+  `claude_ai_Context7`, is not seen by the agents.
+- flutter-native: `build-release-expert`, `cpp-engine-expert`, `flutter-coder`, `ios-android-expert` and
+  `flutter-reviewer` say when to delegate to them ("Use when …"). The three reviewers no longer call themselves
+  read-only, since they write their report: "Does not edit code".
+- device-e2e: `references/test-design.md` (over 100 lines) starts with a table of contents. The drivers name their
+  fixed waits (`LAUNCH_WAIT`, `KEY_WAIT`, `UNLOCK_WAIT`, `POLL`, …), each with the reason for the wait; the values
+  are unchanged.
+
 ## [device-e2e 2.1.0] — 2026-10-18
 Test cases are designed by a procedure instead of one line ("plan the cases first"), and the agent has a written
 input and output contract. An audit of two e-Scanner plans found goals with no case, cases repeated per language

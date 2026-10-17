@@ -1,7 +1,7 @@
 ---
 name: cpp-engine-expert
-description: "Implements and reviews a C++ native engine (OpenCV-style image processing) behind a stable C ABI: algorithms, perf tuning to budget, memory-ownership correctness and fixed native error codes."
-tools: Read, Grep, Glob, Bash, Edit, Write, mcp__serena, mcp__context7
+description: "Implements and reviews a C++ native engine (OpenCV-style image processing) behind a stable C ABI: algorithms, perf tuning to budget, memory-ownership correctness and fixed native error codes. Use when a task changes the C++ engine or its C ABI, or a native perf budget is missed."
+tools: Read, Grep, Glob, Bash, Edit, Write, mcp__serena__*, mcp__context7__*
 model: inherit
 color: blue
 ---

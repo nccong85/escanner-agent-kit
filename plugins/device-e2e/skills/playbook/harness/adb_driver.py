@@ -11,6 +11,17 @@ from pathlib import Path
 
 ADB_KEYBOARD = "com.android.adbkeyboard/.AdbIME"
 
+# Fixed waits after an action whose end adb cannot see. Raise them on a slow phone.
+# Callers that need a specific screen still wait for an element.
+LAUNCH_WAIT = 4    # monkey returns before the app has drawn its first frame
+KEY_WAIT = 1       # Home, force-stop: the launcher or the stop finishes within a second
+UNLOCK_WAIT = 2    # the keyguard swipe animation and the app's resume
+BACK_WAIT = 0.8    # one route pop animation
+IME_WAIT = 1.5     # an IME switch rebinds the input connection
+BROADCAST_WAIT = 0.5  # ADB Keyboard commits the broadcast text
+DUMP_RETRY_WAIT = 1   # uiautomator dump fails while the screen is animating
+POLL = 0.8         # interval of every wait-for loop
+
 
 def _env(name):
     value = os.environ.get(name, "").strip()
@@ -73,27 +84,27 @@ class AndroidDriver:
 
     def launch(self):
         self._shell(f"monkey -p {self.app} -c android.intent.category.LAUNCHER 1")
-        time.sleep(4)
+        time.sleep(LAUNCH_WAIT)
 
     def activate(self):
         self.launch()
 
     def terminate(self):
         self._shell(f"am force-stop {self.app}")
-        time.sleep(1)
+        time.sleep(KEY_WAIT)
 
     def home(self):
         self._shell("input keyevent KEYCODE_HOME")
-        time.sleep(1)
+        time.sleep(KEY_WAIT)
 
     def lock_for(self, seconds):
         self._shell("input keyevent KEYCODE_POWER")
         time.sleep(seconds)
         self._shell("input keyevent KEYCODE_WAKEUP")
-        time.sleep(1)
+        time.sleep(KEY_WAIT)
         w, h = self.size()
         self._shell(f"input swipe {w // 2} {int(h * 0.85)} {w // 2} {int(h * 0.3)} 250")
-        time.sleep(2)
+        time.sleep(UNLOCK_WAIT)
 
     def size(self):
         out = self._shell("wm size")
@@ -114,7 +125,7 @@ class AndroidDriver:
 
     def back(self):
         self._shell("input keyevent KEYCODE_BACK")
-        time.sleep(0.8)
+        time.sleep(BACK_WAIT)
 
     def use_adb_keyboard(self):
         installed = self._shell("pm list packages com.android.adbkeyboard", check=False)
@@ -122,14 +133,14 @@ class AndroidDriver:
             return False
         self._shell(f"ime enable {ADB_KEYBOARD}")
         self._shell(f"ime set {ADB_KEYBOARD}")
-        time.sleep(1.5)
+        time.sleep(IME_WAIT)
         return True
 
     def type_text(self, text):
         ime = self._shell("settings get secure default_input_method").strip()
         if "adbkeyboard" in ime.lower():
             self._shell(f"am broadcast -a ADB_INPUT_TEXT --es msg {shlex.quote(text)}")
-            time.sleep(0.5)
+            time.sleep(BROADCAST_WAIT)
             return
         if not text.isascii():
             raise UnicodeInputUnavailable(text)
@@ -140,7 +151,7 @@ class AndroidDriver:
             out = self._shell("uiautomator dump /sdcard/e2e_window.xml", check=False)
             if "dumped" in out:
                 break
-            time.sleep(1)
+            time.sleep(DUMP_RETRY_WAIT)
         xml = self._shell("cat /sdcard/e2e_window.xml")
         root = ET.fromstring(xml[xml.index("<?xml"):] if "<?xml" in xml else xml)
         out = []
@@ -184,7 +195,7 @@ class AndroidDriver:
                 return el
             if time.time() > end:
                 raise TimeoutError(f"no element: {texts}")
-            time.sleep(0.8)
+            time.sleep(POLL)
 
     def tap_text(self, *texts, contains=True, timeout=10):
         el = self.wait_for(*texts, contains=contains, timeout=timeout)
@@ -235,7 +246,7 @@ class AndroidDriver:
             pkg = self.foreground_package()
             if predicate(pkg):
                 return pkg
-            time.sleep(0.8)
+            time.sleep(POLL)
         return self.foreground_package()
 
     def keep_screen_on(self, on=True):

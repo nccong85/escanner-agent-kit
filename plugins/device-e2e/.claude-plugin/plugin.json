@@ -1,7 +1,7 @@
 {
   "name": "device-e2e",
   "displayName": "Device E2E",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Real-device end-to-end testing on a physical iPhone (WebDriverAgent) and Android phone (adb + uiautomator): the device-tester agent, the playbook skill, and Python drivers with one interface for both platforms.",
   "author": {
     "name": "Nguyen Chi Cong"

@@ -1,7 +1,7 @@
 ---
 name: contract-expert
 description: "Owner of cross-stack contracts: a C ABI header and its Dart FFI bindings, byte-identical encrypted wire formats, network API shapes, version negotiation. Consult BEFORE any ABI/wire/API change; changes the contract first, reviews each side, requires an interop test."
-tools: Read, Grep, Glob, Bash, Edit, Write, mcp__serena, mcp__context7
+tools: Read, Grep, Glob, Bash, Edit, Write, mcp__serena__*, mcp__context7__*
 model: inherit
 color: red
 ---

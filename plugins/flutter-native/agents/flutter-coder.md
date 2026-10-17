@@ -1,7 +1,7 @@
 ---
 name: flutter-coder
-description: "Implements Flutter/Dart feature code: screens and widgets, state controllers, routes, repositories, local persistence and immutable models, following the project's chosen libraries. Mirrors the nearest existing feature, keeps heavy work off the UI isolate, leaves the analyzer at zero."
-tools: Read, Grep, Glob, Bash, Edit, Write, Skill, mcp__serena, mcp__context7
+description: "Implements Flutter/Dart feature code: screens and widgets, state controllers, routes, repositories, local persistence and immutable models, following the project's chosen libraries. Mirrors the nearest existing feature, keeps heavy work off the UI isolate, leaves the analyzer at zero. Use for any task whose code is Dart in the Flutter app (not the native engine or the platform layer)."
+tools: Read, Grep, Glob, Bash, Edit, Write, Skill, mcp__serena__*, mcp__context7__*
 model: inherit
 color: cyan
 ---

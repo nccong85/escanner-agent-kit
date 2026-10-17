@@ -7,6 +7,14 @@ import time
 import urllib.request
 from pathlib import Path
 
+# Fixed waits after a WDA call that returns before the screen settles. Callers that need a specific screen still
+# wait for an element.
+LAUNCH_WAIT = 3     # /wda/apps/launch returns before the app has drawn its first frame
+ACTIVATE_WAIT = 2   # bringing a backgrounded app forward and its resume
+KEY_WAIT = 1        # terminate, Home: SpringBoard finishes the transition within a second
+UNLOCK_WAIT = 2     # the unlock animation and the app's resume
+POLL = 0.8          # interval of every wait-for loop
+
 SID_FILE = Path(os.environ.get("E2E_WDA_SID_FILE", str(Path.home() / ".cache" / "device-e2e" / "wda_sid")))
 
 
@@ -71,19 +79,19 @@ class IosDriver:
 
     def launch(self):
         _call("POST", self._s("/wda/apps/launch"), {"bundleId": self.app})
-        time.sleep(3)
+        time.sleep(LAUNCH_WAIT)
 
     def activate(self):
         _call("POST", self._s("/wda/apps/activate"), {"bundleId": self.app})
-        time.sleep(2)
+        time.sleep(ACTIVATE_WAIT)
 
     def terminate(self):
         _call("POST", self._s("/wda/apps/terminate"), {"bundleId": self.app})
-        time.sleep(1)
+        time.sleep(KEY_WAIT)
 
     def home(self):
         _call("POST", "/wda/homescreen")
-        time.sleep(1)
+        time.sleep(KEY_WAIT)
 
     def locked(self):
         return bool(_call("GET", self._s("/wda/locked"))["value"])
@@ -92,7 +100,7 @@ class IosDriver:
         _call("POST", self._s("/wda/lock"))
         time.sleep(seconds)
         _call("POST", self._s("/wda/unlock"))
-        time.sleep(2)
+        time.sleep(UNLOCK_WAIT)
 
     def size(self):
         return _call("GET", self._s("/window/size"))["value"]
@@ -183,7 +191,7 @@ class IosDriver:
                 return el
             if time.time() > end:
                 raise TimeoutError(f"no element: {texts}")
-            time.sleep(0.8)
+            time.sleep(POLL)
 
     def screenshot(self, path):
         Path(path).parent.mkdir(parents=True, exist_ok=True)

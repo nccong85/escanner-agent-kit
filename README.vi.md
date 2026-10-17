@@ -158,7 +158,8 @@ claude mcp add --transport http context7 https://mcp.context7.com/mcp
 claude mcp add --scope user serena -- serena start-mcp-server --context claude-code --project-from-cwd
 ```
 
-Tên phải đúng chính xác là `serena` và `context7`.
+Tên phải đúng chính xác là `serena` và `context7`, vì các agent khai báo tool là `mcp__serena__*` và
+`mcp__context7__*`. Connector mang tên khác (Context7 của claude.ai hiện là `claude_ai_Context7`) thì agent không thấy.
 
 Công cụ riêng của dự án bạn (Flutter, CMake, …) phải có trong `PATH` để agent chạy được test của bạn.
 

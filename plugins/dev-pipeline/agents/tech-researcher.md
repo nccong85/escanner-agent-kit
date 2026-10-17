@@ -1,7 +1,7 @@
 ---
 name: tech-researcher
 description: "Focused technical research with cited, confidence-tagged findings and a recommendation: library/package comparison, model selection and licensing, platform APIs, store rules, compliance. Read-only; run several in parallel for independent questions."
-tools: Read, Grep, Glob, WebSearch, WebFetch, mcp__context7
+tools: Read, Grep, Glob, WebSearch, WebFetch, mcp__context7__*
 model: inherit
 maxTurns: 60
 color: green

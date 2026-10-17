@@ -1,6 +1,6 @@
 ---
 name: build-release-expert
-description: "Implements and reviews build and release work: CI, store/release lanes, signing, multi-toolchain builds (Flutter, Gradle, CocoaPods, Xcode, CMake), perf-gate scripts, crash/analytics wiring."
+description: "Implements and reviews build and release work: CI, store/release lanes, signing, multi-toolchain builds (Flutter, Gradle, CocoaPods, Xcode, CMake), perf-gate scripts, crash/analytics wiring. Use when a task touches CI, a build or release script, signing, native build files or the perf gate."
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 color: yellow

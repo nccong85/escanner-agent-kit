@@ -1,7 +1,7 @@
 ---
 name: security-checker
-description: "Security and crypto gate for diffs touching encryption, keys/IVs/recovery, telemetry/logging, data upload or storage: crypto correctness against the project's spec, zero-knowledge, no key/plaintext leaks, TLS, supply chain. Read-only; writes a report and a QA verdict."
-tools: Read, Grep, Glob, Bash, Write, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__get_symbols_overview, mcp__serena__get_diagnostics_for_file, mcp__context7
+description: "Security and crypto gate for diffs touching encryption, keys/IVs/recovery, telemetry/logging, data upload or storage: crypto correctness against the project's spec, zero-knowledge, no key/plaintext leaks, TLS, supply chain. Does not edit code; writes only its report and a QA verdict."
+tools: Read, Grep, Glob, Bash, Write, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__get_symbols_overview, mcp__serena__get_diagnostics_for_file, mcp__context7__*
 model: inherit
 maxTurns: 80
 color: red

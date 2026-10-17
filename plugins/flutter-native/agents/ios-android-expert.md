@@ -1,7 +1,7 @@
 ---
 name: ios-android-expert
-description: "Implements and reviews Swift (iOS) and Kotlin (Android) code reached over platform channels: Pigeon/MethodChannel bridges, platform APIs, hardware-backed key storage, the platform side of byte-identical crypto."
-tools: Read, Grep, Glob, Bash, Edit, Write, mcp__serena, mcp__context7
+description: "Implements and reviews Swift (iOS) and Kotlin (Android) code reached over platform channels: Pigeon/MethodChannel bridges, platform APIs, hardware-backed key storage, the platform side of byte-identical crypto. Use when a task changes Swift or Kotlin code, a platform channel or its Pigeon file."
+tools: Read, Grep, Glob, Bash, Edit, Write, mcp__serena__*, mcp__context7__*
 model: inherit
 color: purple
 ---

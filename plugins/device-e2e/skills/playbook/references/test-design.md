@@ -9,6 +9,10 @@ Terms (test basis, coverage item, oracle, BLOCKED vs NOT RUN, …) are defined i
 `validate_e2e_plan.py <plan> --spec <spec>` (exit 0 = no finding). The owner approves the plan together with the
 device time, before the run.
 
+Contents: [Two modes](#two-modes) · [The procedure](#the-procedure) (1 basis, 2 risk, 3 factors, 4 state × event,
+5 technique, 6 push down, 7 platforms, 8 write, 9 oracle, 10 dedupe, 11 budget, 12 close) ·
+[Oracles that can fail](#oracles-that-can-fail) · [Results](#results)
+
 ## Two modes
 
 - **Feature:** the basis is one spec. Depth follows risk.

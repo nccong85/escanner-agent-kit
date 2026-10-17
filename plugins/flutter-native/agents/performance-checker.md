@@ -1,7 +1,7 @@
 ---
 name: performance-checker
-description: "Performance gate for hot-path diffs (native pipeline, FFI, heavy processing, DB queries, render loops, startup, new dependencies): holds the change against the project's budgets and demands a measured number. Read-only; writes a report and a QA verdict."
-tools: Read, Grep, Glob, Bash, Write, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__get_symbols_overview, mcp__serena__get_diagnostics_for_file, mcp__context7
+description: "Performance gate for hot-path diffs (native pipeline, FFI, heavy processing, DB queries, render loops, startup, new dependencies): holds the change against the project's budgets and demands a measured number. Does not edit code; writes only its report and a QA verdict."
+tools: Read, Grep, Glob, Bash, Write, mcp__serena__find_symbol, mcp__serena__find_referencing_symbols, mcp__serena__find_declaration, mcp__serena__find_implementations, mcp__serena__get_symbols_overview, mcp__serena__get_diagnostics_for_file, mcp__context7__*
 model: inherit
 maxTurns: 80
 color: yellow
