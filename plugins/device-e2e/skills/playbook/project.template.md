@@ -1,6 +1,6 @@
 # Device e2e — project facts
 
-Copy this file to `.claude/device-e2e/project.md` and fill every `<…>`. The `device-tester` agent and the
+`/device-e2e:init` copies this file to `.claude/device-e2e/project.md`; fill every slot in angle brackets. The `device-tester` agent and the
 `device-e2e:playbook` skill read it before touching a device; nothing here is guessed.
 
 ## App

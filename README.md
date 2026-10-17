@@ -31,7 +31,7 @@ The kit is split into four plugins so you install only what fits your project.
 | [`review-loop`](plugins/review-loop) | Any project, any language | **Core**, install it first | `finding-checker` agent · `/review-loop:review` · `/review-loop:init` · rule/finding/spec/citation validators · destructive-git hook · project templates |
 | [`flutter-native-agents`](plugins/flutter-native-agents) | Flutter apps with a C/C++ engine and iOS/Android code, like e-Scanner | Optional | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev-pipeline`](plugins/dev-pipeline) | Teams that want the whole flow: spec → tasks → code → review | Optional | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md` · `/dev-pipeline:research` · `tech-researcher` agent |
-| [`device-e2e`](plugins/device-e2e) | Anyone testing a mobile app on a real iPhone or Android phone | Optional | `device-tester` agent · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
+| [`device-e2e`](plugins/device-e2e) | Anyone testing a mobile app on a real iPhone or Android phone | Optional | `device-tester` agent · `/device-e2e:init` · `device-e2e:playbook` skill · iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers with one interface · project template |
 
 `review-loop` works on its own. Each optional plugin depends on it, and installing one installs `review-loop` too.
 Working on another stack (web, backend, …)? Install `review-loop` and add your own agents — see

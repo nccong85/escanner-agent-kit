@@ -27,6 +27,7 @@ Extract the feature name, the layers, the **contract impact** (none | abi | wire
 **Layer/Dir:** {path prefix from routing.md}
 **Agent:** {coder from routing.md, e.g. my-plugin:dev-x} | main session
 **Dependencies:** None | Task X
+**Gate:** none | owner approval — {what needs the owner's yes, e.g. a release build installed on the phones}
 
 ### Requirements
 - {from the spec}
@@ -55,6 +56,10 @@ command it names.
   2. Then the per-side updates, each depending on Task 1.
   3. Then an interop-test task (round-trip across the boundary, cross-platform vectors plus negative tests).
 - Security-sensitive tasks are always reviewed by the security gate.
+- **Owner gate:** a task whose DoD needs a build, a device run or a bench that the project says only the owner may
+  approve (Part A, or `.claude/device-e2e/project.md` for a device task) gets `**Gate:** owner approval — <what>`.
+  `implement` stops before that task until the approval is recorded, so the stop is visible in the plan, not a
+  surprise at dispatch. Keep the gated work in its own task so it does not hold up code that can be reviewed now.
 - Prefer larger cohesive tasks; split only across layers or for contract-first ordering.
 
 ## Step 3: Initialize `execution_state.md`
@@ -71,6 +76,7 @@ command it names.
 - **Fix Iteration:** 0/2
 - **Review Round:** 1
 - **Pre-fix snapshot:** (none)
+- **Owner approval:** (none)
 - **Last ACTION:** (none)
 - **Files:** (none)
 - **Report:** (none)
@@ -111,6 +117,12 @@ Every cited path must exist and every `**Agent:**` must be declared in `routing.
 Then check: one session per task, contract-first ordering, one layer per task, the checkpoint format, dependencies
 ordered foundation → features.
 
+**Device tasks.** When a task routes to `device-e2e:device-tester`, check `.claude/device-e2e/project.md`. Missing,
+or its *App* or *Devices* table still holding a `` `<…>` `` slot → say so in the report and point to
+`/device-e2e:init`. Slots elsewhere (harness paths, optional environment) are the agent's to settle. The agent reports
+`BLOCKED` without that file, so finding out here saves a dispatch.
+
 ## Step 5: Report
-The task count, whether contract-first applies, the two files created, and the next step:
+The task count, whether contract-first applies, the two files created, any device-task warning from Step 4, and the
+next step:
 `/dev-pipeline:implement <spec path>`.

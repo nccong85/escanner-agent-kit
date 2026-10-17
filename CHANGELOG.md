@@ -2,6 +2,38 @@
 
 All notable changes are documented here. Versions follow [Semantic Versioning](https://semver.org/) per plugin.
 
+## [dev-pipeline 1.3.0 · device-e2e 1.2.0 · review-loop 1.1.1 · flutter-native-agents 1.1.1] — 2026-10-18
+Fixes from the e-Scanner field test (TODO #11, #12, #8, #9, #5). New behavior in `dev-pipeline` and `device-e2e`;
+wording-only fixes in `review-loop` and `flutter-native-agents`.
+- `dev-pipeline`: `implement` takes the pre-fix snapshot before every fix round, and says so at each place that
+  dispatches a fix coder: Step 3, both `Step=FIX` rows of the routing table, and the Step 5 audit fix, which
+  skipped it once in the field test. With no snapshot the delta review has no base, so it becomes a full review of
+  the fixed files, never a diff against the coder's own backups. A test pins every one of these lines.
+- `flutter-native-agents`, `review-loop`: every agent with a review hand-off (the reviewer, both checkers, the four
+  experts in review mode) and the brief's §B7 now say the report file is the one file a reviewer writes, and that it
+  is required even when a harness default discourages creating `.md` files. In the field test `flutter-reviewer`
+  wrote it in three rounds and returned it inline in the fourth. `implement` Step 2 and `/review-loop:review` check
+  that the named report exists, re-prompt the reviewer once, and otherwise save the inline reply themselves.
+- `dev-pipeline`: a task that needs the owner's yes for a build, a device run or a bench is marked
+  `**Gate:** owner approval — <what>` by `task-decompose`. `implement` stops before dispatching it until Pipeline
+  State records the approval, then passes that line to the agent (which is what `device-tester` waits for). An agent
+  that reports `BLOCKED` with a reason now has its own routing row: save, stop, report, no retry. Stop 3 covers
+  both, so there are still six sanctioned stops. In the field test the orchestrator had to make this stop up.
+- `device-e2e`: new `/device-e2e:init` creates `.claude/device-e2e/project.md` from the playbook template (never
+  over an existing file or symlink), fills only what it can read from the project (the app id), and lists every
+  slot left as `<VERIFY>`. `task-decompose` warns when a task routes to `device-tester` and that file is missing or
+  unfilled. Before, it was copied by hand, and a missing file showed up only as `BLOCKED` at dispatch.
+- `dev-pipeline`: a `spec-create` question about performance or budget now quotes the Part A rule it touches, and an
+  answer beyond that rule goes into the spec's Performance section as a scoped, dated owner exception.
+  `spec-validate` accepts that form instead of failing every exceeded budget. In the field test the owner answered
+  "+50 %" without seeing the 20 % regression rule, and had to be asked again after validate failed.
+  `implement` passes those exception lines to the coder and to both review prompts (round 1 and delta), so the
+  reviewer enforces the approved limit within its scope, and still blocks beyond it.
+- `dev-pipeline`: in a delta review, a prior blocking finding verdicted `NOT CLOSED` goes back to the fix coder
+  with the regressions (iteration cap unchanged); before, only regressions were routed, and a round with no new
+  regression fell to rule C4 as a spec doubt. A full review that replaces a delta for lack of a snapshot routes a
+  new blocking finding as a regression, since nothing can show it predates the fix.
+
 ## [dev-pipeline 1.2.0] — 2026-10-15
 - `implement` now stops after each task by default and prints the resume line (`/clear`, then
   `/dev-pipeline:implement <spec>`), so every task runs in a fresh, small main session. The state was already in

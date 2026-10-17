@@ -11,13 +11,15 @@ and keeps the traps that cost real device time there.
 | `agents/device-tester.md` | Plans cases, drives the phones, triages every FAIL (harness bug or app bug), cleans up, reports PASS/FAIL/BLOCKED with evidence. Never fixes app code. |
 | `skills/playbook/` | The procedure: workflow, rules for cases that can actually fail, triage, device rules, cleanup, report — plus `references/ios.md`, `references/android.md`, `references/traps.md`. |
 | `skills/playbook/harness/` | `IosDriver` (WebDriverAgent HTTP) and `AndroidDriver` (adb + uiautomator) with the same method names, configured by `E2E_*` environment variables. Python 3 standard library only. |
+| `commands/init.md` | `/device-e2e:init`: creates `.claude/device-e2e/project.md` from the template and lists its unfilled slots. |
 | `skills/playbook/project.template.md` | The project facts the agent needs: devices, app id, build commands, harness paths, cleanup. |
 
 ## Set up
 
 1. `claude plugin install device-e2e@escanner-agent-kit` (it depends on `review-loop`, whose hook keeps the agent
    from running destructive git commands).
-2. Copy `project.template.md` to `.claude/device-e2e/project.md` in your project and fill it in.
+2. Run `/device-e2e:init` in your project. It creates `.claude/device-e2e/project.md` from `project.template.md`
+   (never over an existing one) and lists the slots you still have to fill.
 3. Build WebDriverAgent once for your iPhone, enable Developer Mode and UI Automation on it, and make adb see the
    Android phone (`adb devices`).
 4. Write your app-flows module and suite on top of the two drivers — the skill explains the shape.

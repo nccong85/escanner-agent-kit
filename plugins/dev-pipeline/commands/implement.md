@@ -97,6 +97,13 @@ that the changed files trigger, in addition to the base routing.
 
 Launch the coder agent for the current task per the **routing.md (Coder column) + overlay gates**.
 
+**Owner gate first.** A task marked `**Gate:** owner approval — <what>` in `{feature}_tasks.md` is not dispatched
+until Pipeline State's **Owner approval** names that approval. Absent → Step=BLOCKED, save state, stop and ask the
+owner for exactly `<what>` (sanctioned stop 3). When the owner says yes, record
+`Owner approval: <what> — owner, <YYYY-MM-DD>` and put that line in the agent's brief, which is what an agent that
+builds only on the owner's word (`device-e2e:device-tester`) looks for. The approval covers this task only: Step 4
+clears it.
+
 > **Prefer a packaged skill for standard setup work.** If the current task is a canonical, packaged
 > procedure and the project has a skill for it (for example scaffolding a feature module, generating FFI
 > bindings, or a coverage report), the skill encodes the maintained steps — use it instead of re-deriving them.
@@ -117,7 +124,8 @@ Agent tool:
     Implement: <TASK_REQUIREMENTS>
     If the task references "See spec Section X.Y", read the spec for full detail.
     Honor the contracts Part A names (ABI stability, byte-identical formats across platforms), its
-    data-handling non-negotiables, and the named budgets.
+    data-handling non-negotiables, and the named budgets — as amended by any `Exception to <rule>` line in the
+    spec's §3 Performance / NFRs, within its scope only.
     SHIFT-LEFT — you are graded on exactly this list, so run it over your OWN diff before handing off:
       · review_brief.md Part A "Non-negotiables" (all 9)
       · .claude/review-loop/common_pitfalls.md — every entry that touches your layer
@@ -150,6 +158,8 @@ Agent tool:
     Review these files: <FILES_TO_REVIEW>
     Round: 1 (full review of the diff).
     Acceptance criteria — the task's Definition of Done: <DOD_LINES>
+    Approved budget exceptions (spec §3 Performance / NFRs, verbatim, or "none"): <EXCEPTION_LINES>
+    Inside its scope an exception is the effective limit; beyond that limit it still blocks.
     Unresolved items the coder flagged: <OPEN_LINES_ONLY>
     Every finding MUST carry rule: <ID> from .claude/review-loop/review_rules.md, plus severity and
     confidence. No ID = the finding is dropped. Never file a MECHANIZED rule (§3).
@@ -165,7 +175,12 @@ Agent tool:
 > reviewer that reads *why* the coder believes the code is right anchors on that framing, and the
 > independence of the second opinion is the entire source of its value.
 
-**Round ≥ 2 uses the DELTA prompt instead (rule C3):**
+**Round ≥ 2 uses the DELTA prompt instead (rule C3).** `<PRE_FIX_SNAPSHOT>` is the SHA from Pipeline State.
+If it is `(none)`, the fix ran without a snapshot and there is no base to diff: do not build one from the coder's
+own backups. Run a round-1 (full) review of `<FILES_IN_FIX>` instead, still passing the prior report and the
+findings the fix claims to close so each gets its CLOSED / NOT CLOSED verdict, and write `no pre-fix snapshot` in
+the Pipeline State's Last ACTION so the miss is on record. With no base, a new blocking finding cannot be shown to
+predate the fix: route it as a regression (next fix round, iteration cap applies), never as C4 `SPEC-DOUBT`.
 
 ```yaml
 Agent tool:
@@ -174,6 +189,7 @@ Agent tool:
     Read `.claude/review-loop/review_brief.md` §B3 — this is a DELTA re-review, not a fresh review.
     Prior report: <PRIOR_REPORT_PATH>
     Blocking findings the fix claims to close: <LIST>
+    Approved budget exceptions (same lines as round 1, or "none"): <EXCEPTION_LINES>
     Fix diff: `git diff <PRE_FIX_SNAPSHOT> -- <FILES_IN_FIX>` (working tree vs the pre-fix snapshot;
     NOT `<sha>..`, which compares commits and is empty in this never-committed tree). Files the fix
     created are untracked and absent from the snapshot — read them whole: <NEW_FILES>.
@@ -189,6 +205,12 @@ Agent tool:
 > `regressions=<n>` is required on **both** verdicts, not just the failing one. Rule C4 routes on
 > whether a round-≥2 finding is a regression, so the orchestrator needs that count even when the delta
 > review passes — otherwise a pass carries no record that zero regressions were looked for.
+
+**Check the report file first** (every round, delta included). The hand-off must name a report path that exists.
+A reviewer that returned its findings inline, or named a path that is not there, is re-prompted once (resume it
+with `SendMessage`): "Write your report to the `review_brief.md` §B7 path with the Write tool and reply with the
+path." Still no file → save its inline reply to the §B7 path yourself, note `report saved by orchestrator` in
+Pipeline State, and go on. The Cost Ledger, Gate 1b and the next delta review all read that file.
 
 **After agent returns:** run Step 2b, THEN update Pipeline State → route per the decision table.
 `blocking=0` → treat as QA_PASSED and move on, however many `deferred` came back (rule C1).
@@ -274,6 +296,9 @@ git ls-files --others --exclude-standard > <scratchpad>/untracked_before_fix.txt
 stash list (the destructive-git hook allows it). Record `SNAP` as **Pre-fix snapshot** in Pipeline State;
 the delta re-review and the out-of-scope revert both use it.
 
+**No fix coder is dispatched while Pre-fix snapshot is `(none)`** — every fix round takes a fresh one, the
+Step 5 audit fix included. A snapshot taken after the fix is useless: it already contains the fix.
+
 **Resume the coder that wrote the code** — `SendMessage` to the **Coder agent** ID recorded for that layer,
 with the prompt below minus the brief line. It keeps its own reads and reasoning, so the fix round skips
 re-orientation. Dispatch a fresh coder only when no ID is recorded, the issue is in another layer, the
@@ -321,7 +346,8 @@ Update `execution_state.md`:
 - Append files to Accumulative File List
 - Move any Medium/Low from `## Current Issues` into `## Deferred Findings` (they do not block DONE)
 - Append the task's row to `## Cost Ledger`
-- Reset Pipeline State for next task (Step = IMPLEMENT, Round = 1, Iteration = 0, clear files/report/snapshot)
+- Reset Pipeline State for next task (Step = IMPLEMENT, Round = 1, Iteration = 0, clear files/report/snapshot/owner
+  approval)
 
 **Pending tasks remain** → the session boundary (stop and print the resume line), or with `--continuous` Step 1
 for the next task. **All done** → the session boundary, then Step 5 in the next session (`--continuous`: Step 5 now).
@@ -348,7 +374,9 @@ structurally cannot see: interactions between tasks.** Re-reviewing everything i
    contract one task changed and another still assumes, duplicated logic, dead code left by a later task.
 3. **Triage `## Deferred Findings` here — once.** Present them to the owner grouped by severity with a
    recommendation (fix now / file as tech debt / drop). Do not silently fix them all.
-4. `blocking > 0` → **one** fix round (route by layer, parallel if mixed) → one delta re-review.
+4. `blocking > 0` → take the pre-fix snapshot exactly as in Step 3 (`SNAP` + the untracked list, recorded in
+   Pipeline State) → **one** fix round (route by layer, parallel if mixed) → one delta re-review against that
+   `SNAP`.
    Still blocking after that → save, status `FINAL_QA_PARTIAL`, notify owner.
 5. `blocking = 0` → status `FINAL_QA_PASSED` → notify owner (report the deferred count, don't hide it).
 
@@ -369,6 +397,7 @@ structurally cannot see: interactions between tasks.** Re-reviewing everything i
 - **Fix Iteration:** 1/2
 - **Review Round:** 1 (round ≥2 = DELTA review, rule C3)
 - **Pre-fix snapshot:** (`git stash create` SHA, set before dispatching a fix; delta review + revert use it)
+- **Owner approval:** (none) | <what> — owner, <YYYY-MM-DD> (only for a task marked `**Gate:** owner approval`)
 - **Last ACTION:** REVIEW_REQUIRED
 - **Files:** native/src/enhance.cpp
 - **Report:** (none yet)
@@ -434,9 +463,10 @@ Continue from Task 2, Step 2 (Review).
 | `ACTION: REVIEW_REQUIRED` with **no** SELF-CHECK | Step unchanged | Re-prompt the same coder for the SELF-CHECK block. Do not spend a review round on it. |
 | `ACTION: QA_PASSED (blocking=0, …)` | Step=DONE | Append any `deferred` to `## Deferred Findings`. Run the interop test if a contract task; → Step 4, then the session boundary (`--continuous`: next task or Step 5). |
 | `ACTION: ISSUES_FOUND (blocking=0, deferred=n)` | Step=DONE | **This is a PASS (rule C1).** Append the n findings to `## Deferred Findings` and move on. Do NOT launch a fix round. |
-| `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-loop:finding-checker`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
-| `ACTION: ISSUES_FOUND (blocking≥1, regressions=0)`, round ≥2 | Step=BLOCKED | **Rule C4** — the new blocking finding is not a regression, so the spec is suspect. Save state, record as `SPEC-DOUBT`, **stop and ask the owner.** |
-| `ACTION: ISSUES_FOUND (blocking≥1, regressions≥1)`, round ≥2 | Step=FIX, Iteration++ | Fix the regressions only. At Iteration ≥ 2 → `FINAL_QA_PARTIAL`, report to owner. |
+| `ACTION: ISSUES_FOUND (blocking≥1)`, round 1 | — (run Step 2b FIRST) | Validate rule IDs → drop `UNKNOWN`; filter each survivor via `review-loop:finding-checker`. Recount. `blocking=0` after filtering → treat as QA_PASSED. Otherwise Step=FIX, Iteration++, take the Step 3 snapshot, launch coder(s) with **only** the filtered C/H list and the allowed-file list. |
+| `ACTION: ISSUES_FOUND (blocking≥1, regressions=0)`, round ≥2, with a **new** blocking finding | Step=BLOCKED | **Rule C4** — the new blocking finding is not a regression, so the spec is suspect. Save state, record as `SPEC-DOUBT`, **stop and ask the owner.** |
+| `ACTION: ISSUES_FOUND (blocking≥1, regressions≥1)`, round ≥2 — or the only blocking findings are prior ones verdicted `NOT CLOSED` | Step=FIX, Iteration++ | Take a fresh Step 3 snapshot, then fix the regressions plus every prior finding verdicted `NOT CLOSED`, nothing else. At Iteration ≥ 2 → `FINAL_QA_PARTIAL`, report to owner. |
+| An agent reports `BLOCKED` with a reason (instead of an `ACTION:` or `E2E:` line) | Step=BLOCKED | Save state with the reason, **stop and report it to the owner** (sanctioned stop 3). Do not retry or re-route: the agent stopped on purpose, e.g. no owner approval, a phone in use, or a missing project file. |
 | No recognized ACTION | Analyze output | ① Extract file paths → FILES. ② "no issues"/"passed"/blocking=0 → treat as QA_PASSED. ③ blocking issues + report path → ISSUES_FOUND. ④ files but no result → REVIEW_REQUIRED. ⑤ still unclear → save state, report to owner. |
 
 **VIOLATION: Returning to the user after an ACTION without launching the next agent is FORBIDDEN** —
@@ -446,7 +476,9 @@ except for the six sanctioned stops below.
 **The six sanctioned stops** (1–5 are signals the loop cannot fix by iterating; 6 is planned):
 1. **Rule C4** — a new non-regression blocking finding on round ≥ 2 (the spec, not the code, is wrong).
 2. Fix iteration cap reached with blocking issues open → `FINAL_QA_PARTIAL`.
-3. A contract/crypto gate that needs a device or an interop run the pipeline cannot perform.
+3. **A gate the pipeline cannot pass on its own:** a contract/crypto gate that needs a device or an interop run it
+   cannot perform; a task marked `**Gate:** owner approval` with no approval recorded; or an agent that reported
+   `BLOCKED` with a reason.
 4. Two reviewers filing **contradictory** blocking findings on the same line — iterating just alternates
    between them. Report both and let the owner pick.
 5. A deterministic validator exits 2 (`FATAL`): the project's review files are missing or a symlink is broken.

@@ -98,5 +98,7 @@ Checklist:
   `try/catch(...) → status` so no exception (or path) crosses the FFI boundary.
 
 ## Hand-off (`review_brief.md` §B7)
-Reviewing → write the report to the §B7 path, then end with exactly one of
+Reviewing → write the report to the §B7 path. It is the one file you write while reviewing, and it is required even
+if a harness default or another instruction says not to create `.md` files; modify nothing else. Then end with
+exactly one of
 `ACTION: QA_PASSED (blocking=0, deferred=<n>)` · `ACTION: ISSUES_FOUND (blocking=<n>, deferred=<n>)`.

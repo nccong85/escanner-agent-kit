@@ -107,6 +107,14 @@ Generate 5–7 targeted questions across: clarification, contract safety, securi
 reuse. Ask them (at most 4 per question batch — ask the highest-stakes first), update the spec, then clear Open
 Questions.
 
+**A performance or budget question quotes the Part A rule it touches.** Before asking how much extra time, memory
+or size is acceptable, find the matching budget or regression rule in Part A and quote it in the question, e.g.
+"Part A *Regression rule*: > 20 % over a recorded baseline blocks. Does this stay inside it, or do you want an
+exception?". The question lives in chat and cannot drift, so quote the figure there; the spec still cites the rule
+by name (Step 1.4). An answer beyond the rule is an exception: write it into §3 *Performance / NFRs* at once as
+`Exception to <rule name>: <accepted limit>, scoped to <path or operation>, approved by the owner <YYYY-MM-DD>`.
+Otherwise spec-validate fails the spec on the conflict and the owner is asked a second time.
+
 ## Step 3b: Check the references mechanically
 ```
 validate_spec_refs.sh <features dir>/{feature-name}/spec_{feature-name}.md

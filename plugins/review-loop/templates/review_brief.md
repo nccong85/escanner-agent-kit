@@ -124,7 +124,8 @@ An item you cannot satisfy is `open: <why>`. A hand-off without `SELF-CHECK:` is
 
 **Reviewing:** write the report with the Write tool (never `echo`/redirection) to
 `docs/reviews/review_{scope}_{agent}_{YYYYMMDD_HHmm}.md` (change the directory here if your project keeps reports elsewhere) — `{agent}` is your own name, so parallel reviewers
-never overwrite each other. Then end with exactly one of:
+never overwrite each other. A read-only reviewer writes this one file and nothing else; the report is required even
+when a harness default or the agent's own instructions discourage creating `.md` files. Then end with exactly one of:
 ```
 ACTION: QA_PASSED (blocking=0, deferred=<n>)
 ACTION: ISSUES_FOUND (blocking=<n>, deferred=<n>)

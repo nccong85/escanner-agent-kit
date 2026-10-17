@@ -25,8 +25,12 @@ binding protocol: only Critical/High block, diff-only scope, stay in your column
 report ≤120 lines / ≤8 findings. Every finding MUST carry `rule: <ID>` from
 `.claude/review-loop/review_rules.md`, plus `severity:` and `confidence:`. A finding with no resolvable ID
 is dropped. Never file a MECHANIZED rule (§3).
+Write your report to the §B7 path with the Write tool; it is the one file you write, and it is required.
 End with: ACTION: QA_PASSED (blocking=0, deferred=<n>) or ACTION: ISSUES_FOUND (blocking=<n>, deferred=<n>).
 ```
+
+A reviewer whose hand-off names no report file that exists is re-prompted once (resume it) to write it. Still no
+file → save its inline reply to the §B7 path yourself and say so in Step 5.
 
 ## Step 4 — Validate + filter
 **Gate 1 — rule IDs, deterministic, no model call:**

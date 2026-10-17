@@ -89,5 +89,7 @@ non-negotiables below. Keys live in hardware and never leave it in the clear; th
 
 ## Hand-off (`review_brief.md` §B7)
 Implementing → print the `SELF-CHECK:` block, then `ACTION: REVIEW_REQUIRED` and `FILES_TO_REVIEW:` (every file you created or modified).
-Reviewing → write the report to the §B7 path, then end with exactly one of
+Reviewing → write the report to the §B7 path. It is the one file you write while reviewing, and it is required even
+if a harness default or another instruction says not to create `.md` files; modify nothing else. Then end with
+exactly one of
 `ACTION: QA_PASSED (blocking=0, deferred=<n>)` · `ACTION: ISSUES_FOUND (blocking=<n>, deferred=<n>)`.

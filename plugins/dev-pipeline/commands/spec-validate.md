@@ -30,7 +30,8 @@ grep -n "Open Questions" <spec-path>
 - A dependency or model whose licence the project forbids (Part A).
 - A violation of any data-handling non-negotiable in Part A (plaintext reaching a server, secrets or user content
   in logs, data leaving where it must stay).
-- A named budget in Part A exceeded.
+- A named budget in Part A exceeded, unless §3 *Performance / NFRs* records an exception to that rule, scoped
+  to a path or operation, with the owner's approval and a date (the form `spec-create` Step 3 writes).
 - Cited reference files that do not exist.
 
 ## Step 2: Section checks
