@@ -21,5 +21,5 @@ ISTQB glossary (CTFL 4.0).
 | Confirmation test | Re-runs a fixed bug's case; it must have failed on the build before the fix. |
 | Regression test | Re-tests an area the diff touches that was working. |
 | Smoke test | One main path per area the change does not touch. |
-| Evidence | A screenshot, UI-tree read, count from a file the app wrote, or a result file, with its path. |
+| Evidence | A file in `evidence/` next to the results summary (screenshot, UI-tree dump, the app's file, a result file or log), cited by its path. A sentence is not evidence. |
 | Severity | S1 data loss or crash · S2 feature broken · S3 degraded, with a workaround · S4 cosmetic. |

@@ -102,8 +102,8 @@ RESULTS = """# Results
 | DRY | android | PASS | same |
 | DIAG | ios | PASS | 0 failure events |
 | DIAG | android | PASS | 0 failure events |
-| E1 | ios | PASS | 12/40 → 31/40, 640 ms |
-| E1 | android | PASS | 9/40 → 28/40, 810 ms |
+| E1 | ios | PASS | 12/40 → 31/40, 640 ms, `evidence/E1_ios_1.png` |
+| E1 | android | PASS | 9/40 → 28/40, 810 ms, evidence/E1_android_1.xml |
 | E2 | ios | BLOCKED | indexing done before kill (40/40) |
 | E2 | android | FAIL | BUG-1, 10/40 after 120 s, logs/e2.txt |
 | E3 | android | NOT RUN | no scanned fixture on this phone |
@@ -123,6 +123,11 @@ RESULTS = """# Results
 
 E2E: ios pass=1 fail=0 blocked=1 not_run=0 · android pass=1 fail=1 blocked=0 not_run=1
 """
+
+
+for f in ("evidence/E1_ios_1.png", "evidence/E1_android_1.xml", "logs/e2.txt"):
+    (WORK / f).parent.mkdir(parents=True, exist_ok=True)
+    (WORK / f).write_text("x")
 
 
 def run(plan, *args):
@@ -222,6 +227,12 @@ expect("defect names another case", 1, PLAN, "--results", "RES:" + RESULTS.repla
        pattern="BUG-1: **Case:** does not name E2 android")
 expect("hand-off counts differ", 1, PLAN, "--results", "RES:" + RESULTS.replace("android pass=1 fail=1", "android pass=2 fail=0"),
        pattern="E2E: line android counts differ")
+expect("PASS with only words", 1, PLAN, "--results", "RES:" + RESULTS.replace(", `evidence/E1_ios_1.png`", ""),
+       pattern="E1 ios: PASS cites no evidence file")
+expect("PASS cites a missing file", 1, PLAN, "--results", "RES:" + RESULTS.replace("E1_android_1.xml", "E1_android_9.xml"),
+       pattern="evidence file evidence/E1_android_9.xml does not exist")
+expect("defect cites a missing file", 1, PLAN, "--results", "RES:" + RESULTS.replace("- **Evidence:** logs/e2.txt", "- **Evidence:** logs/e9.txt"),
+       pattern="BUG-1: evidence file logs/e9.txt does not exist")
 expect("no hand-off line", 1, PLAN, "--results", "RES:" + RESULTS.replace("E2E: ios", "ios"), pattern="no E2E: hand-off line")
 
 # usage and the shipped template

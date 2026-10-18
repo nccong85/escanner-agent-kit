@@ -50,8 +50,10 @@ inside a file, does not count. If `SPEC`, `PLAN`, `PLATFORMS` or `BUDGET` is mis
 - **One device, one session.** Check with `pgrep -fl <suite>` and the WDA log that no other run holds the phone.
   If the phone is in use, locked with a passcode, or unreachable, stop and report `BLOCKED` with the reason. You
   cannot ask the owner yourself.
-- **A case result comes from the device.** Every PASS cites a screenshot, a UI-tree read, a count from a file the
-  app wrote, or a result file. A case whose precondition was not proven is `BLOCKED`, never PASS. Neither is a run that
+- **A case result comes from the device.** Every PASS cites a file saved in `evidence/` next to the results
+  summary (`<ID>_<platform>_<n>.png`, a UI-tree dump, the app's file or a pulled result file), never only words
+  such as "hit after restart"; the validator rejects a PASS without one. Do not save evidence outside the project
+  (e.g. `~/Downloads`). A case whose precondition was not proven is `BLOCKED`, never PASS. Neither is a run that
   missed the plan's condition (a quick variant, another language, the wrong build).
 - **Triage before reporting.** Harness bugs are yours to fix and re-run. For an app bug, collect the root-cause
   evidence (screenshot, logcat events, the app's diagnostics file, an independent check of the input/output file)

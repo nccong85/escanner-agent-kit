@@ -104,6 +104,7 @@ before the run stays awake after it.
 
 Write the results summary where `project.md` says, in the plan template's results layout: a header (build,
 commit, devices, date, plan), one row per planned case and run step per platform with `PASS`, `FAIL`, `BLOCKED`
-or `NOT RUN` and the evidence (numbers, not adjectives) or the reason, a `BUG-n` entry for every FAIL, what was
+or `NOT RUN` and the evidence (numbers, not adjectives, plus the `evidence/<ID>_<platform>_<n>` file they were
+read from) or the reason, a `BUG-n` entry for every FAIL, what was
 **not** verified, and the `E2E:` counts. A run that did not meet the plan's condition is `BLOCKED`. Then run `validate_e2e_plan.py <plan> --results <summary>` until it exits 0. Delete the result files of aborted
 runs so they do not read as results.

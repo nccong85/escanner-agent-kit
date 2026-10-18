@@ -17,8 +17,9 @@ eyeball on its own plan:
      (Min × platforms, run steps included) fits the plan's **Device budget**.
   7. With --results: the header names the build, commit, devices, date and this plan; every case and run step has
      exactly one row per planned platform with PASS, FAIL, BLOCKED or NOT RUN, a reason for BLOCKED / NOT RUN, and
-     no row for an ID the plan does not have; every FAIL cites a BUG-n whose defect entry is complete; the
-     `E2E:` line's counts equal the table's.
+     no row for an ID the plan does not have; every case PASS cites an evidence file; every evidence file cited
+     (a path with a directory, e.g. `evidence/E1_ios_1.png`, relative to the summary) exists; every FAIL cites a
+     BUG-n whose defect entry is complete; the `E2E:` line's counts equal the table's.
 
 Exit 0 = no finding. Exit 1 = at least one finding. Exit 2 = usage error or unreadable file.
 A cell is one `|`-separated field; a cell that is a whole `<…>` slot is unfilled.
@@ -38,6 +39,7 @@ NUM = re.compile(r"\d+(\.\d+)?")
 HEADER = ("Build", "Commit", "Devices", "Date", "Plan")
 DEFECT_FIELDS = ("Case", "Build", "Device", "Severity", "Steps", "Expected", "Actual", "Evidence", "Harness ruled out by")
 TEST_REF = re.compile(r"\S\.[A-Za-z]{1,5}::\s*\S")
+EVIDENCE_FILE = re.compile(r"[\w.~/-]*/[\w.-]+\.(?:png|jpe?g|xml|json|txt|log|csv)\b", re.I)
 UNWRITTEN = re.compile(r"\bto be (created|written|added)\b|\bTODO\b|\bTBD\b|\bnot yet\b|\bplanned\b|\bmissing\b", re.I)
 
 findings = []
@@ -297,6 +299,12 @@ def main(argv):
     for res in results:
         R = Path(res).name
         text = read(res)
+        base = Path(res).resolve().parent
+
+        def missing_files(where, evidence):
+            for f in EVIDENCE_FILE.findall(evidence):
+                if not (base / Path(f).expanduser()).is_file():
+                    find(R, f"{where}: evidence file {f} does not exist")
         for h in HEADER:
             m = re.search(rf"^\*\*{h}:\*\*(.*)$", text, re.M)
             if not m or unfilled(m.group(1)):
@@ -310,6 +318,7 @@ def main(argv):
                 continue
             fields = dict(re.findall(r"^\s*-\s*\*\*([^*]+?):\*\*(.*)$", block, re.M))
             defects[m.group(1)] = fields
+            missing_files(m.group(1), clean(fields.get("Evidence", "")))
             for f in DEFECT_FIELDS:
                 if f not in fields or unfilled(fields[f]):
                     find(R, f"{m.group(1)}: field **{f}:** is missing or empty")
@@ -336,6 +345,9 @@ def main(argv):
                     find(R, f"{cid} {plat}: status '{status}' is not PASS, FAIL, BLOCKED or NOT RUN")
                 if status in ("BLOCKED", "NOT RUN") and unfilled(evidence):
                     find(R, f"{cid} {plat}: {status} with no reason")
+                if status == "PASS" and cid in cases and not EVIDENCE_FILE.search(evidence):
+                    find(R, f"{cid} {plat}: PASS cites no evidence file (e.g. evidence/{cid}_{plat}_1.png)")
+                missing_files(f"{cid} {plat}", evidence)
                 if status == "FAIL":
                     bugs = re.findall(r"BUG-\d+", evidence)
                     if not bugs:

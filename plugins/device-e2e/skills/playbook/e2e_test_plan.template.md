@@ -77,7 +77,10 @@ the next. A shortened variant is its own row with its own Expected.
 ## Results
 
 The results summary (path in `project.md`) has this layout. `validate_e2e_plan.py <plan> --results <summary>`
-checks it. Status words are defined in `references/glossary.md`.
+checks it. Status words are defined in `references/glossary.md`. Evidence files go in `evidence/` next to the
+summary, named `<ID>_<platform>_<n>.<ext>` (screenshot, UI-tree dump, the app's diagnostics file, a pulled result
+file, a log). Every case PASS cites at least one of them by its path; a number read on the device goes in the cell
+next to the file it was read from.
 
 ```markdown
 # E2E results: <feature>, <YYYY-MM-DD>
@@ -91,7 +94,7 @@ checks it. Status words are defined in `references/glossary.md`.
 | ID | Platform | Status | Evidence |
 |---|---|---|---|
 | READY | ios | PASS | <what was checked> |
-| E1 | ios | <PASS · FAIL · BLOCKED · NOT RUN> | <numbers, file path; BUG-n for a FAIL; the reason for BLOCKED or NOT RUN> |
+| E1 | ios | <PASS · FAIL · BLOCKED · NOT RUN> | <numbers and evidence/E1_ios_1.png; BUG-n for a FAIL; the reason for BLOCKED or NOT RUN> |
 
 ## Defects
 
@@ -103,7 +106,7 @@ checks it. Status words are defined in `references/glossary.md`.
 - **Steps:** <numbered, from a fresh state>
 - **Expected:** <the plan's Expected>
 - **Actual:** <numbers, what the screen showed>
-- **Evidence:** <screenshot, logcat, diagnostics paths>
+- **Evidence:** <evidence/ paths: screenshot, logcat, diagnostics>
 - **Harness ruled out by:** <screenshot at the failure, activity log, independent check of the file>
 
 ## Not verified
