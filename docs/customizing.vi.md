@@ -1,4 +1,4 @@
-[English](customizing.md) · **Tiếng Việt**
+[English](customizing.md) · **Tiếng Việt** · [日本語](customizing.ja.md)
 
 # Tùy chỉnh
 

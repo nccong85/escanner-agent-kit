@@ -1,4 +1,4 @@
-[English](field-notes.md) · **Tiếng Việt**
+[English](field-notes.md) · **Tiếng Việt** · [日本語](field-notes.ja.md)
 
 # Ghi chép thực tế
 

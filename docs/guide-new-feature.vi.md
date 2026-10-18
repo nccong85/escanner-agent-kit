@@ -1,4 +1,4 @@
-[English](guide-new-feature.md) · **Tiếng Việt**
+[English](guide-new-feature.md) · **Tiếng Việt** · [日本語](guide-new-feature.ja.md)
 
 # Hướng dẫn: làm một tính năng mới với các agent
 

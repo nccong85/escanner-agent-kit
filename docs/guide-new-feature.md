@@ -1,4 +1,4 @@
-**English** · [Tiếng Việt](guide-new-feature.vi.md)
+**English** · [Tiếng Việt](guide-new-feature.vi.md) · [日本語](guide-new-feature.ja.md)
 
 # Guide: building a new feature with the agents
 

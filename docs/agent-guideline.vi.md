@@ -1,4 +1,4 @@
-[English](agent-guideline.md) · **Tiếng Việt**
+[English](agent-guideline.md) · **Tiếng Việt** · [日本語](agent-guideline.ja.md)
 
 # Hướng dẫn sử dụng và tạo agent
 

@@ -1,4 +1,4 @@
-[English](architecture.md) · **Tiếng Việt**
+[English](architecture.md) · **Tiếng Việt** · [日本語](architecture.ja.md)
 
 # Kiến trúc
 

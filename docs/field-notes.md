@@ -1,4 +1,4 @@
-**English** · [Tiếng Việt](field-notes.vi.md)
+**English** · [Tiếng Việt](field-notes.vi.md) · [日本語](field-notes.ja.md)
 
 # Field notes
 

@@ -1,4 +1,4 @@
-**English** · [Tiếng Việt](architecture.vi.md)
+**English** · [Tiếng Việt](architecture.vi.md) · [日本語](architecture.ja.md)
 
 # Architecture
 

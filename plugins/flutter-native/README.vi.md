@@ -1,4 +1,4 @@
-[English](README.md) · **Tiếng Việt**
+[English](README.md) · **Tiếng Việt** · [日本語](README.ja.md)
 
 # flutter-native
 

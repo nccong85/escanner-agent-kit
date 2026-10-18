@@ -1,4 +1,4 @@
-**English** · [Tiếng Việt](README.vi.md)
+**English** · [Tiếng Việt](README.vi.md) · [日本語](README.ja.md)
 
 # eScanner Agent Kit
 

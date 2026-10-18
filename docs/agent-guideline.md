@@ -1,4 +1,4 @@
-**English** · [Tiếng Việt](agent-guideline.vi.md)
+**English** · [Tiếng Việt](agent-guideline.vi.md) · [日本語](agent-guideline.ja.md)
 
 # Agent Guideline
 
