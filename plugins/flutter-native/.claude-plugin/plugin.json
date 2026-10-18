@@ -1,0 +1,22 @@
+{
+  "name": "flutter-native",
+  "displayName": "Flutter + Native",
+  "version": "1.0.0",
+  "description": "Reference coder, reviewer, contract-owner and gate agents for Flutter apps with a C/C++ engine and iOS/Android platform code.",
+  "author": {
+    "name": "Nguyen Chi Cong"
+  },
+  "license": "MIT",
+  "keywords": [
+    "flutter",
+    "dart",
+    "ffi",
+    "ios",
+    "android",
+    "agents"
+  ],
+  "dependencies": [
+    "review-gate"
+  ],
+  "repository": "https://github.com/nccong85/escanner-agent-kit"
+}

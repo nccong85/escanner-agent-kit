@@ -1,0 +1,34 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "escanner-agent-kit",
+  "description": "Gated code review for Claude Code: a closed rule vocabulary, deterministic validators and a precision filter, plus a spec-to-ship pipeline whose fix loop ends, and a reference Flutter + native agent stack.",
+  "owner": {
+    "name": "Nguyen Chi Cong"
+  },
+  "plugins": [
+    {
+      "name": "review-gate",
+      "source": "./plugins/review-gate",
+      "description": "Rule-ID-gated code review: the finding-checker agent, rule validators, a destructive-git safety hook, project templates, and /review-gate:review.",
+      "category": "development"
+    },
+    {
+      "name": "dev-pipeline",
+      "source": "./plugins/dev-pipeline",
+      "description": "Spec → validate → decompose → implement, checkpointed in execution_state.md, with convergence rules so the coder/reviewer loop ends.",
+      "category": "development"
+    },
+    {
+      "name": "flutter-native",
+      "source": "./plugins/flutter-native",
+      "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, experts that write and review one layer, security and performance checkers.",
+      "category": "development"
+    },
+    {
+      "name": "device-e2e",
+      "source": "./plugins/device-e2e",
+      "description": "Real-device e2e testing on a physical iPhone (WebDriverAgent) and Android phone (adb): the device-tester agent, its skill, and Python drivers.",
+      "category": "development"
+    }
+  ]
+}

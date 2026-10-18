@@ -1,0 +1,20 @@
+{
+  "name": "dev-pipeline",
+  "displayName": "Dev Pipeline",
+  "version": "1.0.0",
+  "description": "Spec-to-ship pipeline: spec-create, spec-validate, task-decompose and implement, checkpointed and convergent.",
+  "author": {
+    "name": "Nguyen Chi Cong"
+  },
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "spec",
+    "agents",
+    "orchestration"
+  ],
+  "dependencies": [
+    "review-gate"
+  ],
+  "repository": "https://github.com/nccong85/escanner-agent-kit"
+}

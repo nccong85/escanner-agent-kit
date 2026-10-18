@@ -1,0 +1,17 @@
+{
+  "name": "review-gate",
+  "displayName": "Review Gate",
+  "version": "1.0.0",
+  "description": "Rule-ID-gated code review that terminates: closed rule vocabulary, deterministic validators, a precision filter, delta re-reviews and a destructive-git safety hook.",
+  "author": {
+    "name": "Nguyen Chi Cong"
+  },
+  "license": "MIT",
+  "keywords": [
+    "code-review",
+    "agents",
+    "quality",
+    "hooks"
+  ],
+  "repository": "https://github.com/nccong85/escanner-agent-kit"
+}
