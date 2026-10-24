@@ -21,7 +21,7 @@ claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit
 claude plugin install flutter-native@escanner-agent-kit   # or your own stack plugin
 ```
-プラグインを 1 つのプロジェクトに限定するには `--scope local` を付けます。実機でのテストには、さらに`device-e2e@escanner-agent-kit` をインストールし、プロジェクトで `/device-e2e:init` を実行します。
+プラグインを 1 つのプロジェクトに限定するには `--scope local` を付けます。実機でのテストには、さらに専用マーケットプレイス ([github.com/nccong85/device-e2e](https://github.com/nccong85/device-e2e)) から `device-e2e@device-e2e` をインストールし、プロジェクトで `/device-e2e:init` を実行します。
 
 **後で更新するには：** `claude plugin marketplace update escanner-agent-kit` を実行し、続いて`claude plugin update <plugin>@escanner-agent-kit` を実行します（ローカルインストールの場合は `--scope local` を付けます）。そのプロジェクトで `claude plugin list` を確認し、バージョンがまだ古ければ、そこでプラグインをアンインストールして再インストールします。
 

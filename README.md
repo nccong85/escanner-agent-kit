@@ -27,7 +27,7 @@ If you are interested in the real app this kit grew out of, you can download and
 | [`review‑gate`](plugins/review-gate) | Any&nbsp;project,&nbsp;any&nbsp;language | **Core** | `finding-checker` agent<br>`/review-gate:review`<br>`/review-gate:init`<br>Rule/finding/spec validators<br>Hook that blocks unsafe git commands<br>Project templates |
 | [`flutter‑native`](plugins/flutter-native) | Flutter apps with a C++ engine and iOS/Android code | Optional | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev‑pipeline`](plugins/dev-pipeline) | The&nbsp;flow:&nbsp;spec&nbsp;→&nbsp;task&nbsp;→&nbsp;code&nbsp;→&nbsp;review | Optional | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, checkpointed in `execution_state.md`<br>`/dev-pipeline:research`<br>`tech-researcher` agent |
-| [`device‑e2e`](plugins/device-e2e) | An&nbsp;agent&nbsp;that&nbsp;tests&nbsp;a&nbsp;mobile&nbsp;app&nbsp;on&nbsp;real&nbsp;devices | Optional | `device-tester` agent<br>`/device-e2e:init`<br>`device-e2e:playbook` skill<br>E2e test-plan template and validator<br>iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers<br>Project template |
+| [`device‑e2e`](https://github.com/nccong85/device-e2e) (own repo) | An&nbsp;agent&nbsp;that&nbsp;tests&nbsp;a&nbsp;mobile&nbsp;app&nbsp;on&nbsp;real&nbsp;devices | Optional | `device-tester` agent<br>`/device-e2e:init`<br>`device-e2e:playbook` skill<br>E2e test-plan template and validator<br>iPhone (WebDriverAgent) and Android (adb + uiautomator) drivers<br>Project template |
 
 `review-gate` works on its own. On another stack (web, backend, …), install `review-gate` and add your own agents:
 see [docs/customizing.md](docs/customizing.md).
@@ -67,7 +67,8 @@ claude plugin marketplace add nccong85/escanner-agent-kit
 claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
 claude plugin install flutter-native@escanner-agent-kit          # optional, Flutter + native stacks
-claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
+claude plugin marketplace add nccong85/device-e2e               # optional, real-device e2e on iPhone + Android
+claude plugin install device-e2e@device-e2e
 ```
 
 **2. Initialize inside your project**

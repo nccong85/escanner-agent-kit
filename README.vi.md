@@ -25,7 +25,7 @@ Nếu bạn có hứng thú về ứng dụng thực tế đã làm nền tảng
 | [`review‑gate`](plugins/review-gate/README.vi.md) | Mọi&nbsp;dự&nbsp;án,&nbsp;mọi&nbsp;ngôn&nbsp;ngữ | **Lõi** | agent `finding-checker`<br>`/review-gate:review`<br>`/review-gate:init`<br>Validator cho rule/finding/spec<br>Hook chặn lệnh git sai<br>Template dự án |
 | [`flutter‑native`](plugins/flutter-native/README.vi.md) | App Flutter có engine C++ và code iOS/Android | Tùy&nbsp;chọn | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev‑pipeline`](plugins/dev-pipeline/README.vi.md) | Quy&nbsp;trình:&nbsp;spec&nbsp;→&nbsp;task&nbsp;→&nbsp;code&nbsp;→&nbsp;review | Tùy&nbsp;chọn | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`, lưu checkpoint trong `execution_state.md`<br>`/dev-pipeline:research`<br>agent `tech-researcher` |
-| [`device‑e2e`](plugins/device-e2e/README.vi.md) | Agent&nbsp;test&nbsp;app&nbsp;mobile&nbsp;trên&nbsp;thiết&nbsp;bị&nbsp;thật | Tùy&nbsp;chọn | Agent `device-tester`<br>`/device-e2e:init`<br>skill `device-e2e:playbook`<br>Mẫu test plan e2e và validator<br>Driver cho iPhone (WebDriverAgent) và Android (adb + uiautomator)<br>Template dự án |
+| [`device‑e2e`](https://github.com/nccong85/device-e2e/blob/main/plugins/device-e2e/README.vi.md) (repo riêng) | Agent&nbsp;test&nbsp;app&nbsp;mobile&nbsp;trên&nbsp;thiết&nbsp;bị&nbsp;thật | Tùy&nbsp;chọn | Agent `device-tester`<br>`/device-e2e:init`<br>skill `device-e2e:playbook`<br>Mẫu test plan e2e và validator<br>Driver cho iPhone (WebDriverAgent) và Android (adb + uiautomator)<br>Template dự án |
 
 `review-gate` chạy độc lập. Làm stack khác (web, backend, …) thì cài `review-gate` rồi thêm agent của riêng bạn: xem [docs/customizing.vi.md](docs/customizing.vi.md).
 
@@ -64,7 +64,8 @@ claude plugin marketplace add nccong85/escanner-agent-kit
 claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
 claude plugin install flutter-native@escanner-agent-kit          # optional, Flutter + native stacks
-claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
+claude plugin marketplace add nccong85/device-e2e               # optional, real-device e2e on iPhone + Android
+claude plugin install device-e2e@device-e2e
 ```
 
 **2. Khởi tạo trong dự án của bạn**

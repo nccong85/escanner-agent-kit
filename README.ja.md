@@ -24,7 +24,7 @@ e-Scanner アプリの実開発から抽出し、調整したエージェント�
 | [`review‑gate`](plugins/review-gate/README.ja.md) | あらゆるプロジェクト、あらゆる言語 | **コア** | `finding-checker` エージェント<br>`/review-gate:review`<br>`/review-gate:init`<br>ルール/指摘/仕様 (spec) のバリデーター<br>危険な git コマンドをブロックするフック<br>プロジェクトテンプレート |
 | [`flutter‑native`](plugins/flutter-native/README.ja.md) | C++ エンジンと iOS/Android コードを持つ Flutter アプリ | 任意 | `flutter-coder`, `flutter-reviewer`, `cpp-engine-expert`, `ios-android-expert`, `contract-expert`, `build-release-expert`, `security-checker`, `performance-checker` |
 | [`dev‑pipeline`](plugins/dev-pipeline/README.ja.md) | フロー: 仕様 → タスク → コード → レビュー | 任意 | `/dev-pipeline:spec-create` → `spec-validate` → `task-decompose` → `implement`、`execution_state.md` にチェックポイントを記録<br>`/dev-pipeline:research`<br>`tech-researcher` エージェント |
-| [`device‑e2e`](plugins/device-e2e/README.ja.md) | 実機でモバイルアプリをテストするエージェント | 任意 | `device-tester` エージェント<br>`/device-e2e:init`<br>`device-e2e:playbook` スキル<br>E2E テスト計画テンプレートとバリデーター<br>iPhone (WebDriverAgent) と Android (adb + uiautomator) のドライバー<br>プロジェクトテンプレート |
+| [`device‑e2e`](https://github.com/nccong85/device-e2e/blob/main/plugins/device-e2e/README.ja.md) (別リポジトリ) | 実機でモバイルアプリをテストするエージェント | 任意 | `device-tester` エージェント<br>`/device-e2e:init`<br>`device-e2e:playbook` スキル<br>E2E テスト計画テンプレートとバリデーター<br>iPhone (WebDriverAgent) と Android (adb + uiautomator) のドライバー<br>プロジェクトテンプレート |
 
 `review-gate` は単体で動作します。別のスタック (Web、バックエンドなど) では、`review-gate` をインストールして独自のエージェントを追加してください。[docs/customizing.ja.md](docs/customizing.ja.md) を参照してください。
 
@@ -63,7 +63,8 @@ claude plugin marketplace add nccong85/escanner-agent-kit
 claude plugin install review-gate@escanner-agent-kit
 claude plugin install dev-pipeline@escanner-agent-kit            # optional
 claude plugin install flutter-native@escanner-agent-kit          # optional, Flutter + native stacks
-claude plugin install device-e2e@escanner-agent-kit              # optional, real-device e2e on iPhone + Android
+claude plugin marketplace add nccong85/device-e2e               # optional, real-device e2e on iPhone + Android
+claude plugin install device-e2e@device-e2e
 ```
 
 **2. プロジェクト内で初期化する**

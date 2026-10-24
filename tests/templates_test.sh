@@ -48,10 +48,7 @@ done
 grep -q '^| An agent reports `BLOCKED` with a reason' "$CMD/implement.md" && ok || ko "implement.md routing table has no BLOCKED row"
 grep -q '^\*\*Owner gate first.\*\*' "$CMD/implement.md" && ok || ko "implement.md Step 1 lacks the owner gate"
 
-# Nothing else creates .claude/device-e2e/project.md; device-tester reports BLOCKED without it.
-E2E_INIT="$AGENTS/device-e2e/commands/init.md"
-[ -f "$E2E_INIT" ] && grep -q 'do not write to it' "$E2E_INIT" && grep -q 'skills/playbook/project.template.md' "$E2E_INIT" \
-  && ok || ko "device-e2e/commands/init.md missing, or it may overwrite / names no template"
+# device-e2e (github.com/nccong85/device-e2e) checks its own init command, brief and hand-off.
 grep -q '/device-e2e:init' "$CMD/task-decompose.md" && ok || ko "task-decompose.md does not point device tasks to /device-e2e:init"
 
 # A budget question that does not quote the Part A rule gets an answer spec-validate then rejects: one wasted round
@@ -70,14 +67,6 @@ KIT="$(cd "$CMD/../../.." && pwd)"
 stale=$(cd "$KIT" && git ls-files | grep -vE '^tests/' | xargs grep -n 'review-loop\|flutter-native-agents\|REVIEW_LOOP' 2>/dev/null)
 [ -z "$stale" ] && ok || { ko "old plugin names in the kit:"; echo "$stale" | head -5; }
 grep -q 'in any column of the "Legacy names" section' "$CMD/implement.md" && ok || ko "implement.md does not look old names up in every Legacy column"
-# device-tester's brief and hand-off are a contract with task-decompose and implement; the validator checks the counts.
-DT="$AGENTS/device-e2e/agents/device-tester.md"
-for k in 'SPEC:' 'PLAN:' 'PLAN_APPROVED:' 'BUILD:' 'PLATFORMS:' 'CASES:' 'BUDGET:' 'RESULTS:' 'BLOCKERS:' 'not_run=<n>' 'BLOCKED: brief missing'; do
-  grep -qF "$k" "$DT" && ok || ko "device-tester.md lacks '$k'"
-done
 grep -q "Brief\* lines" "$CMD/task-decompose.md" && ok || ko "task-decompose.md does not give device tasks the Brief lines"
-for f in references/test-design.md references/glossary.md e2e_test_plan.template.md; do
-  grep -q "$(basename "$f")" "$AGENTS/device-e2e/skills/playbook/SKILL.md" "$AGENTS/device-e2e/skills/playbook/references/test-design.md" && ok || ko "$f is not linked from the playbook"
-done
 echo "templates: pass=$pass fail=$fail"
 [ "$fail" = 0 ]

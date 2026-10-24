@@ -24,7 +24,7 @@ claude plugin install dev-pipeline@escanner-agent-kit
 claude plugin install flutter-native@escanner-agent-kit   # or your own stack plugin
 ```
 Add `--scope local` to keep the plugins to one project. For tests on real phones, also install
-`device-e2e@escanner-agent-kit` and run `/device-e2e:init` in the project.
+`device-e2e@device-e2e` from its own marketplace ([github.com/nccong85/device-e2e](https://github.com/nccong85/device-e2e)) and run `/device-e2e:init` in the project.
 
 **Updating later:** run `claude plugin marketplace update escanner-agent-kit`, then
 `claude plugin update <plugin>@escanner-agent-kit` (add `--scope local` for local installs).

@@ -23,12 +23,6 @@
       "source": "./plugins/flutter-native",
       "description": "Reference agents for Flutter apps with a native (C/C++) engine and iOS/Android platform code: coders, area reviewers, experts that write and review one layer, security and performance checkers.",
       "category": "development"
-    },
-    {
-      "name": "device-e2e",
-      "source": "./plugins/device-e2e",
-      "description": "Real-device e2e testing on a physical iPhone (WebDriverAgent) and Android phone (adb): the device-tester agent, its skill, and Python drivers.",
-      "category": "development"
     }
   ]
 }
