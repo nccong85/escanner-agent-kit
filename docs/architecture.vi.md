@@ -9,7 +9,7 @@
 
 ## Thành phần
 
-| Thành phần | Vai trò | Tất định? |
+| Thành phần | Vai trò | Cần thiết |
 |---|---|---|
 | `review_brief.md` Phần A | Thông tin dự án mà agent cần đọc trước tiên | — |
 | `review_brief.md` Phần B | Giao thức: gate mức độ nghiêm trọng, phạm vi, review phần thay đổi, quyền sở hữu, giới hạn báo cáo, bàn giao | — |
